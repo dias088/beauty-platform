@@ -93,22 +93,7 @@ export function HeroSection() {
         </div>
       </section>
 
-      {/* ─── Categories ───────────────────────────────── */}
-      <section className="border-b bg-background">
-        <div className="container mx-auto px-6 max-w-5xl">
-          <div className="flex items-center gap-2 py-3 overflow-x-auto scrollbar-hide">
-            {CATEGORIES.map(cat => (
-              <Link
-                key={cat.value}
-                href={`/?category=${cat.value}`}
-                className="shrink-0 px-4 py-1.5 rounded-full text-sm text-muted-foreground border border-border hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-colors"
-              >
-                {cat.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* ─── Benefits ─────────────────────────────────── */}
       <section className="border-b bg-muted/20">
