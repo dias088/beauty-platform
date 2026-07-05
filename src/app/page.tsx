@@ -7,6 +7,9 @@ import { CategorySections } from './_components/category-sections'
 import { FiltersBar } from './_components/filters-bar'
 import { Suspense } from 'react'
 
+
+export const dynamic = 'force-dynamic'
+
 export default async function Home(props: {
   searchParams: Promise<{ category?: string; q?: string; sort?: string; minPrice?: string; maxPrice?: string }>
 }) {
