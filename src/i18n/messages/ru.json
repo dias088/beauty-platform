@@ -1,0 +1,28 @@
+{
+  "common": {
+    "search": "Поиск",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Готово",
+    "back": "Назад",
+    "next": "Далее"
+  },
+  "auth": {
+    "login": "Войти",
+    "register": "Зарегистрироваться",
+    "logout": "Выйти",
+    "email": "Email",
+    "password": "Пароль",
+    "fullName": "Имя и фамилия"
+  },
+  "categories": {
+    "nail": "Ногти",
+    "lash": "Ресницы",
+    "brow": "Брови",
+    "hair": "Волосы",
+    "makeup": "Макияж",
+    "cosmetology": "Косметология"
+  }
+}
