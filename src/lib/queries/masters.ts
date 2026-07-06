@@ -45,7 +45,7 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
       reviews_count,
       is_active,
       boost_until,
-      profiles!inner (full_name),
+      profiles (full_name),
       portfolio_photos (url, position),
       services (price_kzt)
     `)
