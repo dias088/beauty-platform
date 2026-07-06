@@ -48,6 +48,7 @@ export default async function Home(props: {
         <FiltersBar />
       </Suspense>
 
+      <div>DEBUG: {masters.length} masters</div>
       <CategorySections masters={masters} />
 
       {!user && <HowItWorks />}
