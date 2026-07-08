@@ -11,14 +11,14 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 const MENU_ITEMS = [
-  { href: '/dashboard/master', icon: Home, label: '📅 Записи' },
-  { href: '/dashboard/master/schedule', icon: Calendar, label: '🗓️ Расписание' },
-  { href: '/dashboard/master/services', icon: Wrench, label: '💅 Услуги' },
-  { href: '/dashboard/master/profile', icon: Settings, label: '👤 Профиль' },
-  { href: '/dashboard/master/stats', icon: BarChart3, label: '📊 Статистика' },
-  { href: '/dashboard/master/crm', icon: Users, label: '👥 Клиенты' },
-  { href: '/dashboard/master/boost', icon: Zap, label: '⚡ Буст', highlight: true },
-  { href: '/dashboard/master/score-discounts', icon: Sparkles, label: '✨ Скидки Beauty Score' },
+  { href: '/dashboard/master', icon: Home, label: 'Записи' },
+  { href: '/dashboard/master/schedule', icon: Calendar, label: 'Расписание' },
+  { href: '/dashboard/master/services', icon: Wrench, label: 'Услуги' },
+  { href: '/dashboard/master/profile', icon: Settings, label: 'Профиль' },
+  { href: '/dashboard/master/stats', icon: BarChart3, label: 'Статистика' },
+  { href: '/dashboard/master/crm', icon: Users, label: 'Клиенты' },
+  { href: '/dashboard/master/boost', icon: Zap, label: 'Буст', highlight: true },
+  { href: '/dashboard/master/score-discounts', icon: Sparkles, label: 'Скидки Beauty Score' },
 ]
 
 function ProfileLink({ masterId }: { masterId?: string }) {
@@ -59,7 +59,7 @@ function ProfileLink({ masterId }: { masterId?: string }) {
           {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
         </button>
       </div>
-      <p className="text-xs text-muted-foreground">Скопируй ссылку → вставь в шапку Instagram</p>
+      <p className="text-xs text-muted-foreground">Скопируй ссылку — вставь в шапку Instagram</p>
     </div>
   )
 }
@@ -71,10 +71,9 @@ function SidebarContent({ masterId }: { masterId?: string }) {
     <div className="flex flex-col h-full">
       <div className="p-6 border-b">
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="text-2xl">💄</span>
+          <Sparkles className="w-5 h-5 text-primary" />
           <span className="font-bold text-lg tracking-tight">
-            Beauty
-            <span className="text-primary">.</span>
+            Beauty<span className="text-primary">.</span>kz
           </span>
         </Link>
         <p className="text-xs text-muted-foreground mt-1">Кабинет мастера</p>

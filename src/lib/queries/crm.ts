@@ -28,21 +28,29 @@ export type CrmBooking = {
 export async function getCrmClients(masterId: string): Promise<CrmClient[]> {
   const supabase = await createClient()
 
-  const { data } = await supabase
-    .from('bookings')
-    .select(`
-      client_id,
-      price_kzt_snapshot,
-      starts_at,
-      status,
-      profiles!bookings_client_id_fkey (full_name, avatar_url, phone),
-      client_scores!client_scores_client_id_fkey (score, level)
-    `)
-    .eq('master_id', masterId)
-    .in('status', ['completed', 'confirmed', 'pending', 'no_show'])
-    .order('starts_at', { ascending: false })
+  const [{ data }, { data: notesData }] = await Promise.all([
+    supabase
+      .from('bookings')
+      .select(`
+        client_id,
+        price_kzt_snapshot,
+        starts_at,
+        status,
+        profiles!bookings_client_id_fkey (full_name, avatar_url, phone),
+        client_scores!client_scores_client_id_fkey (score, level)
+      `)
+      .eq('master_id', masterId)
+      .in('status', ['completed', 'confirmed', 'pending', 'no_show'])
+      .order('starts_at', { ascending: false }),
+    supabase
+      .from('master_client_notes')
+      .select('client_id, note')
+      .eq('master_id', masterId),
+  ])
 
   if (!data) return []
+
+  const notesByClient = new Map<string, string>((notesData ?? []).map(n => [n.client_id, n.note]))
 
   // Агрегируем по клиенту
   const map = new Map<string, CrmClient>()
@@ -60,9 +68,9 @@ export async function getCrmClients(masterId: string): Promise<CrmClient[]> {
         total_visits: isCompleted ? 1 : 0,
         total_spent:  isCompleted ? row.price_kzt_snapshot : 0,
         last_visit:   isCompleted ? row.starts_at : null,
-        score:        row.client_scores?.[0]?.score ?? 0,
-        level:        row.client_scores?.[0]?.level ?? 'new',
-        notes:        null,
+        score:        row.client_scores?.score ?? 0,
+        level:        row.client_scores?.level ?? 'new',
+        notes:        notesByClient.get(row.client_id) ?? null,
       })
     } else {
       if (isCompleted) {

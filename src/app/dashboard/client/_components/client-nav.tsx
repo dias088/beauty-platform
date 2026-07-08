@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 
 const NAV = [
   { href: '/dashboard/client', label: 'Записи' },
-  { href: '/dashboard/client/favorites', label: '❤️ Избранные' },
+  { href: '/dashboard/client/favorites', label: 'Избранные' },
   { href: '/dashboard/client/beauty-score', label: 'Beauty Score' },
   { href: '/dashboard/client/profile', label: 'Профиль' },
 ]

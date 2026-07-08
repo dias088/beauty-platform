@@ -14,14 +14,14 @@ const PLANS = [
     label: '7 дней',
     price: 2990,
     badge: null,
-    features: ['TOP-позиция в выдаче', 'Значок ⚡ TOP на карточке', '× 3–5 просмотров профиля'],
+    features: ['TOP-позиция в выдаче', 'Значок TOP на карточке', '3–5× просмотров профиля'],
   },
   {
     id: '30d' as const,
     label: '30 дней',
     price: 7990,
     badge: 'Выгоднее',
-    features: ['TOP-позиция в выдаче', 'Значок ⚡ TOP на карточке', '× 3–5 просмотров профиля', 'Экономия 3 940 ₸ vs 4 недели'],
+    features: ['TOP-позиция в выдаче', 'Значок TOP на карточке', '3–5× просмотров профиля', 'Экономия 3 940 ₸ vs 4 недели'],
   },
 ]
 
@@ -70,7 +70,7 @@ export default function BoostPage() {
           {[
             { icon: TrendingUp, title: 'TOP в выдаче', desc: 'Твой профиль первым видят все клиенты' },
             { icon: Eye, title: 'Больше просмотров', desc: 'В среднем ×3–5 к органическому трафику' },
-            { icon: Star, title: 'Значок ⚡ TOP', desc: 'Выделяешься среди других мастеров' },
+            { icon: Star, title: 'Значок TOP', desc: 'Выделяешься среди других мастеров' },
           ].map(item => (
             <div key={item.title} className="flex gap-3">
               <item.icon className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
@@ -133,7 +133,7 @@ export default function BoostPage() {
       {payment && (
         <Card className="p-6 border-green-200 bg-green-50">
           <h2 className="text-xl font-bold text-green-900 mb-2">
-            ✅ Заявка принята!
+            Заявка принята!
           </h2>
           <p className="text-green-800 text-sm mb-6">
             Переведи оплату через Kaspi — мы активируем буст в течение 1 часа.

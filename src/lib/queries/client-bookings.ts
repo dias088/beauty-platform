@@ -8,6 +8,8 @@ export type ClientBooking = {
   ends_at: string
   service_name_snapshot: string
   price_kzt_snapshot: number
+  original_price_kzt: number | null
+  discount_pct: number | null
   duration_minutes_snapshot: number
   master_id: string
   masters: {
@@ -20,11 +22,11 @@ export type ClientBooking = {
       avatar_url: string | null
     }
   }
-  reviews: Array<{
+  review: {
     id: string
     rating: number
     text: string | null
-  }>
+  } | null
 }
 
 export type ClientScore = {
@@ -48,6 +50,8 @@ export async function getClientBookings(clientId: string): Promise<ClientBooking
       ends_at,
       service_name_snapshot,
       price_kzt_snapshot,
+      original_price_kzt,
+      discount_pct,
       duration_minutes_snapshot,
       master_id,
       masters!inner (
@@ -57,7 +61,7 @@ export async function getClientBookings(clientId: string): Promise<ClientBooking
         address,
         profiles!inner (full_name, avatar_url)
       ),
-      reviews (id, rating, text)
+      review:reviews (id, rating, text)
     `)
     .eq('client_id', clientId)
     .order('starts_at', { ascending: false })

@@ -48,7 +48,7 @@ export default function FavoritesPage() {
         <div className="text-center py-20 text-muted-foreground">
           <Heart className="w-16 h-16 mx-auto mb-4 opacity-20" />
           <p className="font-medium text-lg mb-2">Нет избранных мастеров</p>
-          <p className="text-sm mb-6">Нажмите ❤️ на карточке мастера чтобы сохранить</p>
+          <p className="text-sm mb-6">Нажмите на сердечко на карточке мастера чтобы сохранить</p>
           <Link
             href="/"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90"

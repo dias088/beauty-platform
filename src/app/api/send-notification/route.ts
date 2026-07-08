@@ -22,7 +22,7 @@ export async function POST(request: Request) {
         masterEmail && resend.emails.send({
           from: FROM,
           to: masterEmail,
-          subject: '💄 Новая запись на Beauty Platform',
+          subject: 'Новая запись на Beauty Platform',
           html: `
             <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
               <h2 style="color:#7c3aed">Новая запись!</h2>
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         clientEmail && resend.emails.send({
           from: FROM,
           to: clientEmail,
-          subject: `✅ Запись создана — ${masterName}`,
+          subject: `Запись создана — ${masterName}`,
           html: `
             <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
               <h2 style="color:#7c3aed">Запись создана!</h2>
@@ -65,14 +65,14 @@ export async function POST(request: Request) {
       await resend.emails.send({
         from: FROM,
         to: clientEmail,
-        subject: '✅ Мастер подтвердил вашу запись',
+        subject: 'Мастер подтвердил вашу запись',
         html: `
           <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
             <h2 style="color:#16a34a">Запись подтверждена!</h2>
             <p>Мастер <strong>${masterName}</strong> подтвердил вашу запись</p>
             <p>Услуга: <strong>${serviceName}</strong></p>
             <p>Время: <strong>${dateTime}</strong></p>
-            <p>До встречи! 💄</p>
+            <p>До встречи!</p>
           </div>
         `,
       })
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       await resend.emails.send({
         from: FROM,
         to: clientEmail,
-        subject: '⏰ Напоминание о записи завтра',
+        subject: 'Напоминание о записи завтра',
         html: `
           <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
             <h2 style="color:#d97706">Напоминание!</h2>

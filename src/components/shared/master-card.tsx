@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Star, MapPin } from 'lucide-react'
+import { Star, MapPin, ImageOff, Zap } from 'lucide-react'
 import type { MasterListItem } from '@/lib/queries/masters'
 import { FavoriteButton } from './favorite-button'
 
@@ -11,12 +11,12 @@ type Props = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  nail: '💅 Ногти',
-  lash: '✨ Ресницы',
-  brow: '👁️ Брови',
-  hair: '💇 Волосы',
-  makeup: '💄 Макияж',
-  cosmetology: '🧴 Косметология',
+  nail: 'Ногти',
+  lash: 'Ресницы',
+  brow: 'Брови',
+  hair: 'Волосы',
+  makeup: 'Макияж',
+  cosmetology: 'Косметология',
 }
 
 export function MasterCard({ master }: Props) {
@@ -38,7 +38,7 @@ export function MasterCard({ master }: Props) {
               />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
-                <span className="text-4xl">💄</span>
+                <ImageOff className="w-8 h-8" strokeWidth={1.5} />
                 <span className="text-sm">Нет фото</span>
               </div>
             )}
@@ -51,7 +51,7 @@ export function MasterCard({ master }: Props) {
             {/* TOP бейдж */}
             {master.is_boosted && (
               <div className="absolute top-2.5 left-2.5 flex items-center gap-1 bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
-                ⚡ TOP
+                <Zap className="w-3 h-3 fill-amber-900" /> TOP
               </div>
             )}
 

@@ -7,16 +7,16 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
-import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react'
+import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, Lightbulb } from 'lucide-react'
 import { saveBasicsAction, saveLocationAction } from '../actions'
 
 const CATEGORIES = [
-  { value: 'nail',        label: '💅 Маникюр' },
-  { value: 'lash',        label: '✨ Ресницы' },
-  { value: 'brow',        label: '👁️ Брови' },
-  { value: 'hair',        label: '💇 Волосы' },
-  { value: 'makeup',      label: '💄 Макияж' },
-  { value: 'cosmetology', label: '🧴 Косметология' },
+  { value: 'nail',        label: 'Маникюр' },
+  { value: 'lash',        label: 'Ресницы' },
+  { value: 'brow',        label: 'Брови' },
+  { value: 'hair',        label: 'Волосы' },
+  { value: 'makeup',      label: 'Макияж' },
+  { value: 'cosmetology', label: 'Косметология' },
 ]
 
 const STEPS = [
@@ -85,7 +85,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
             Настройка профиля
           </div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {step < 4 ? `Привет, ${userName.split(' ')[0]}! 👋` : 'Всё готово! 🎉'}
+            {step < 4 ? `Привет, ${userName.split(' ')[0]}!` : 'Всё готово!'}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
             {step < 4 ? 'Осталось буквально пару минут' : 'Твой профиль создан'}
@@ -164,9 +164,10 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
         {/* ─── ШАГ 2: Первая услуга ───────────────────────────────── */}
         {step === 2 && (
           <Card className="p-6 space-y-5 shadow-sm">
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800">
-              💡 Добавьте хотя бы одну услугу — клиенты увидят её при записи.
-              Всё можно изменить в разделе «Услуги».
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 flex gap-2">
+              <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>Добавьте хотя бы одну услугу — клиенты увидят её при записи.
+              Всё можно изменить в разделе «Услуги».</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

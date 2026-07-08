@@ -39,7 +39,7 @@ async function sendBookingCreatedEmails(bookingId: string, clientEmail: string) 
       masterEmail && resend.emails.send({
         from: FROM,
         to: masterEmail,
-        subject: '💄 Новая запись на Beauty Platform',
+        subject: 'Новая запись на Beauty Platform',
         html: `
           <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
             <h2 style="color:#7c3aed">Новая запись!</h2>
@@ -57,7 +57,7 @@ async function sendBookingCreatedEmails(bookingId: string, clientEmail: string) 
       resend.emails.send({
         from: FROM,
         to: clientEmail,
-        subject: `✅ Запись создана — ${masterName}`,
+        subject: `Запись создана — ${masterName}`,
         html: `
           <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
             <h2 style="color:#7c3aed">Запись создана!</h2>

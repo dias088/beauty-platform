@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import { Sparkles, BadgeCheck, ShieldCheck, type LucideIcon } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
@@ -11,10 +12,10 @@ type Props = {
   score: number
 }
 
-const LEVEL_INFO = {
-  new:      { emoji: '🆕', label: 'Новый',       className: 'bg-blue-100 text-blue-800 hover:bg-blue-100 border-0' },
-  verified: { emoji: '✅', label: 'Проверенный', className: 'bg-amber-100 text-amber-800 hover:bg-amber-100 border-0' },
-  trusted:  { emoji: '⭐', label: 'Доверенный',  className: 'bg-green-100 text-green-800 hover:bg-green-100 border-0' },
+const LEVEL_INFO: Record<string, { icon: LucideIcon; label: string; className: string }> = {
+  new:      { icon: Sparkles,   label: 'Новый',       className: 'bg-blue-100 text-blue-800 hover:bg-blue-100 border-0' },
+  verified: { icon: BadgeCheck, label: 'Проверенный', className: 'bg-amber-100 text-amber-800 hover:bg-amber-100 border-0' },
+  trusted:  { icon: ShieldCheck, label: 'Доверенный',  className: 'bg-green-100 text-green-800 hover:bg-green-100 border-0' },
 }
 
 export function BeautyScoreBadge({ level, score }: Props) {
@@ -25,7 +26,7 @@ export function BeautyScoreBadge({ level, score }: Props) {
       <Tooltip>
         <TooltipTrigger>
           <Badge className={info.className}>
-            {info.emoji} {info.label}
+            <info.icon className="w-3 h-3" /> {info.label}
           </Badge>
         </TooltipTrigger>
         <TooltipContent>

@@ -28,10 +28,9 @@ export async function ClientHeader() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="container mx-auto flex items-center justify-between h-16 px-4 gap-4">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <span className="text-2xl">💄</span>
+        <Link href="/" className="flex items-center gap-1 shrink-0">
           <span className="font-bold text-lg tracking-tight">
-            Beauty<span className="text-primary">.</span>
+            Beauty<span className="text-primary">.</span>kz
           </span>
         </Link>
 

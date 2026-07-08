@@ -86,7 +86,7 @@ export default async function StatsPage({ searchParams }: Props) {
     { label: 'Всего записей',  value: stats.totalBookings,  color: '' },
     { label: 'Завершено',      value: stats.completedBookings, color: 'text-green-600' },
     { label: 'Доход',          value: formatPrice(stats.totalRevenue), color: '' },
-    { label: 'Рейтинг',        value: `⭐ ${stats.avgRating.toFixed(1)}`, color: '', sub: `${stats.reviewCount} отзывов` },
+    { label: 'Рейтинг',        value: `${stats.avgRating.toFixed(1)}`, color: '', sub: `${stats.reviewCount} отзывов` },
   ]
 
   return (

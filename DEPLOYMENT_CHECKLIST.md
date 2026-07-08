@@ -68,7 +68,7 @@
 ```bash
 # 1. Push в GitHub
 git add .
-git commit -m "🚀 Production ready"
+git commit -m "Production ready"
 git push origin main
 
 # 2. Импорт в Vercel

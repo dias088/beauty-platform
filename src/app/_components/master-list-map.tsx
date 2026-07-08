@@ -6,7 +6,7 @@ import { MasterCard } from '@/components/shared/master-card'
 import { MasterMap } from '@/components/shared/master-map'
 import { FiltersBar } from './filters-bar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Map, List } from 'lucide-react'
+import { Map, List, SearchX } from 'lucide-react'
 import type { MasterListItem } from '@/lib/queries/masters'
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-      <p className="text-5xl mb-4">🔍</p>
+      <SearchX className="w-12 h-12 mb-4 text-muted-foreground" strokeWidth={1.5} />
       <p className="font-semibold text-lg mb-2">Мастеров не найдено</p>
       <p className="text-sm text-muted-foreground">
         Попробуйте изменить фильтры или сбросить поиск

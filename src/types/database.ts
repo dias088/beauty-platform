@@ -44,11 +44,13 @@ export type Database = {
           client_id: string
           client_notes: string | null
           created_at: string
+          discount_pct: number | null
           duration_minutes_snapshot: number
           ends_at: string
           id: string
           master_id: string
           master_notes: string | null
+          original_price_kzt: number | null
           price_kzt_snapshot: number
           service_id: string
           service_name_snapshot: string
@@ -62,11 +64,13 @@ export type Database = {
           client_id: string
           client_notes?: string | null
           created_at?: string
+          discount_pct?: number | null
           duration_minutes_snapshot: number
           ends_at: string
           id?: string
           master_id: string
           master_notes?: string | null
+          original_price_kzt?: number | null
           price_kzt_snapshot: number
           service_id: string
           service_name_snapshot: string
@@ -80,11 +84,13 @@ export type Database = {
           client_id?: string
           client_notes?: string | null
           created_at?: string
+          discount_pct?: number | null
           duration_minutes_snapshot?: number
           ends_at?: string
           id?: string
           master_id?: string
           master_notes?: string | null
+          original_price_kzt?: number | null
           price_kzt_snapshot?: number
           service_id?: string
           service_name_snapshot?: string
@@ -166,10 +172,76 @@ export type Database = {
           },
         ]
       }
+      master_client_notes: {
+        Row: {
+          client_id: string
+          master_id: string
+          note: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          master_id: string
+          note?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          master_id?: string
+          note?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "master_client_notes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "master_client_notes_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: false
+            referencedRelation: "masters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      master_score_discounts: {
+        Row: {
+          master_id: string
+          trusted_discount: number
+          updated_at: string
+          verified_discount: number
+        }
+        Insert: {
+          master_id: string
+          trusted_discount?: number
+          updated_at?: string
+          verified_discount?: number
+        }
+        Update: {
+          master_id?: string
+          trusted_discount?: number
+          updated_at?: string
+          verified_discount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "master_score_discounts_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: true
+            referencedRelation: "masters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       masters: {
         Row: {
           address: string | null
           bio: string | null
+          boost_until: string | null
           categories: Database["public"]["Enums"]["service_category"][]
           city: string
           completed_bookings: number
@@ -189,6 +261,7 @@ export type Database = {
         Insert: {
           address?: string | null
           bio?: string | null
+          boost_until?: string | null
           categories?: Database["public"]["Enums"]["service_category"][]
           city?: string
           completed_bookings?: number
@@ -208,6 +281,7 @@ export type Database = {
         Update: {
           address?: string | null
           bio?: string | null
+          boost_until?: string | null
           categories?: Database["public"]["Enums"]["service_category"][]
           city?: string
           completed_bookings?: number

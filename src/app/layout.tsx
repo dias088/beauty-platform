@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter, Geist } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { Header } from '@/components/shared/header'
 import './globals.css'
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' })
+// Inter supports Cyrillic, which this Russian-language site requires.
+const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
   manifest: '/manifest.json',
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={cn("font-sans", geist.variable)}>
+    <html lang="ru" className={cn("font-sans", inter.variable)}>
       <body className="font-sans antialiased">
         <Header />
         {children}

@@ -33,6 +33,12 @@ export async function Header() {
           <Logo />
           <nav className="flex items-center gap-1">
             <Link
+              href="/register?role=master"
+              className="hidden sm:inline-flex text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-muted"
+            >
+              Мастерам
+            </Link>
+            <Link
               href="/login"
               className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-sm')}
             >

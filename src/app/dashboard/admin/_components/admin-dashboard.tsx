@@ -145,14 +145,14 @@ export function AdminDashboard({ stats, masters, recentProfiles }: Props) {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold text-sm">{master.profiles.full_name}</span>
                         {master.is_verified
-                          ? <Badge className="bg-green-100 text-green-800 border-0 text-xs">✅ Верифицирован</Badge>
-                          : <Badge className="bg-amber-100 text-amber-800 border-0 text-xs">⏳ Ожидает</Badge>
+                          ? <Badge className="bg-green-100 text-green-800 border-0 text-xs gap-1"><CheckCircle2 className="w-3 h-3" /> Верифицирован</Badge>
+                          : <Badge className="bg-amber-100 text-amber-800 border-0 text-xs gap-1"><Clock className="w-3 h-3" /> Ожидает</Badge>
                         }
-                        {isBoosted && <Badge className="bg-amber-100 text-amber-800 border-0 text-xs">⚡ Буст</Badge>}
+                        {isBoosted && <Badge className="bg-amber-100 text-amber-800 border-0 text-xs gap-1"><Zap className="w-3 h-3" /> Буст</Badge>}
                         {!master.is_active && <Badge variant="destructive" className="text-xs">Деактивирован</Badge>}
                       </div>
                       <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
-                        <span>⭐ {master.rating.toFixed(1)} ({master.reviews_count})</span>
+                        <span className="inline-flex items-center gap-1"><Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> {master.rating.toFixed(1)} ({master.reviews_count})</span>
                         <span>·</span>
                         <span>{master.completed_bookings} записей</span>
                         <span>·</span>
@@ -163,10 +163,8 @@ export function AdminDashboard({ stats, masters, recentProfiles }: Props) {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={`/masters/${master.id}`} target="_blank">
-                          <Eye className="w-3.5 h-3.5 mr-1" /> Профиль
-                        </a>
+                      <Button variant="outline" size="sm" render={<a href={`/masters/${master.id}`} target="_blank" rel="noopener noreferrer" />}>
+                        <Eye className="w-3.5 h-3.5 mr-1" /> Профиль
                       </Button>
 
                       {!master.is_verified && (

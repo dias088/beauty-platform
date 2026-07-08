@@ -30,12 +30,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  nail: '💅 Ногти',
-  lash: '✨ Ресницы',
-  brow: '👁️ Брови',
-  hair: '💇 Волосы',
-  makeup: '💄 Макияж',
-  cosmetology: '🧴 Косметология',
+  nail: 'Ногти',
+  lash: 'Ресницы',
+  brow: 'Брови',
+  hair: 'Волосы',
+  makeup: 'Макияж',
+  cosmetology: 'Косметология',
 }
 
 export default async function MasterProfilePage({ params }: Props) {

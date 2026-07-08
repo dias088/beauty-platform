@@ -265,7 +265,7 @@ export async function requestBoostAction(plan: '7d' | '30d'): Promise<Result<{ k
     await resend.emails.send({
       from: 'Beauty Platform <bookings@beauty-platform.kz>',
       to: 'medetsovetov09@gmail.com',
-      subject: `💰 Запрос на буст — ${(master.profiles as any).full_name}`,
+      subject: `Запрос на буст — ${(master.profiles as any).full_name}`,
       html: `
         <div style="font-family:sans-serif">
           <h2>Новый запрос на буст</h2>

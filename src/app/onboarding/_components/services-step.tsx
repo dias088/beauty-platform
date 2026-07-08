@@ -28,12 +28,12 @@ import { createClient } from '@/lib/supabase/client'
 import { SERVICE_CATEGORIES } from '@/lib/validations/master'
 
 const CATEGORY_LABELS: Record<string, string> = {
-  nail: '💅 Ногти',
-  lash: '✨ Ресницы',
-  brow: '👁️ Брови',
-  hair: '💇 Волосы',
-  makeup: '💄 Макияж',
-  cosmetology: '🧴 Косметология',
+  nail: 'Ногти',
+  lash: 'Ресницы',
+  brow: 'Брови',
+  hair: 'Волосы',
+  makeup: 'Макияж',
+  cosmetology: 'Косметология',
 }
 
 const DURATIONS = [15, 30, 45, 60, 90, 120, 180, 240, 360, 480]

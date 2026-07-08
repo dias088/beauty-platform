@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: Request) {
   const cronSecret = request.headers.get('x-cron-secret')
@@ -6,7 +6,10 @@ export async function GET(request: Request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const supabase = await createClient()
+  // Обычный клиент — для чтения данных под RLS-политиками недостаточно,
+  // т.к. у cron-запроса нет сессии пользователя. Используем admin-клиент
+  // (service role) и для чтения bookings, и для auth.admin.getUserById().
+  const supabase = createAdminClient()
   const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
   // Записи, которые начнутся через 23-25 часов

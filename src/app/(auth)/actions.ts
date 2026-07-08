@@ -70,8 +70,30 @@ export async function registerAction(formData: FormData): Promise<Result> {
     if (error.message.includes('already')) {
       return { success: false, error: 'Этот email уже зарегистрирован' }
     }
-    console.error('Supabase Auth error:', error)
     return { success: false, error: `Ошибка: ${error.message}` }
+  }
+
+  // Если мастер — создаём запись в masters сразу
+  // (триггер в БД тоже это делает, но дублирование безопасно через on conflict)
+  // Триггер handle_new_user() выполняется синхронно в той же транзакции,
+  // что и вставка в auth.users, так что к моменту, когда signUp() вернул
+  // результат, профиль уже гарантированно создан — искусственная задержка не нужна.
+  if (parsed.data.role === 'master' && data.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', data.user.id)
+      .single()
+
+    if (profile) {
+      await supabase
+        .from('masters')
+        .upsert({
+          profile_id: data.user.id,
+          city: 'Astana',
+          categories: [],
+        }, { onConflict: 'profile_id' })
+    }
   }
 
   revalidatePath('/', 'layout')

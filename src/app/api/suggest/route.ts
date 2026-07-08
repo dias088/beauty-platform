@@ -9,8 +9,9 @@ export async function GET(req: Request) {
   }
 
   try {
+    const geocoderKey = process.env.YANDEX_GEOCODER_KEY || process.env.NEXT_PUBLIC_YANDEX_MAPS_KEY || ''
     const geocodeUrl = new URL('https://geocode-maps.yandex.ru/1.x/')
-    geocodeUrl.searchParams.set('apikey', process.env.YANDEX_GEOCODER_KEY || '')
+    geocodeUrl.searchParams.set('apikey', geocoderKey)
     geocodeUrl.searchParams.set('format', 'json')
     geocodeUrl.searchParams.set('geocode', `Астана, ${q}`)
     geocodeUrl.searchParams.set('results', '5')
@@ -18,6 +19,11 @@ export async function GET(req: Request) {
 
     const res = await fetch(geocodeUrl.toString())
     const data = await res.json()
+
+    if (data.error) {
+      console.error('Geocoder API error:', data.error)
+      return NextResponse.json({ results: [] })
+    }
 
     const features = data.response?.GeoObjectCollection?.featureMember || []
     const results = features.map((f: any) => {

@@ -6,11 +6,15 @@ import type { Result } from '@/types/result'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-export async function saveBasicsAction(formData: FormData): Promise<Result> {
+export async function saveBasicsAction(
+  bio: string,
+  categories: string[],
+  instagram?: string,
+): Promise<Result> {
   const parsed = masterBasicsSchema.safeParse({
-    bio: formData.get('bio'),
-    categories: formData.getAll('categories'),
-    instagram: formData.get('instagram') || undefined,
+    bio,
+    categories,
+    instagram,
   })
 
   if (!parsed.success) {

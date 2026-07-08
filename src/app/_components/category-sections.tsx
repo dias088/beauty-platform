@@ -1,16 +1,16 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Star, ChevronRight } from 'lucide-react'
+import { Star, ChevronRight, Hand, Scissors, Eye, Palette, Droplet, Zap, ImageOff, type LucideIcon } from 'lucide-react'
 import type { MasterListItem } from '@/lib/queries/masters'
 import { FavoriteButton } from '@/components/shared/favorite-button'
 
-const CATEGORIES = [
-  { value: 'nail',        label: 'Маникюр и педикюр', emoji: '💅' },
-  { value: 'hair',        label: 'Волосы',             emoji: '💇' },
-  { value: 'lash',        label: 'Ресницы',            emoji: '✨' },
-  { value: 'brow',        label: 'Брови',              emoji: '👁️' },
-  { value: 'makeup',      label: 'Макияж',             emoji: '💄' },
-  { value: 'cosmetology', label: 'Косметология',       emoji: '🧴' },
+const CATEGORIES: { value: string; label: string; icon: LucideIcon }[] = [
+  { value: 'nail',        label: 'Маникюр и педикюр', icon: Hand },
+  { value: 'hair',        label: 'Волосы',             icon: Scissors },
+  { value: 'lash',        label: 'Ресницы',            icon: Eye },
+  { value: 'brow',        label: 'Брови',              icon: Eye },
+  { value: 'makeup',      label: 'Макияж',             icon: Palette },
+  { value: 'cosmetology', label: 'Косметология',       icon: Droplet },
 ]
 
 function CompactMasterCard({ master }: { master: MasterListItem }) {
@@ -28,13 +28,13 @@ function CompactMasterCard({ master }: { master: MasterListItem }) {
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-3xl text-muted-foreground">
-                💄
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                <ImageOff className="w-6 h-6" strokeWidth={1.5} />
               </div>
             )}
             {master.is_boosted && (
-              <div className="absolute top-2 left-2 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
-                ⚡ TOP
+              <div className="absolute top-2 left-2 flex items-center gap-1 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                <Zap className="w-3 h-3 fill-amber-900" /> TOP
               </div>
             )}
           </div>
@@ -95,7 +95,7 @@ export function CategorySections({ masters }: Props) {
         <div key={section.value}>
           <div className="container mx-auto px-4 flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold flex items-center gap-2">
-              <span>{section.emoji}</span>
+              <section.icon className="w-5 h-5 text-primary" />
               <span>{section.label}</span>
               <span className="text-sm font-normal text-muted-foreground ml-1">
                 {section.masters.length}

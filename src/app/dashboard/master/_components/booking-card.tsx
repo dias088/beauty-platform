@@ -25,18 +25,12 @@ import type { MasterBooking } from '@/lib/queries/master-bookings'
 import { BeautyScoreBadge } from '@/components/shared/beauty-score-badge'
 
 const STATUS_CONFIG: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
-  pending:              { label: '⏳ Ожидание',           variant: 'secondary' },
-  confirmed:            { label: '✅ Подтверждена',        variant: 'default' },
-  completed:            { label: '✔️ Завершена',          variant: 'outline' },
-  no_show:              { label: '❌ Не пришёл',           variant: 'destructive' },
-  cancelled_by_client:  { label: '🚫 Отменена клиентом',  variant: 'outline' },
-  cancelled_by_master:  { label: '🚫 Отменена мастером',  variant: 'outline' },
-}
-
-const LEVEL_LABELS: Record<string, string> = {
-  new:      '🆕 Новый',
-  verified: '✅ Проверенный',
-  trusted:  '⭐ Доверенный',
+  pending:              { label: 'Ожидание',           variant: 'secondary' },
+  confirmed:            { label: 'Подтверждена',        variant: 'default' },
+  completed:            { label: 'Завершена',          variant: 'outline' },
+  no_show:              { label: 'Не пришёл',           variant: 'destructive' },
+  cancelled_by_client:  { label: 'Отменена клиентом',  variant: 'outline' },
+  cancelled_by_master:  { label: 'Отменена мастером',  variant: 'outline' },
 }
 
 export function BookingCard({ booking }: { booking: MasterBooking }) {
@@ -44,7 +38,6 @@ export function BookingCard({ booking }: { booking: MasterBooking }) {
   const startDate = parseISO(booking.starts_at)
   const isUpcoming = startDate > new Date()
   const statusCfg = STATUS_CONFIG[booking.status] ?? { label: booking.status, variant: 'outline' as const }
-  const clientLevel = booking.client_scores?.[0]?.level
 
   const withLoading = async (fn: () => Promise<{ success: boolean; error?: string }>) => {
     setLoading(true)
@@ -68,10 +61,10 @@ export function BookingCard({ booking }: { booking: MasterBooking }) {
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-1">
             <span className="font-semibold">{booking.profiles.full_name}</span>
-            {booking.client_scores?.[0] && (
+            {booking.client_scores && (
               <BeautyScoreBadge
-                level={booking.client_scores[0].level as 'new' | 'verified' | 'trusted'}
-                score={booking.client_scores[0].score}
+                level={booking.client_scores.level as 'new' | 'verified' | 'trusted'}
+                score={booking.client_scores.score}
               />
             )}
             <Badge variant={statusCfg.variant} className="text-xs">
@@ -84,12 +77,12 @@ export function BookingCard({ booking }: { booking: MasterBooking }) {
           </p>
 
           <p className="text-sm font-medium mt-1">
-            📅 {format(startDate, 'dd MMMM (EEEE) в HH:mm', { locale: ru })}
+            {format(startDate, 'dd MMMM (EEEE) в HH:mm', { locale: ru })}
           </p>
 
           {booking.client_notes && (
             <p className="text-sm text-muted-foreground mt-2 bg-muted/50 rounded p-2">
-              💬 {booking.client_notes}
+              {booking.client_notes}
             </p>
           )}
         </div>

@@ -5,20 +5,20 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { Sparkles, Info } from 'lucide-react'
+import { Sparkles, Info, BadgeCheck, ShieldCheck, type LucideIcon } from 'lucide-react'
 import { saveDiscountSettingsAction, type DiscountSettings } from './actions'
 
 const DISCOUNT_OPTIONS = [0, 5, 10, 15, 20] // %
 
-const LEVEL_INFO = {
+const LEVEL_INFO: Record<string, { icon: LucideIcon; label: string; desc: string; color: string }> = {
   verified: {
-    emoji: '✅',
+    icon: BadgeCheck,
     label: 'Проверенный',
     desc: 'Клиенты с 5+ завершёнными записями и хорошей репутацией',
     color: 'bg-amber-100 text-amber-800',
   },
   trusted: {
-    emoji: '⭐',
+    icon: ShieldCheck,
     label: 'Доверенный',
     desc: 'Постоянные клиенты с отличной репутацией, никогда не пропускали',
     color: 'bg-green-100 text-green-800',
@@ -131,8 +131,8 @@ function LevelRow({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Badge className={`${info.color} border-0 text-sm font-medium`}>
-          {info.emoji} {info.label}
+        <Badge className={`${info.color} border-0 text-sm font-medium gap-1`}>
+          <info.icon className="w-3.5 h-3.5" /> {info.label}
         </Badge>
         <span className="text-xs text-muted-foreground">{info.desc}</span>
       </div>
@@ -175,20 +175,20 @@ function ExamplePreview({
       </p>
       <div className="space-y-1.5">
         <PriceRow
-          label="🆕 Новый клиент"
+          label="Новый клиент"
           original={EXAMPLE_PRICE}
           discount={0}
         />
         {verifiedDiscount > 0 && (
           <PriceRow
-            label="✅ Проверенный"
+            label="Проверенный"
             original={EXAMPLE_PRICE}
             discount={verifiedDiscount}
           />
         )}
         {trustedDiscount > 0 && (
           <PriceRow
-            label="⭐ Доверенный"
+            label="Доверенный"
             original={EXAMPLE_PRICE}
             discount={trustedDiscount}
           />

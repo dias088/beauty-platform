@@ -13,12 +13,12 @@ import { useAddressSuggest } from '@/hooks/use-address-suggest'
 import { MapPin, Loader2 } from 'lucide-react'
 
 const CATEGORIES = [
-  { value: 'nail', label: '💅 Ногти' },
-  { value: 'lash', label: '✨ Ресницы' },
-  { value: 'brow', label: '👁️ Брови' },
-  { value: 'hair', label: '💇 Волосы' },
-  { value: 'makeup', label: '💄 Макияж' },
-  { value: 'cosmetology', label: '🧴 Косметология' },
+  { value: 'nail', label: 'Ногти' },
+  { value: 'lash', label: 'Ресницы' },
+  { value: 'brow', label: 'Брови' },
+  { value: 'hair', label: 'Волосы' },
+  { value: 'makeup', label: 'Макияж' },
+  { value: 'cosmetology', label: 'Косметология' },
 ]
 
 export default function ProfilePage() {

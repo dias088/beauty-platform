@@ -18,12 +18,12 @@ import { toast } from 'sonner'
 import { Trash2, Edit2, Plus, X } from 'lucide-react'
 
 const CATEGORIES = [
-  { value: 'nail', label: '💅 Ногти' },
-  { value: 'lash', label: '✨ Ресницы' },
-  { value: 'brow', label: '👁️ Брови' },
-  { value: 'hair', label: '💇 Волосы' },
-  { value: 'makeup', label: '💄 Макияж' },
-  { value: 'cosmetology', label: '🧴 Косметология' },
+  { value: 'nail', label: 'Ногти' },
+  { value: 'lash', label: 'Ресницы' },
+  { value: 'brow', label: 'Брови' },
+  { value: 'hair', label: 'Волосы' },
+  { value: 'makeup', label: 'Макияж' },
+  { value: 'cosmetology', label: 'Косметология' },
 ]
 
 const CATEGORY_LABELS: Record<string, string> = Object.fromEntries(

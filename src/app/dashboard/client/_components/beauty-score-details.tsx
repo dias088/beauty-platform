@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { AlertCircle, TrendingUp, CheckCircle2 } from 'lucide-react'
+import { AlertCircle, TrendingUp, CheckCircle2, Sparkles, BadgeCheck, ShieldCheck, PartyPopper, type LucideIcon } from 'lucide-react'
 
 type ScoreData = {
   score: number
@@ -13,9 +13,21 @@ type ScoreData = {
   late_cancellations: number
 }
 
-const LEVEL_INFO = {
+const LEVEL_INFO: Record<string, {
+  icon: LucideIcon
+  name: string
+  bg: string
+  text: string
+  muted: string
+  bar: string
+  track: string
+  minScore: number
+  maxScore: number
+  benefits: string[]
+  nextLevel: { score: number; name: string } | null
+}> = {
   new: {
-    emoji: '🆕',
+    icon: Sparkles,
     name: 'Новый',
     bg: 'bg-blue-50 border-blue-100',
     text: 'text-blue-900',
@@ -28,7 +40,7 @@ const LEVEL_INFO = {
     nextLevel: { score: 50, name: 'Проверенный' },
   },
   verified: {
-    emoji: '✅',
+    icon: BadgeCheck,
     name: 'Проверенный',
     bg: 'bg-amber-50 border-amber-100',
     text: 'text-amber-900',
@@ -41,7 +53,7 @@ const LEVEL_INFO = {
     nextLevel: { score: 150, name: 'Доверенный' },
   },
   trusted: {
-    emoji: '⭐',
+    icon: ShieldCheck,
     name: 'Доверенный',
     bg: 'bg-green-50 border-green-100',
     text: 'text-green-900',
@@ -69,7 +81,9 @@ export function BeautyScoreDetails({ score }: { score: ScoreData }) {
         <div className="flex items-start justify-between gap-4 mb-5">
           <div>
             <p className={`text-xs font-medium uppercase tracking-wider ${cfg.muted} mb-1`}>Ваш статус</p>
-            <h2 className={`text-3xl font-bold ${cfg.text}`}>{cfg.emoji} {cfg.name}</h2>
+            <h2 className={`text-3xl font-bold ${cfg.text} flex items-center gap-2`}>
+              <cfg.icon className="w-7 h-7" /> {cfg.name}
+            </h2>
           </div>
           <div className="text-right">
             <p className={`text-4xl font-bold ${cfg.text}`}>{score.score}</p>
@@ -93,7 +107,9 @@ export function BeautyScoreDetails({ score }: { score: ScoreData }) {
         )}
 
         {!cfg.nextLevel && (
-          <p className={`text-sm font-medium ${cfg.muted}`}>🎉 Вы достигли максимального уровня!</p>
+          <p className={`text-sm font-medium ${cfg.muted} flex items-center gap-1.5`}>
+            <PartyPopper className="w-4 h-4" /> Вы достигли максимального уровня!
+          </p>
         )}
       </Card>
 

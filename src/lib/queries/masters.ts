@@ -1,5 +1,5 @@
 import 'server-only'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export type MasterListItem = {
   id: string
@@ -29,7 +29,7 @@ export type MasterFilters = {
 }
 
 export async function getMasters(filters: MasterFilters = {}): Promise<MasterListItem[]> {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   let query = supabase
     .from('masters')
@@ -52,6 +52,7 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
     .eq('is_active', true)
     .order('boost_until', { ascending: false, nullsFirst: false })
     .order('rating', { ascending: false })
+    .order('position', { referencedTable: 'portfolio_photos' })
     .limit(200)
 
   if (filters.category) {
@@ -65,7 +66,7 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
   const { data, error } = await query
 
   if (error) {
-    console.error('Error fetching masters:', error)
+    console.error('getMasters error:', error)
     return []
   }
 
@@ -82,11 +83,10 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
     is_active: m.is_active,
     primary_photo: m.portfolio_photos?.[0]?.url ?? null,
     min_price: m.services?.length ? Math.min(...m.services.map((s: any) => s.price_kzt)) : null,
-    full_name: m.profiles?.full_name || 'Unknown',
+    full_name: (m.profiles as any)?.full_name || 'Мастер',
     is_boosted: m.boost_until ? new Date(m.boost_until) > new Date() : false,
   }))
 
-  // Price filter (post-fetch since min_price is computed)
   if (filters.minPrice) {
     results = results.filter(m => m.min_price !== null && m.min_price >= filters.minPrice!)
   }
@@ -94,20 +94,15 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
     results = results.filter(m => m.min_price !== null && m.min_price <= filters.maxPrice!)
   }
 
-  // Sort (boosted always first, then by chosen sort)
   const boosted = results.filter(m => m.is_boosted)
   const rest = results.filter(m => !m.is_boosted)
 
   const sortFn = (a: MasterListItem, b: MasterListItem) => {
     switch (filters.sort) {
-      case 'price_asc':
-        return (a.min_price ?? Infinity) - (b.min_price ?? Infinity)
-      case 'price_desc':
-        return (b.min_price ?? 0) - (a.min_price ?? 0)
-      case 'reviews':
-        return b.reviews_count - a.reviews_count
-      default:
-        return b.rating - a.rating
+      case 'price_asc':  return (a.min_price ?? Infinity) - (b.min_price ?? Infinity)
+      case 'price_desc': return (b.min_price ?? 0) - (a.min_price ?? 0)
+      case 'reviews':    return b.reviews_count - a.reviews_count
+      default:           return b.rating - a.rating
     }
   }
 
@@ -116,19 +111,20 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
 
 export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> {
   if (ids.length === 0) return []
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const { data, error } = await supabase
     .from('masters')
     .select(`
       id, profile_id, bio, categories, address, lat, lng, rating, reviews_count,
       is_active, boost_until,
-      profiles!inner (full_name),
+      profiles (full_name),
       portfolio_photos (url, position),
       services (price_kzt)
     `)
     .in('id', ids)
     .eq('is_active', true)
+    .order('position', { referencedTable: 'portfolio_photos' })
 
   if (error || !data) return []
 
@@ -145,7 +141,7 @@ export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> 
     is_active: m.is_active,
     primary_photo: m.portfolio_photos?.[0]?.url ?? null,
     min_price: m.services?.length ? Math.min(...m.services.map((s: any) => s.price_kzt)) : null,
-    full_name: m.profiles?.full_name || 'Unknown',
+    full_name: (m.profiles as any)?.full_name || 'Мастер',
     is_boosted: m.boost_until ? new Date(m.boost_until) > new Date() : false,
   }))
 }

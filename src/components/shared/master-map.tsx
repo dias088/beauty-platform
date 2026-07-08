@@ -28,7 +28,7 @@ export function MasterMap({ masters, selectedId, onSelect }: Props) {
           balloonContent: `
             <div style="padding:8px;max-width:200px;font-family:sans-serif;">
               <strong>${m.full_name}</strong>
-              <div style="font-size:12px;color:#666;margin-top:4px;">⭐ ${m.rating.toFixed(1)} (${m.reviews_count})</div>
+              <div style="font-size:12px;color:#666;margin-top:4px;">Рейтинг ${m.rating.toFixed(1)} (${m.reviews_count})</div>
               ${m.min_price ? `<div style="font-size:12px;color:#666;">от ${m.min_price.toLocaleString('ru')} ₸</div>` : ''}
               <a href="/masters/${m.id}" style="color:#0066ff;font-size:12px;display:block;margin-top:8px;">Открыть профиль</a>
             </div>

@@ -25,12 +25,12 @@ import Link from 'next/link'
 import type { ClientBooking } from '@/lib/queries/client-bookings'
 
 const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
-  pending:             { label: '⏳ Ожидает подтверждения', variant: 'secondary' },
-  confirmed:           { label: '✅ Подтверждена',          variant: 'default' },
-  completed:           { label: '✔️ Завершена',            variant: 'outline' },
-  no_show:             { label: '❌ Не пришёл',             variant: 'destructive' },
-  cancelled_by_client: { label: '🚫 Отменена вами',         variant: 'outline' },
-  cancelled_by_master: { label: '🚫 Отменена мастером',     variant: 'outline' },
+  pending:             { label: 'Ожидает подтверждения', variant: 'secondary' },
+  confirmed:           { label: 'Подтверждена',          variant: 'default' },
+  completed:           { label: 'Завершена',            variant: 'outline' },
+  no_show:             { label: 'Не пришёл',             variant: 'destructive' },
+  cancelled_by_client: { label: 'Отменена вами',         variant: 'outline' },
+  cancelled_by_master: { label: 'Отменена мастером',     variant: 'outline' },
 }
 
 export function ClientBookingCard({ booking, canCancel }: { booking: ClientBooking; canCancel: boolean }) {
@@ -41,7 +41,7 @@ export function ClientBookingCard({ booking, canCancel }: { booking: ClientBooki
   const [submitted, setSubmitted] = useState(false)
 
   const startDate = parseISO(booking.starts_at)
-  const existingReview = booking.reviews?.[0] ?? null
+  const existingReview = booking.review ?? null
   const statusCfg = STATUS_LABELS[booking.status] ?? { label: booking.status, variant: 'outline' as const }
 
   const handleCancel = async () => {

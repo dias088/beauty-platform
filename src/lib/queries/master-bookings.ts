@@ -13,10 +13,10 @@ export type MasterBooking = {
     full_name: string
     avatar_url: string | null
   }
-  client_scores: Array<{
+  client_scores: {
     score: number
     level: string
-  }>
+  } | null
 }
 
 export async function getMasterBookings(masterId: string): Promise<MasterBooking[]> {

@@ -17,9 +17,9 @@ import type { CrmClient, CrmBooking } from '@/lib/queries/crm'
 import { createClient } from '@/lib/supabase/client'
 
 const LEVEL_STYLE = {
-  new:      { label: '🆕 Новый',       cls: 'bg-blue-100 text-blue-800' },
-  verified: { label: '✅ Проверенный', cls: 'bg-amber-100 text-amber-800' },
-  trusted:  { label: '⭐ Доверенный',  cls: 'bg-green-100 text-green-800' },
+  new:      { label: 'Новый',       cls: 'bg-blue-100 text-blue-800' },
+  verified: { label: 'Проверенный', cls: 'bg-amber-100 text-amber-800' },
+  trusted:  { label: 'Доверенный',  cls: 'bg-green-100 text-green-800' },
 }
 
 const STATUS_STYLE: Record<string, { label: string; cls: string }> = {
@@ -99,8 +99,8 @@ export function CrmClientList({ clients, masterId }: Props) {
       {/* Список клиентов */}
       {filtered.map(client => {
         const lvl  = LEVEL_STYLE[client.level as keyof typeof LEVEL_STYLE] ?? LEVEL_STYLE.new
-        const isEx = expanded === client.clientId || expanded === client.client_id
         const cid  = client.client_id
+        const isEx = expanded === cid
 
         return (
           <Card key={cid} className="overflow-hidden">

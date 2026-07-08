@@ -15,12 +15,12 @@ type Props = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  nail: '💅 Ногти',
-  lash: '✨ Ресницы',
-  brow: '👁️ Брови',
-  hair: '💇 Волосы',
-  makeup: '💄 Макияж',
-  cosmetology: '🧴 Косметология',
+  nail: 'Ногти',
+  lash: 'Ресницы',
+  brow: 'Брови',
+  hair: 'Волосы',
+  makeup: 'Макияж',
+  cosmetology: 'Косметология',
 }
 
 export function ServicesList({ services }: Props) {
