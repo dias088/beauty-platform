@@ -121,7 +121,10 @@ export default async function MasterProfilePage({ params }: Props) {
                     />
                   </div>
                 ) : (
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl border-3 border-white shadow-2xl bg-primary/20 flex items-center justify-center text-3xl text-white font-bold">
+                  <div
+                    className="w-24 h-24 md:w-28 md:h-28 rounded-2xl border-3 border-white shadow-2xl flex items-center justify-center text-3xl text-white font-bold"
+                    style={{ background: 'var(--gradient-primary)' }}
+                  >
                     {master.profiles.full_name[0]}
                   </div>
                 )}
@@ -234,7 +237,7 @@ export default async function MasterProfilePage({ params }: Props) {
 
             {/* Sticky booking sidebar (desktop) */}
             <div className="hidden md:block">
-              <div className="sticky top-24 rounded-2xl border bg-card p-6 shadow-sm space-y-5">
+              <div className="surface sticky top-24 space-y-5 rounded-2xl p-6">
                 <div>
                   <p className="font-bold text-lg leading-tight">{master.profiles.full_name}</p>
                   {master.reviews_count > 0 ? (
@@ -242,7 +245,7 @@ export default async function MasterProfilePage({ params }: Props) {
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-3.5 h-3.5 ${i < Math.round(master.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`}
+                          className={`w-3.5 h-3.5 ${i < Math.round(master.rating) ? 'fill-[#fbbf24] text-[#fbbf24]' : 'text-white/15'}`}
                         />
                       ))}
                       <span className="text-sm text-muted-foreground ml-1">
@@ -255,9 +258,9 @@ export default async function MasterProfilePage({ params }: Props) {
                 </div>
 
                 {minPrice && (
-                  <div className="rounded-xl bg-primary/5 border border-primary/15 px-4 py-3">
-                    <p className="text-xs text-muted-foreground">Стоимость от</p>
-                    <p className="text-2xl font-bold text-primary">{minPrice.toLocaleString('ru')} ₸</p>
+                  <div className="rounded-xl border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.07)] px-4 py-3">
+                    <p className="text-xs text-[var(--text-3)]">Стоимость от</p>
+                    <p className="text-2xl font-bold text-[var(--violet-bright)]">{minPrice.toLocaleString('ru')} ₸</p>
                   </div>
                 )}
 

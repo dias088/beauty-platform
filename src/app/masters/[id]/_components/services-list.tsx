@@ -29,24 +29,24 @@ export function ServicesList({ services }: Props) {
       {services.map(service => (
         <div
           key={service.id}
-          className="flex items-center justify-between gap-4 p-4 rounded-xl border bg-card hover:border-primary/30 hover:bg-primary/[0.02] transition-colors"
+          className="surface flex items-center justify-between gap-4 rounded-[14px] p-4 transition-all duration-200 hover:translate-x-1 hover:border-[var(--violet)]/45"
         >
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-0.5">
-              <span className="font-semibold text-sm">{service.name}</span>
-              <span className="text-xs text-muted-foreground">{CATEGORY_LABELS[service.category]}</span>
+          <div className="min-w-0 flex-1">
+            <div className="mb-0.5 flex flex-wrap items-center gap-2">
+              <span className="text-sm font-semibold text-white">{service.name}</span>
+              <span className="text-xs text-[var(--text-3)]">{CATEGORY_LABELS[service.category]}</span>
             </div>
             {service.description && (
-              <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{service.description}</p>
+              <p className="mt-0.5 line-clamp-1 text-xs text-[var(--text-2)]">{service.description}</p>
             )}
-            <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
-              <Clock className="w-3 h-3" />
+            <div className="mt-1.5 flex items-center gap-1 text-xs text-[var(--text-3)]">
+              <Clock className="h-3 w-3" />
               <span>{formatDuration(service.duration_minutes)}</span>
             </div>
           </div>
 
           <div className="shrink-0 text-right">
-            <p className="text-base font-bold text-primary">{formatPrice(service.price_kzt)}</p>
+            <p className="text-base font-bold text-[var(--violet-bright)]">{formatPrice(service.price_kzt)}</p>
           </div>
         </div>
       ))}

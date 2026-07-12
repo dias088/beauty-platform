@@ -38,13 +38,13 @@ export function PortfolioGallery({ photos }: Props) {
           <button
             key={photo.id}
             onClick={() => setSelectedIndex(idx)}
-            className="relative overflow-hidden rounded-lg h-48 hover:opacity-75 transition-opacity"
+            className="group relative h-48 overflow-hidden rounded-[14px] border border-white/[0.06]"
           >
             <Image
               src={photo.url}
               alt="Portfolio"
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-300 group-hover:scale-[1.05]"
             />
           </button>
         ))}
