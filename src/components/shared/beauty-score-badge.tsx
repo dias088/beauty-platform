@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge'
 import { Sparkles, BadgeCheck, ShieldCheck, type LucideIcon } from 'lucide-react'
 import {
   Tooltip,
@@ -13,21 +12,36 @@ type Props = {
 }
 
 const LEVEL_INFO: Record<string, { icon: LucideIcon; label: string; className: string }> = {
-  new:      { icon: Sparkles,   label: 'Новый',       className: 'bg-blue-100 text-blue-800 hover:bg-blue-100 border-0' },
-  verified: { icon: BadgeCheck, label: 'Проверенный', className: 'bg-amber-100 text-amber-800 hover:bg-amber-100 border-0' },
-  trusted:  { icon: ShieldCheck, label: 'Доверенный',  className: 'bg-green-100 text-green-800 hover:bg-green-100 border-0' },
+  new: {
+    icon: Sparkles,
+    label: 'Новый',
+    className: 'bg-[rgba(96,165,250,0.12)] text-[#93c5fd] border-[rgba(96,165,250,0.28)]',
+  },
+  verified: {
+    icon: BadgeCheck,
+    label: 'Проверенный',
+    className: 'bg-[rgba(251,191,36,0.12)] text-[#fbbf24] border-[rgba(251,191,36,0.28)]',
+  },
+  trusted: {
+    icon: ShieldCheck,
+    label: 'Доверенный',
+    className: 'bg-[rgba(16,185,129,0.12)] text-[#34d399] border-[rgba(16,185,129,0.28)]',
+  },
 }
 
 export function BeautyScoreBadge({ level, score }: Props) {
   const info = LEVEL_INFO[level] ?? LEVEL_INFO.new
+  const Icon = info.icon
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          <Badge className={info.className}>
-            <info.icon className="w-3 h-3" /> {info.label}
-          </Badge>
+          <span
+            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-tight ${info.className}`}
+          >
+            <Icon className="h-3 w-3" /> {info.label}
+          </span>
         </TooltipTrigger>
         <TooltipContent>
           <p className="text-sm">Beauty Score: <strong>{score}</strong></p>

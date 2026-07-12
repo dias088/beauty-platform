@@ -65,7 +65,7 @@ export function FiltersBar() {
   const hasFilters = category || query || (sort && sort !== 'rating') || minPrice || maxPrice
 
   return (
-    <div className="border-b bg-background/95 backdrop-blur shrink-0">
+    <div className="sticky top-0 z-30 shrink-0 border-b border-white/[0.06] bg-[#0d0d0f]/85 backdrop-blur">
       {/* Top row: search + sort */}
       <div className="container mx-auto px-4 py-3 flex gap-2 items-center">
         <Input
@@ -93,7 +93,9 @@ export function FiltersBar() {
         <button
           onClick={() => setShowPriceFilter(v => !v)}
           className={`h-9 flex items-center gap-1.5 px-3 rounded-md border text-sm transition-colors shrink-0 ${
-            (minPrice || maxPrice) ? 'border-primary text-primary bg-primary/5' : 'border-input hover:bg-muted'
+            (minPrice || maxPrice)
+              ? 'border-[var(--violet)]/50 text-[var(--violet-bright)] bg-[rgba(167,139,250,0.08)]'
+              : 'border-white/10 text-[var(--text-2)] hover:bg-white/[0.04] hover:text-white'
           }`}
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -139,11 +141,14 @@ export function FiltersBar() {
           <button
             key={cat.value}
             onClick={() => update('category', category === cat.value ? null : cat.value)}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
+            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all ${
               category === cat.value
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'bg-muted hover:bg-accent hover:text-accent-foreground'
+                ? 'text-white shadow-[var(--glow-violet)]'
+                : 'border border-white/10 bg-white/[0.04] text-[var(--text-2)] hover:border-[var(--violet)]/40 hover:text-white'
             }`}
+            style={
+              category === cat.value ? { background: 'var(--gradient-primary)' } : undefined
+            }
           >
             {cat.label}
           </button>

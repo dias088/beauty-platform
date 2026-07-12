@@ -1,10 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Star, MapPin, ImageOff, Zap } from 'lucide-react'
 import type { MasterListItem } from '@/lib/queries/masters'
 import { FavoriteButton } from './favorite-button'
+import { GlowCard } from '@/components/premium/glow-card'
 
 type Props = {
   master: MasterListItem
@@ -23,11 +22,11 @@ export function MasterCard({ master }: Props) {
   const hasReviews = master.reviews_count > 0
 
   return (
-    <div className="relative group h-full">
+    <div className="group relative h-full">
       <Link href={`/masters/${master.id}`} className="block h-full">
-        <Card className="overflow-hidden h-full flex flex-col transition-all duration-200 group-hover:shadow-lg group-hover:-translate-y-0.5 border-border/60">
+        <GlowCard className="flex h-full flex-col overflow-hidden p-0 transition-transform duration-200 group-hover:-translate-y-1.5">
           {/* Фото */}
-          <div className="relative w-full h-52 bg-muted shrink-0 overflow-hidden">
+          <div className="relative h-48 w-full shrink-0 overflow-hidden bg-white/[0.04]">
             {master.primary_photo ? (
               <Image
                 src={master.primary_photo}
@@ -37,87 +36,91 @@ export function MasterCard({ master }: Props) {
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
-                <ImageOff className="w-8 h-8" strokeWidth={1.5} />
+              <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-[var(--text-3)]">
+                <ImageOff className="h-8 w-8" strokeWidth={1.5} />
                 <span className="text-sm">Нет фото</span>
               </div>
             )}
 
-            {/* Оверлей снизу с градиентом */}
-            {master.primary_photo && (
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            )}
+            {/* Затемнение снизу для читаемости бейджей */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
             {/* TOP бейдж */}
             {master.is_boosted && (
-              <div className="absolute top-2.5 left-2.5 flex items-center gap-1 bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
-                <Zap className="w-3 h-3 fill-amber-900" /> TOP
+              <div
+                className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold text-white shadow-md"
+                style={{ background: 'var(--gradient-primary)' }}
+              >
+                <Zap className="h-3 w-3 fill-white" /> TOP
               </div>
             )}
 
-            {/* Цена снизу на фото */}
+            {/* Цена */}
             {master.min_price && (
-              <div className="absolute bottom-2.5 right-2.5 bg-black/60 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">
+              <div className="absolute bottom-2.5 right-2.5 rounded-full border border-white/10 bg-black/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                 от {master.min_price.toLocaleString('ru')} ₸
               </div>
             )}
           </div>
 
           {/* Контент */}
-          <div className="p-4 flex flex-col gap-2.5 flex-1">
+          <div className="flex flex-1 flex-col gap-2.5 p-4">
             {/* Имя и рейтинг */}
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-base leading-tight line-clamp-1">
+              <h3 className="line-clamp-1 text-[15px] font-bold leading-tight tracking-tight text-white">
                 {master.full_name}
               </h3>
               {hasReviews ? (
-                <div className="flex items-center gap-1 shrink-0 text-sm">
-                  <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold">{master.rating.toFixed(1)}</span>
-                  <span className="text-muted-foreground text-xs">({master.reviews_count})</span>
+                <div className="flex shrink-0 items-center gap-1 text-sm">
+                  <Star className="h-3.5 w-3.5 fill-[#fbbf24] text-[#fbbf24]" />
+                  <span className="font-semibold text-white">{master.rating.toFixed(1)}</span>
+                  <span className="text-xs text-[var(--text-3)]">({master.reviews_count})</span>
                 </div>
               ) : (
-                <span className="text-xs text-muted-foreground shrink-0">Новый</span>
+                <span className="shrink-0 text-xs text-[var(--text-3)]">Новый</span>
               )}
             </div>
 
             {/* Категории */}
             <div className="flex flex-wrap gap-1.5">
               {master.categories.slice(0, 3).map(cat => (
-                <Badge key={cat} variant="secondary" className="text-xs px-2 py-0.5 font-normal">
-                  {CATEGORY_LABELS[cat]}
-                </Badge>
+                <span
+                  key={cat}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-xs font-medium text-[var(--text-2)]"
+                >
+                  {CATEGORY_LABELS[cat] ?? cat}
+                </span>
               ))}
               {master.categories.length > 3 && (
-                <Badge variant="outline" className="text-xs px-2 py-0.5 font-normal text-muted-foreground">
+                <span className="rounded-full border border-white/10 px-2 py-0.5 text-xs text-[var(--text-3)]">
                   +{master.categories.length - 3}
-                </Badge>
+                </span>
               )}
             </div>
 
             {/* Адрес */}
             {master.address && (
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-auto">
-                <MapPin className="w-3 h-3 shrink-0" />
+              <div className="mt-auto flex items-center gap-1.5 text-xs text-[var(--text-3)]">
+                <MapPin className="h-3 w-3 shrink-0" />
                 <span className="line-clamp-1">{master.address}</span>
               </div>
             )}
 
             {/* CTA */}
-            <div className="pt-1 mt-auto">
-              <div className="w-full text-center py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium transition-colors group-hover:bg-primary/90">
+            <div className="mt-auto pt-1">
+              <div
+                className="w-full rounded-[12px] py-2 text-center text-sm font-semibold text-white transition-all duration-200 group-hover:shadow-[var(--glow-violet)]"
+                style={{ background: 'var(--gradient-primary)' }}
+              >
                 Записаться
               </div>
             </div>
           </div>
-        </Card>
+        </GlowCard>
       </Link>
 
       {/* Кнопка избранного — поверх ссылки */}
-      <FavoriteButton
-        masterId={master.id}
-        className="absolute top-2.5 right-2.5 z-10"
-      />
+      <FavoriteButton masterId={master.id} className="absolute right-2.5 top-2.5 z-10" />
     </div>
   )
 }
