@@ -129,11 +129,14 @@
   --violet: #a78bfa;
   --violet-bright: #c4b5fd;
   --gradient-primary: linear-gradient(135deg, #8b5cf6, #c026d3);
+  /* Тексты: контраст поднят для комфортной читаемости на тёмном фоне.
+     text-1 основной, text-2 вторичный, text-3 приглушённый (но читаемый),
+     text-muted самый тихий, label — номера/метки (violet). */
   --text-1: #ffffff;
-  --text-2: #9ca3af;
-  --text-3: #7c7f88;
-  --text-muted: #6b7280;
-  --label: #6d5aa8;
+  --text-2: #b2b8c2;
+  --text-3: #969ca8;
+  --text-muted: #8b919d;
+  --label: #a394d8;
   --orb-1: #7c3aed;
   --orb-2: #c026d3;
   --orb-3: #4f46e5;

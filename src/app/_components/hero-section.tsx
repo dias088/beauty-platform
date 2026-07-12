@@ -61,7 +61,7 @@ export function HeroSection() {
 
         {/* Typewriter */}
         <p className="animate-fade-in-up mt-6 flex min-h-[1.75rem] flex-wrap items-center text-lg text-[var(--text-2)]">
-          <span className="mr-2 text-[var(--text-3)]">Найди:</span>
+          <span className="mr-2 font-medium text-[var(--text-2)]">Найди:</span>
           <TypewriterText
             className="font-medium text-[var(--violet-bright)]"
             phrases={[
