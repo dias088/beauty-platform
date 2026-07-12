@@ -59,7 +59,7 @@ function ProfileLink({ masterId }: { masterId?: string }) {
           {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
         </button>
       </div>
-      <p className="text-xs text-muted-foreground">Скопируй ссылку — вставь в шапку Instagram</p>
+      <p className="text-xs text-muted-foreground">Скопируй ссылку → вставь в шапку Instagram</p>
     </div>
   )
 }
@@ -71,25 +71,29 @@ function SidebarContent({ masterId }: { masterId?: string }) {
     <div className="flex flex-col h-full">
       <div className="p-6 border-b">
         <Link href="/" className="flex items-center gap-2 group">
-          <Sparkles className="w-5 h-5 text-primary" />
           <span className="font-bold text-lg tracking-tight">
-            Beauty<span className="text-primary">.</span>kz
+            Beauty
+            <span className="text-primary">.</span>kz
           </span>
         </Link>
         <p className="text-xs text-muted-foreground mt-1">Кабинет мастера</p>
       </div>
 
       <nav className="flex-1 space-y-1 p-4">
-        {MENU_ITEMS.map(item => (
-          <Link key={item.href} href={item.href}>
-            <Button
-              variant={pathname === item.href ? 'default' : 'ghost'}
-              className={`w-full justify-start text-sm ${item.highlight && pathname !== item.href ? 'text-amber-600 hover:text-amber-700' : ''}`}
-            >
-              {item.label}
-            </Button>
-          </Link>
-        ))}
+        {MENU_ITEMS.map(item => {
+          const Icon = item.icon
+          return (
+            <Link key={item.href} href={item.href}>
+              <Button
+                variant={pathname === item.href ? 'default' : 'ghost'}
+                className={`w-full justify-start text-sm ${item.highlight && pathname !== item.href ? 'text-amber-600 hover:text-amber-700' : ''}`}
+              >
+                <Icon className="w-4 h-4 mr-2 shrink-0" />
+                {item.label}
+              </Button>
+            </Link>
+          )
+        })}
       </nav>
 
       <ProfileLink masterId={masterId} />
