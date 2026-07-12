@@ -29,8 +29,8 @@ export function HowItWorks() {
             </p>
             <div className="space-y-7">
               {CLIENT_STEPS.map((step, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg border border-border bg-muted/50 flex items-center justify-center">
+                <div key={i} className={`reveal group flex gap-4 stagger-${i + 1}`}>
+                  <div className="flex-shrink-0 w-8 h-8 rounded-lg border border-border bg-muted/50 flex items-center justify-center transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-foreground/20">
                     <step.icon className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div>
@@ -49,8 +49,8 @@ export function HowItWorks() {
             </p>
             <div className="space-y-7">
               {MASTER_STEPS.map((step, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg border border-violet-100 bg-violet-50 flex items-center justify-center">
+                <div key={i} className={`reveal group flex gap-4 stagger-${i + 1}`}>
+                  <div className="flex-shrink-0 w-8 h-8 rounded-lg border border-violet-100 bg-violet-50 flex items-center justify-center transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-violet-300 group-hover:bg-violet-100">
                     <step.icon className="w-4 h-4 text-violet-600" />
                   </div>
                   <div>
