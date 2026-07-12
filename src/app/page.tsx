@@ -5,6 +5,8 @@ import { HeroSection } from './_components/hero-section'
 import { HowItWorks } from './_components/how-it-works'
 import { CategorySections } from './_components/category-sections'
 import { FiltersBar } from './_components/filters-bar'
+import { LandingOutro } from './_components/landing-outro'
+import { AmbientBackground } from '@/components/premium/ambient-background'
 import { Suspense } from 'react'
 
 export default async function Home(props: {
@@ -38,16 +40,25 @@ export default async function Home(props: {
 
   // Homepage: category sections
   return (
-    <main className="min-h-screen flex flex-col">
-      {!user && <HeroSection />}
+    <main className="relative isolate flex min-h-screen flex-col overflow-hidden">
+      {!user && <AmbientBackground variant="full" />}
 
-      <Suspense>
-        <FiltersBar />
-      </Suspense>
+      <div className="relative z-10 flex flex-col">
+        {!user && <HeroSection />}
 
-      <CategorySections masters={masters} />
+        <Suspense>
+          <FiltersBar />
+        </Suspense>
 
-      {!user && <HowItWorks />}
+        <CategorySections masters={masters} />
+
+        {!user && (
+          <>
+            <HowItWorks />
+            <LandingOutro />
+          </>
+        )}
+      </div>
     </main>
   )
 }

@@ -83,38 +83,65 @@
   --sidebar-ring: oklch(0.65 0.18 277);
 }
 
+/* ─── Premium dark palette (Beauty.kz redesign) ──────────
+   Значения из дизайн-системы. Меняем ТОЛЬКО представление —
+   бизнес-логика и токены shadcn остаются на месте.            */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.72 0.18 277);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.28 0.04 277);
-  --accent-foreground: oklch(0.85 0.1 277);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.18 277);
-  --chart-1: oklch(0.72 0.18 277);
-  --chart-2: oklch(0.75 0.2 350);
-  --chart-3: oklch(0.82 0.155 60);
-  --chart-4: oklch(0.68 0.15 160);
-  --chart-5: oklch(0.68 0.2 240);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.72 0.18 277);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.28 0.04 277);
-  --sidebar-accent-foreground: oklch(0.85 0.1 277);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.65 0.18 277);
+  --background: #0d0d0f;
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.03);
+  --card-foreground: #ffffff;
+  --popover: #17171c;
+  --popover-foreground: #ffffff;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.04);
+  --muted-foreground: #9ca3af;
+  --accent: rgba(167, 139, 250, 0.09);
+  --accent-foreground: #c4b5fd;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.07);
+  --input: rgba(255, 255, 255, 0.10);
+  --ring: #a78bfa;
+  --chart-1: #a78bfa;
+  --chart-2: #c026d3;
+  --chart-3: #4f46e5;
+  --chart-4: #10b981;
+  --chart-5: #fbbf24;
+  --sidebar: #101013;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(167, 139, 250, 0.09);
+  --sidebar-accent-foreground: #c4b5fd;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-ring: #a78bfa;
+}
+
+/* Дополнительные premium-токены (доступны всегда, сайт dark-only) */
+:root,
+.dark {
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-border: rgba(255, 255, 255, 0.07);
+  --surface-active: rgba(167, 139, 250, 0.09);
+  --violet: #a78bfa;
+  --violet-bright: #c4b5fd;
+  --gradient-primary: linear-gradient(135deg, #8b5cf6, #c026d3);
+  --text-1: #ffffff;
+  --text-2: #9ca3af;
+  --text-3: #7c7f88;
+  --text-muted: #6b7280;
+  --label: #6d5aa8;
+  --orb-1: #7c3aed;
+  --orb-2: #c026d3;
+  --orb-3: #4f46e5;
+  --success: #10b981;
+  --warning: #fbbf24;
+  --danger: #ef4444;
+  --glow-violet: 0 0 34px rgba(139, 92, 246, 0.25);
+  --glow-violet-strong: 0 20px 50px rgba(139, 92, 246, 0.45);
 }
 
 @layer base {
@@ -224,4 +251,169 @@
     animation: none !important;
     opacity: 1 !important;
   }
+}
+/* ══════════════════════════════════════════════════════════
+   PREMIUM MOTION LAYER — Beauty.kz redesign
+   Все анимации отключаются при prefers-reduced-motion (см. низ).
+   ══════════════════════════════════════════════════════════ */
+
+/* Сигнатурное каскадное появление карточек */
+@keyframes cardPop {
+  0%   { opacity: 0; transform: translateY(30px) scale(0.92); }
+  70%  { opacity: 1; transform: translateY(0) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gradientFlow {
+  to { background-position: 200% center; }
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(38px, -28px) scale(1.15); }
+}
+@keyframes driftAlt {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-32px, 30px) scale(1.1); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.5); }
+  50%      { box-shadow: 0 0 0 4px rgba(167, 139, 250, 0); }
+}
+
+/* Каскад появления: класс на контейнере, задержки по индексу */
+.animate-card-pop {
+  opacity: 0;
+  animation: cardPop 0.62s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pop-1 { animation-delay: 0.00s; }
+.pop-2 { animation-delay: 0.08s; }
+.pop-3 { animation-delay: 0.16s; }
+.pop-4 { animation-delay: 0.24s; }
+.pop-5 { animation-delay: 0.32s; }
+.pop-6 { animation-delay: 0.40s; }
+.pop-7 { animation-delay: 0.48s; }
+.pop-8 { animation-delay: 0.56s; }
+.pop-9 { animation-delay: 0.64s; }
+
+/* Дрейфующие орбы фона (premium, blur 90px) */
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.35;
+  pointer-events: none;
+  will-change: transform;
+  z-index: 0;
+}
+/* На мобильных blur дорогой — уменьшаем радиус и непрозрачность */
+@media (max-width: 640px) {
+  .orb { filter: blur(60px); opacity: 0.22; }
+}
+
+/* Тонкая сетка 48px с radial-маской (растворяется к краям) */
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+/* Градиентный переливающийся текст (акцентные слова) */
+.gradient-text {
+  background-image: linear-gradient(90deg, #8b5cf6, #c026d3, #a78bfa, #8b5cf6);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradientFlow 5s linear infinite;
+}
+
+/* Полупрозрачная стеклянная поверхность карточки */
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Glow-follow: радиальный свет за курсором (координаты --x/--y из JS) */
+.glow-follow {
+  position: relative;
+  isolation: isolate;
+}
+.glow-follow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    220px circle at var(--x, 50%) var(--y, 50%),
+    rgba(167, 139, 250, 0.22),
+    transparent 60%
+  );
+}
+.glow-follow:hover::before { opacity: 1; }
+
+/* Градиентная линия снизу карточки (scaleX 0→1 на hover) */
+.service-line {
+  position: relative;
+}
+.service-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--gradient-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.service-line:hover::after { transform: scaleX(1); }
+
+/* Первичная кнопка с цветной тенью */
+.btn-primary-glow {
+  background: var(--gradient-primary);
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-primary-glow:hover {
+  box-shadow: var(--glow-violet-strong);
+  transform: translateY(-1px);
+}
+
+/* Светящаяся статус-точка (без мигания) */
+.status-dot {
+  box-shadow: 0 0 8px 1px currentColor;
+}
+
+/* Уважаем «уменьшить движение» для premium-слоя */
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-pop,
+  .animate-fade-in-up,
+  .gradient-text,
+  .orb {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .glow-follow::before,
+  .service-line::after { transition: none !important; }
 }

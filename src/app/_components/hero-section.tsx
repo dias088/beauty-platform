@@ -1,125 +1,129 @@
-import Link from 'next/link'
-import { ArrowRight, Shield, Zap, Star } from 'lucide-react'
+'use client'
 
-const STATS = [
-  { value: '0 ₸',   label: 'Базовый тариф' },
-  { value: '5 мин', label: 'Настройка профиля' },
-  { value: '24/7',  label: 'Онлайн-запись' },
+import Link from 'next/link'
+import { useState } from 'react'
+import {
+  ArrowRight,
+  Hand,
+  Footprints,
+  Scissors,
+  Palette,
+  Eye,
+  Brush,
+  Droplet,
+  Users,
+  type LucideIcon,
+} from 'lucide-react'
+import { MagneticButton } from '@/components/premium/magnetic-button'
+import { TypewriterText } from '@/components/premium/typewriter-text'
+import { GlowCard } from '@/components/premium/glow-card'
+
+/**
+ * Услуги лендинга. Каждая ведёт на каталог с РЕАЛЬНЫМ фильтром категории
+ * (значения совпадают с filters-bar / category-sections), чтобы клик
+ * всегда открывал непустую выборку. Без выдуманных категорий.
+ */
+const SERVICES: { num: string; label: string; desc: string; href: string; icon: LucideIcon }[] = [
+  { num: '01', label: 'Маникюр', desc: 'Аккуратные ногти и стойкое покрытие', href: '/?category=nail', icon: Hand },
+  { num: '02', label: 'Педикюр', desc: 'Уход и здоровье стоп', href: '/?category=nail', icon: Footprints },
+  { num: '03', label: 'Стрижка', desc: 'Форма под тип волос и лица', href: '/?category=hair', icon: Scissors },
+  { num: '04', label: 'Окрашивание', desc: 'Цвет, тон, сложные техники', href: '/?category=hair', icon: Palette },
+  { num: '05', label: 'Брови', desc: 'Форма, коррекция, окрашивание', href: '/?category=brow', icon: Eye },
+  { num: '06', label: 'Ресницы', desc: 'Наращивание и ламинирование', href: '/?category=lash', icon: Eye },
+  { num: '07', label: 'Макияж', desc: 'Дневной, вечерний, свадебный', href: '/?category=makeup', icon: Brush },
+  { num: '08', label: 'Косметология', desc: 'Уход за кожей лица', href: '/?category=cosmetology', icon: Droplet },
+  { num: '09', label: 'Все мастера', desc: 'Смотреть весь каталог', href: '/?sort=rating', icon: Users },
 ]
 
-const BENEFITS = [
-  {
-    icon: Shield,
-    title: 'Бесплатно навсегда',
-    desc: 'Профиль, расписание и онлайн-запись без скрытых платежей',
-  },
-  {
-    icon: Zap,
-    title: 'Расписание автоматически',
-    desc: 'Один раз настрой шаблон — слоты создаются сами каждую неделю',
-  },
-  {
-    icon: Star,
-    title: 'Beauty Score клиентов',
-    desc: 'Видишь репутацию каждого клиента до подтверждения записи',
-  },
+const FACTS = [
+  { value: '0%', label: 'комиссии с мастеров' },
+  { value: '24/7', label: 'онлайн-запись' },
+  { value: 'Честные', label: 'отзывы клиентов' },
 ]
 
 export function HeroSection() {
+  const [open, setOpen] = useState(false)
+
   return (
-    <>
-      {/* ─── Hero ─────────────────────────────────────── */}
-      <section className="relative isolate overflow-hidden border-b bg-background">
-        {/* Мягкие световые пятна (ambient glow) */}
-        <div
-          className="aurora animate-fade-in"
-          style={{ top: '-120px', right: '-80px', width: '520px', height: '520px', background: 'oklch(0.585 0.233 277 / 0.22)', animation: 'aurora-1 16s ease-in-out infinite, fade-in 1.2s ease both' }}
-        />
-        <div
-          className="aurora animate-fade-in"
-          style={{ top: '40px', left: '-140px', width: '440px', height: '440px', background: 'oklch(0.7 0.2 350 / 0.16)', animation: 'aurora-2 19s ease-in-out infinite, fade-in 1.2s ease both' }}
-        />
-
-        <div className="relative z-10 container mx-auto px-6 py-20 max-w-5xl">
-          <div className="max-w-2xl">
-            {/* Eyebrow */}
-            <div className="animate-fade-up stagger-1 inline-flex items-center gap-2 text-xs text-muted-foreground border border-border rounded-full px-3 py-1.5 mb-8 bg-background/70 backdrop-blur-sm">
-              <span className="relative flex w-1.5 h-1.5">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75 animate-ping" />
-                <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-green-500" />
-              </span>
-              Первая платформа в Казахстане на стороне мастера
-            </div>
-
-            {/* Headline */}
-            <h1 className="animate-fade-up stagger-2 text-5xl font-medium tracking-tight text-foreground leading-[1.1] mb-5">
-              Записи без комиссий.{' '}
-              <span className="text-shimmer">Клиенты без звонков.</span>
-            </h1>
-
-            <p className="animate-fade-up stagger-3 text-lg text-muted-foreground leading-relaxed mb-10 max-w-lg">
-              Создай профиль, настрой расписание один раз — и принимай
-              онлайн-записи круглосуточно. Бесплатно.
-            </p>
-
-            {/* CTA */}
-            <div className="animate-fade-up stagger-4 flex items-center gap-3 mb-16">
-              <Link
-                href="/register?role=master"
-                className="group inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg shadow-lg shadow-violet-600/20 hover:shadow-xl hover:shadow-violet-600/30 hover:-translate-y-0.5 transition-all duration-200"
-              >
-                Начать бесплатно
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href="/?category=nail"
-                className="inline-flex items-center gap-2 border border-border text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-muted hover:-translate-y-0.5 transition-all duration-200 text-foreground"
-              >
-                Найти мастера
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="animate-fade-up stagger-5 flex items-center gap-8">
-              {STATS.map((s, i) => (
-                <div key={s.label} className="flex items-center gap-8">
-                  <div>
-                    <p className="text-2xl font-medium text-foreground tracking-tight">{s.value}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
-                  </div>
-                  {i < STATS.length - 1 && (
-                    <div className="w-px h-8 bg-border" />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+    <section className="relative isolate overflow-hidden">
+      <div className="relative z-10 container mx-auto px-6 pt-24 pb-20 max-w-5xl">
+        {/* Бейдж «Уже в Астане» */}
+        <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-2)] backdrop-blur">
+          <span className="status-dot h-1.5 w-1.5 rounded-full bg-[var(--success)] text-[var(--success)]" />
+          Уже в Астане
         </div>
-      </section>
 
+        {/* Заголовок */}
+        <h1 className="animate-fade-in-up mt-7 max-w-3xl text-[2.6rem] font-extrabold leading-[1.08] tracking-[-0.022em] text-white sm:text-[3.5rem]">
+          Красота начинается с{' '}
+          <span className="gradient-text">правильного мастера</span>
+        </h1>
 
+        {/* Typewriter */}
+        <p className="animate-fade-in-up mt-6 flex min-h-[1.75rem] flex-wrap items-center text-lg text-[var(--text-2)]">
+          <span className="mr-2 text-[var(--text-3)]">Найди:</span>
+          <TypewriterText
+            className="font-medium text-[var(--violet-bright)]"
+            phrases={[
+              'маникюр за 2 минуты',
+              'мастера рядом с домом',
+              'запись без звонков и переписок',
+              'честные отзывы клиентов',
+            ]}
+          />
+        </p>
 
-      {/* ─── Benefits ─────────────────────────────────── */}
-      <section className="border-b bg-muted/20">
-        <div className="container mx-auto px-6 max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
-            {BENEFITS.map((b, i) => (
-              <div
-                key={b.title}
-                className={`reveal group flex gap-4 py-8 px-6 first:pl-0 last:pr-0 stagger-${i + 1}`}
-              >
-                <div className="w-9 h-9 rounded-lg border border-border bg-background flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 group-hover:border-violet-300 group-hover:bg-violet-50 group-hover:-translate-y-0.5">
-                  <b.icon className="w-4 h-4 text-violet-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground mb-1">{b.title}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
-                </div>
+        {/* CTA */}
+        <div className="animate-fade-in-up mt-9">
+          <MagneticButton onClick={() => setOpen(v => !v)}>
+            Смотреть услуги
+            <ArrowRight
+              className={`h-4 w-4 transition-transform duration-300 ${open ? 'rotate-90' : ''}`}
+            />
+          </MagneticButton>
+        </div>
+
+        {/* Раскрывающаяся сетка услуг */}
+        {open && (
+          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {SERVICES.map((s, i) => {
+              const Icon = s.icon
+              return (
+                <GlowCard
+                  key={s.num}
+                  className={`animate-card-pop pop-${i + 1} service-line group overflow-hidden p-5`}
+                >
+                  <Link href={s.href} className="block">
+                    <div className="flex items-start justify-between">
+                      <span className="font-mono text-xs font-semibold tracking-widest text-[var(--label)] transition-colors group-hover:text-[var(--violet)]">
+                        {s.num}
+                      </span>
+                      <Icon className="h-4 w-4 text-[var(--text-3)] transition-colors group-hover:text-[var(--violet)]" />
+                    </div>
+                    <p className="mt-6 text-[17px] font-bold tracking-[-0.01em] text-white">
+                      {s.label}
+                    </p>
+                    <p className="mt-1 text-sm text-[var(--text-2)]">{s.desc}</p>
+                  </Link>
+                </GlowCard>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Полоса честных фактов (без выдуманной статистики) */}
+        <div className="animate-fade-in-up mt-16 flex flex-wrap items-center gap-x-10 gap-y-6">
+          {FACTS.map((f, i) => (
+            <div key={f.label} className="flex items-center gap-10">
+              <div>
+                <p className="text-2xl font-extrabold tracking-tight text-white">{f.value}</p>
+                <p className="mt-0.5 text-xs text-[var(--text-3)]">{f.label}</p>
               </div>
-            ))}
-          </div>
+              {i < FACTS.length - 1 && <div className="hidden h-9 w-px bg-white/10 sm:block" />}
+            </div>
+          ))}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   )
 }

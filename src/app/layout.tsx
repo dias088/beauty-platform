@@ -38,8 +38,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={cn("font-sans", inter.variable)}>
-      <body className="font-sans antialiased">
+    <html lang="ru" className={cn("dark font-sans", inter.variable)}>
+      <body className="font-sans antialiased bg-background text-foreground">
         <Header />
         {children}
         <Toaster position="top-center" richColors />
