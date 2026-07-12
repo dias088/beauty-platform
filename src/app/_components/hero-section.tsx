@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion, type Variants } from 'motion/react'
 import {
   ArrowRight,
   Hand,
@@ -17,6 +18,24 @@ import {
 import { MagneticButton } from '@/components/premium/magnetic-button'
 import { TypewriterText } from '@/components/premium/typewriter-text'
 import { GlowCard } from '@/components/premium/glow-card'
+
+/** Каскад появления карточек услуг: контейнер задаёт stagger, карточка —
+ *  «пружинный» въезд снизу с лёгким overshoot (эффект cardPop). */
+const gridVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.04 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
+}
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 26, scale: 0.92 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: 'spring', stiffness: 300, damping: 22 },
+  },
+  exit: { opacity: 0, y: 10, scale: 0.98, transition: { duration: 0.15 } },
+}
 
 /**
  * Услуги лендинга. Каждая ведёт на каталог с РЕАЛЬНЫМ фильтром категории
@@ -43,6 +62,7 @@ const FACTS = [
 
 export function HeroSection() {
   const [open, setOpen] = useState(false)
+  const reduce = useReducedMotion()
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -83,33 +103,40 @@ export function HeroSection() {
           </MagneticButton>
         </div>
 
-        {/* Раскрывающаяся сетка услуг */}
-        {open && (
-          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {SERVICES.map((s, i) => {
-              const Icon = s.icon
-              return (
-                <GlowCard
-                  key={s.num}
-                  className={`animate-card-pop pop-${i + 1} service-line group overflow-hidden p-5`}
-                >
-                  <Link href={s.href} className="block">
-                    <div className="flex items-start justify-between">
-                      <span className="font-mono text-xs font-semibold tracking-widest text-[var(--label)] transition-colors group-hover:text-[var(--violet)]">
-                        {s.num}
-                      </span>
-                      <Icon className="h-4 w-4 text-[var(--text-3)] transition-colors group-hover:text-[var(--violet)]" />
-                    </div>
-                    <p className="mt-6 text-[17px] font-bold tracking-[-0.01em] text-white">
-                      {s.label}
-                    </p>
-                    <p className="mt-1 text-sm text-[var(--text-2)]">{s.desc}</p>
-                  </Link>
-                </GlowCard>
-              )
-            })}
-          </div>
-        )}
+        {/* Раскрывающаяся сетка услуг — каскадное появление (stagger) */}
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3"
+              variants={reduce ? undefined : gridVariants}
+              initial={reduce ? false : 'hidden'}
+              animate={reduce ? undefined : 'show'}
+              exit={reduce ? undefined : 'exit'}
+            >
+              {SERVICES.map(s => {
+                const Icon = s.icon
+                return (
+                  <motion.div key={s.num} variants={reduce ? undefined : cardVariants}>
+                    <GlowCard className="service-line group h-full overflow-hidden p-5">
+                      <Link href={s.href} className="block">
+                        <div className="flex items-start justify-between">
+                          <span className="font-mono text-xs font-semibold tracking-widest text-[var(--label)] transition-colors group-hover:text-[var(--violet)]">
+                            {s.num}
+                          </span>
+                          <Icon className="h-4 w-4 text-[var(--text-3)] transition-colors group-hover:text-[var(--violet)]" />
+                        </div>
+                        <p className="mt-6 text-[17px] font-bold tracking-[-0.01em] text-white">
+                          {s.label}
+                        </p>
+                        <p className="mt-1 text-sm text-[var(--text-2)]">{s.desc}</p>
+                      </Link>
+                    </GlowCard>
+                  </motion.div>
+                )
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Полоса честных фактов (без выдуманной статистики) */}
         <div className="animate-fade-in-up mt-16 flex flex-wrap items-center gap-x-10 gap-y-6">
