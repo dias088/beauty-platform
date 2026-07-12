@@ -168,6 +168,23 @@ export function BookingDialog({ masterId, masterName, services, open, onOpenChan
           </DialogDescription>
         </DialogHeader>
 
+        {/* Сегментный прогресс шагов */}
+        {step !== 'success' && (
+          <div className="flex gap-1.5">
+            {(['service', 'date', 'confirm'] as const).map((s, i) => {
+              const idx = ['service', 'date', 'confirm'].indexOf(step)
+              return (
+                <div key={s} className="h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: i <= idx ? '100%' : '0%', background: 'var(--gradient-primary)' }}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        )}
+
         {/* ШАГ 1: Услуга */}
         {step === 'service' && (
           <div className="space-y-4">
@@ -242,11 +259,14 @@ export function BookingDialog({ masterId, masterName, services, open, onOpenChan
                       <button
                         key={s.id}
                         onClick={() => setSelectedSlot(s.id)}
-                        className={`py-2 rounded-md border text-sm font-medium transition-all ${
+                        className={`rounded-md border py-2 text-sm font-medium transition-all ${
                           selectedSlot === s.id
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border hover:border-primary'
+                            ? 'border-transparent text-white shadow-[var(--glow-violet)]'
+                            : 'border-white/10 text-[var(--text-2)] hover:border-[var(--violet)]/50 hover:text-white'
                         }`}
+                        style={
+                          selectedSlot === s.id ? { background: 'var(--gradient-primary)' } : undefined
+                        }
                       >
                         {format(parseISO(s.starts_at), 'HH:mm')}
                       </button>
@@ -303,13 +323,13 @@ export function BookingDialog({ masterId, masterName, services, open, onOpenChan
                       {originalPrice.toLocaleString('ru')} ₸
                     </span>
                   )}
-                  <span className={`font-bold text-base ${discountPct > 0 ? 'text-green-700' : ''}`}>
+                  <span className={`font-bold text-base ${discountPct > 0 ? 'text-[#34d399]' : 'text-white'}`}>
                     {displayPrice.toLocaleString('ru')} ₸
                   </span>
                   {discountPct > 0 && (
-                    <Badge className="bg-green-100 text-green-800 border-0 text-xs">
+                    <span className="rounded-full border border-[rgba(16,185,129,0.28)] bg-[rgba(16,185,129,0.12)] px-2 py-0.5 text-xs font-semibold text-[#34d399]">
                       -{discountPct}%
-                    </Badge>
+                    </span>
                   )}
                 </div>
               </div>
@@ -350,15 +370,26 @@ export function BookingDialog({ masterId, masterName, services, open, onOpenChan
 
         {/* ШАГ 4: Успех */}
         {step === 'success' && (
-          <div className="text-center py-8 space-y-4">
-            <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto" />
+          <div className="space-y-4 py-8 text-center">
+            <div
+              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full animate-card-pop"
+              style={{
+                background: 'rgba(16,185,129,0.12)',
+                boxShadow: '0 0 34px rgba(16,185,129,0.35)',
+              }}
+            >
+              <CheckCircle2 className="h-9 w-9 text-[#34d399]" />
+            </div>
             <div>
-              <p className="text-lg font-semibold">Запись создана!</p>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-lg font-semibold text-white">Запись создана!</p>
+              <p className="mt-1 text-sm text-[var(--text-2)]">
                 Мастер подтвердит вашу запись в ближайшее время
               </p>
             </div>
-            <Button className="w-full" onClick={resetAndClose}>
+            <Button
+              className="w-full border-0 text-white btn-primary-glow"
+              onClick={resetAndClose}
+            >
               Закрыть
             </Button>
           </div>
@@ -391,13 +422,13 @@ function DiscountBanner({
   if (!discount || discount.discount_pct === 0) return null
 
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-green-50 border border-green-200 px-4 py-3">
-      <Tag className="w-4 h-4 text-green-600 shrink-0" />
+    <div className="flex items-center gap-3 rounded-lg border border-[rgba(16,185,129,0.25)] bg-[rgba(16,185,129,0.09)] px-4 py-3">
+      <Tag className="h-4 w-4 shrink-0 text-[#34d399]" />
       <div className="text-sm">
-        <span className="font-semibold text-green-800">
+        <span className="font-semibold text-[#34d399]">
           Скидка {discount.discount_pct}% за Beauty Score!
         </span>
-        <span className="text-green-700 ml-1">
+        <span className="ml-1 text-[#6ee7b7]">
           Цена {originalPrice.toLocaleString('ru')} →{' '}
           <strong>{discount.final_price.toLocaleString('ru')} ₸</strong>
         </span>
