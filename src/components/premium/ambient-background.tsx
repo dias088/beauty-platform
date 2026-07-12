@@ -22,12 +22,12 @@ export function AmbientBackground({
       <div
         className="orb"
         style={{
-          top: '-140px',
-          right: '-100px',
-          width: '540px',
-          height: '540px',
+          top: '-160px',
+          right: '-120px',
+          width: '460px',
+          height: '460px',
           background: 'var(--orb-1)',
-          animation: 'drift 16s ease-in-out infinite',
+          animation: 'drift 18s ease-in-out infinite',
         }}
       />
       {variant === 'full' && (
@@ -35,24 +35,25 @@ export function AmbientBackground({
           <div
             className="orb"
             style={{
-              top: '80px',
-              left: '-160px',
-              width: '460px',
-              height: '460px',
+              top: '120px',
+              left: '-180px',
+              width: '400px',
+              height: '400px',
               background: 'var(--orb-2)',
-              animation: 'driftAlt 19s ease-in-out infinite',
+              opacity: 0.16,
+              animation: 'driftAlt 21s ease-in-out infinite',
             }}
           />
           <div
             className="orb"
             style={{
-              bottom: '-180px',
-              left: '30%',
-              width: '420px',
-              height: '420px',
+              bottom: '-200px',
+              left: '35%',
+              width: '380px',
+              height: '380px',
               background: 'var(--orb-3)',
-              opacity: 0.28,
-              animation: 'drift 22s ease-in-out infinite',
+              opacity: 0.14,
+              animation: 'drift 24s ease-in-out infinite',
             }}
           />
         </>

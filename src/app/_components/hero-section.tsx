@@ -85,7 +85,7 @@ export function HeroSection() {
 
         {/* Раскрывающаяся сетка услуг */}
         {open && (
-          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
             {SERVICES.map((s, i) => {
               const Icon = s.icon
               return (

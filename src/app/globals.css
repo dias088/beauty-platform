@@ -302,19 +302,19 @@
 .pop-8 { animation-delay: 0.56s; }
 .pop-9 { animation-delay: 0.64s; }
 
-/* Дрейфующие орбы фона (premium, blur 90px) */
+/* Дрейфующие орбы фона (premium, blur 100px) — приглушённое свечение */
 .orb {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(90px);
-  opacity: 0.35;
+  filter: blur(100px);
+  opacity: 0.22;
   pointer-events: none;
   will-change: transform;
   z-index: 0;
 }
 /* На мобильных blur дорогой — уменьшаем радиус и непрозрачность */
 @media (max-width: 640px) {
-  .orb { filter: blur(60px); opacity: 0.22; }
+  .orb { filter: blur(64px); opacity: 0.14; }
 }
 
 /* Тонкая сетка 48px с radial-маской (растворяется к краям) */
@@ -324,11 +324,11 @@
   z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
   background-size: 48px 48px;
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, #000 35%, transparent 100%);
 }
 
 /* Градиентный переливающийся текст (акцентные слова) */
