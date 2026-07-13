@@ -50,7 +50,7 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
       reviews_count,
       is_active,
       boost_until,
-      profiles (full_name),
+      profiles!masters_profile_id_fkey (full_name),
       portfolio_photos (url, position),
       services (price_kzt)
     `)
@@ -123,7 +123,7 @@ export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> 
     .select(`
       id, profile_id, bio, categories, address, lat, lng, rating, reviews_count,
       is_active, boost_until,
-      profiles (full_name),
+      profiles!masters_profile_id_fkey (full_name),
       portfolio_photos (url, position),
       services (price_kzt)
     `)

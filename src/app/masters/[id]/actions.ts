@@ -20,7 +20,7 @@ async function sendBookingCreatedEmails(bookingId: string, clientEmail: string) 
 
     const { data: booking } = await admin
       .from('bookings')
-      .select('service_name_snapshot, starts_at, master_id, masters!inner(profile_id, profiles!inner(full_name))')
+      .select('service_name_snapshot, starts_at, master_id, masters!inner(profile_id, profiles!masters_profile_id_fkey!inner(full_name))')
       .eq('id', bookingId)
       .single()
 

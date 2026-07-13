@@ -18,7 +18,7 @@ export default async function AdminPage() {
   const [mastersRes, bookingsRes, profilesRes] = await Promise.all([
     admin
       .from('masters')
-      .select('id, is_verified, is_active, created_at, boost_until, rating, reviews_count, completed_bookings, categories, profiles!inner(full_name, avatar_url)')
+      .select('id, is_verified, is_active, created_at, boost_until, rating, reviews_count, completed_bookings, categories, profiles!masters_profile_id_fkey!inner(full_name, avatar_url)')
       .order('created_at', { ascending: false }),
     admin
       .from('bookings')

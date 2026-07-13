@@ -20,7 +20,7 @@ export async function getMasterProfile(id: string) {
       is_active,
       instagram_handle,
       boost_until,
-      profiles!inner (id, full_name, avatar_url),
+      profiles!masters_profile_id_fkey!inner (id, full_name, avatar_url),
       services (id, name, description, category, price_kzt, duration_minutes),
       portfolio_photos (id, url, position),
       reviews (id, rating, text, created_at, profiles!reviews_client_id_fkey (full_name, avatar_url))

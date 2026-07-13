@@ -259,7 +259,7 @@ export async function requestBoostAction(plan: '7d' | '30d'): Promise<Result<{ k
 
   const { data: master } = await supabase
     .from('masters')
-    .select('id, profiles!inner(full_name)')
+    .select('id, profiles!masters_profile_id_fkey!inner(full_name)')
     .eq('profile_id', user.id)
     .single()
 

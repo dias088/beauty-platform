@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       profiles!bookings_client_id_fkey (id, full_name),
       masters!inner (
         profile_id,
-        profiles!inner (full_name)
+        profiles!masters_profile_id_fkey!inner (full_name)
       )
     `)
     .eq('status', 'confirmed')

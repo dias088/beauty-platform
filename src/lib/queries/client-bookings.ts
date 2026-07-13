@@ -59,7 +59,7 @@ export async function getClientBookings(clientId: string): Promise<ClientBooking
         profile_id,
         rating,
         address,
-        profiles!inner (full_name, avatar_url)
+        profiles!masters_profile_id_fkey!inner (full_name, avatar_url)
       ),
       review:reviews (id, rating, text)
     `)
