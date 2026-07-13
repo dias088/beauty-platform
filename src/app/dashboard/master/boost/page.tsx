@@ -64,8 +64,8 @@ export default function BoostPage() {
       </div>
 
       {/* Что даёт буст */}
-      <Card className="p-6 mb-8 bg-amber-50 border-amber-200">
-        <h2 className="font-semibold text-amber-900 mb-4">Что даёт буст?</h2>
+      <Card className="p-6 mb-8 bg-[rgba(251,191,36,0.08)] border-[rgba(251,191,36,0.22)]">
+        <h2 className="font-semibold text-[#fcd34d] mb-4">Что даёт буст?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { icon: TrendingUp, title: 'TOP в выдаче', desc: 'Твой профиль первым видят все клиенты' },
@@ -75,8 +75,8 @@ export default function BoostPage() {
             <div key={item.title} className="flex gap-3">
               <item.icon className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-amber-900 text-sm">{item.title}</p>
-                <p className="text-xs text-amber-700 mt-0.5">{item.desc}</p>
+                <p className="font-medium text-[#fcd34d] text-sm">{item.title}</p>
+                <p className="text-xs text-[#fbbf24] mt-0.5">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -94,7 +94,7 @@ export default function BoostPage() {
                 className={`p-6 relative ${plan.badge ? 'border-amber-400 shadow-md' : ''}`}
               >
                 {plan.badge && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 border-0">
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-[#451a03] border-0">
                     {plan.badge}
                   </Badge>
                 )}
@@ -131,11 +131,11 @@ export default function BoostPage() {
 
       {/* Инструкция по оплате */}
       {payment && (
-        <Card className="p-6 border-green-200 bg-green-50">
-          <h2 className="text-xl font-bold text-green-900 mb-2">
+        <Card className="p-6 border-[rgba(16,185,129,0.22)] bg-[rgba(16,185,129,0.08)]">
+          <h2 className="text-xl font-bold text-[#6ee7b7] mb-2">
             Заявка принята!
           </h2>
-          <p className="text-green-800 text-sm mb-6">
+          <p className="text-[#34d399] text-sm mb-6">
             Переведи оплату через Kaspi — мы активируем буст в течение 1 часа.
           </p>
 
@@ -158,7 +158,7 @@ export default function BoostPage() {
               <p className="text-xl font-bold">{payment.amount.toLocaleString('ru')} ₸</p>
             </div>
 
-            <p className="text-xs text-green-700">
+            <p className="text-xs text-[#34d399]">
               После перевода напиши нам в WhatsApp или Telegram — мы активируем буст немедленно.
               Буст начнёт работать через несколько минут после подтверждения оплаты.
             </p>

@@ -75,16 +75,16 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
   const progress = ((step - 1) / (STEPS.length - 1)) * 100
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-pink-50 flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#0d0d0f] flex flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-lg">
 
         {/* Логотип / заголовок */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 bg-[rgba(167,139,250,0.12)] text-[#c4b5fd] text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
             <Sparkles className="w-4 h-4" />
             Настройка профиля
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-white">
             {step < 4 ? `Привет, ${userName.split(' ')[0]}!` : 'Всё готово!'}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -100,7 +100,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                 <div key={s.num} className="flex flex-col items-center gap-1">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                     step > s.num ? 'bg-violet-600 text-white' :
-                    step === s.num ? 'bg-violet-600 text-white ring-4 ring-violet-100' :
+                    step === s.num ? 'bg-violet-600 text-white ring-4 ring-[rgba(167,139,250,0.2)]' :
                     'bg-muted text-muted-foreground'
                   }`}>
                     {step > s.num ? '✓' : s.num}
@@ -141,8 +141,8 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                     )}
                     className={`px-3 py-2.5 rounded-xl border text-sm font-medium text-left transition-all ${
                       categories.includes(cat.value)
-                        ? 'border-violet-400 bg-violet-50 text-violet-700'
-                        : 'border-border hover:border-violet-200'
+                        ? 'border-[var(--violet)] bg-[rgba(167,139,250,0.1)] text-[#c4b5fd]'
+                        : 'border-border hover:border-[var(--violet)]/40'
                     }`}>
                     {cat.label}
                   </button>
@@ -164,7 +164,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
         {/* ─── ШАГ 2: Первая услуга ───────────────────────────────── */}
         {step === 2 && (
           <Card className="p-6 space-y-5 shadow-sm">
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 flex gap-2">
+            <div className="bg-[rgba(96,165,250,0.08)] border border-[rgba(96,165,250,0.2)] rounded-xl p-4 text-sm text-[#bfdbfe] flex gap-2">
               <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
               <span>Добавьте хотя бы одну услугу — клиенты увидят её при записи.
               Всё можно изменить в разделе «Услуги».</span>
@@ -196,7 +196,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                     return c ? (
                       <button key={cat} onClick={() => setServiceCategory(cat)}
                         className={`px-2 py-2 rounded-lg border text-xs font-medium transition-all ${
-                          serviceCategory === cat ? 'border-violet-400 bg-violet-50' : 'border-border'
+                          serviceCategory === cat ? 'border-[var(--violet)] bg-[rgba(167,139,250,0.1)]' : 'border-border'
                         }`}>
                         {c.label}
                       </button>
@@ -243,7 +243,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
         {/* ─── ШАГ 4: Успех ───────────────────────────────────────── */}
         {step === 4 && (
           <Card className="p-8 text-center shadow-sm space-y-6">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-20 h-20 bg-[rgba(16,185,129,0.14)] rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-10 h-10 text-green-600" />
             </div>
             <div>

@@ -45,13 +45,13 @@ type Props = {
 }
 
 const STAT_CARDS = (s: Stats) => [
-  { label: 'Всего мастеров',    value: s.totalMasters,      icon: Users,       color: 'text-violet-600', bg: 'bg-violet-50' },
-  { label: 'Верифицировано',    value: s.verifiedMasters,   icon: CheckCircle2,color: 'text-green-600',  bg: 'bg-green-50'  },
-  { label: 'Ожидают проверки',  value: s.pendingMasters,    icon: Clock,       color: 'text-amber-600',  bg: 'bg-amber-50', alert: s.pendingMasters > 0 },
-  { label: 'Записей (30 дн)',   value: s.totalBookings30d,  icon: BarChart3,   color: 'text-blue-600',   bg: 'bg-blue-50'   },
-  { label: 'Завершено',         value: s.completedBookings, icon: TrendingUp,  color: 'text-green-600',  bg: 'bg-green-50'  },
-  { label: 'Выручка (30 дн)',   value: `${(s.revenue30d/1000).toFixed(0)}K ₸`, icon: Star, color: 'text-amber-600', bg: 'bg-amber-50' },
-  { label: 'Клиентов',          value: s.totalClients,      icon: Users,       color: 'text-violet-600', bg: 'bg-violet-50' },
+  { label: 'Всего мастеров',    value: s.totalMasters,      icon: Users,       color: 'text-[#a78bfa]', bg: 'bg-[rgba(167,139,250,0.1)]' },
+  { label: 'Верифицировано',    value: s.verifiedMasters,   icon: CheckCircle2,color: 'text-[#34d399]',  bg: 'bg-[rgba(16,185,129,0.1)]'  },
+  { label: 'Ожидают проверки',  value: s.pendingMasters,    icon: Clock,       color: 'text-[#fbbf24]',  bg: 'bg-[rgba(251,191,36,0.1)]', alert: s.pendingMasters > 0 },
+  { label: 'Записей (30 дн)',   value: s.totalBookings30d,  icon: BarChart3,   color: 'text-[#60a5fa]',   bg: 'bg-[rgba(96,165,250,0.1)]'   },
+  { label: 'Завершено',         value: s.completedBookings, icon: TrendingUp,  color: 'text-[#34d399]',  bg: 'bg-[rgba(16,185,129,0.1)]'  },
+  { label: 'Выручка (30 дн)',   value: `${(s.revenue30d/1000).toFixed(0)}K ₸`, icon: Star, color: 'text-[#fbbf24]', bg: 'bg-[rgba(251,191,36,0.1)]' },
+  { label: 'Клиентов',          value: s.totalClients,      icon: Users,       color: 'text-[#a78bfa]', bg: 'bg-[rgba(167,139,250,0.1)]' },
 ]
 
 type Tab = 'masters' | 'pending'
@@ -96,7 +96,7 @@ export function AdminDashboard({ stats, masters, recentProfiles }: Props) {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         {STAT_CARDS(stats).map(card => (
-          <Card key={card.label} className={`p-4 ${card.alert ? 'border-amber-300 bg-amber-50/50' : ''}`}>
+          <Card key={card.label} className={`p-4 ${card.alert ? 'border-[rgba(251,191,36,0.3)] bg-[rgba(251,191,36,0.08)]' : ''}`}>
             <div className={`w-8 h-8 rounded-lg ${card.bg} flex items-center justify-center mb-2`}>
               <card.icon className={`w-4 h-4 ${card.color}`} />
             </div>
@@ -145,10 +145,10 @@ export function AdminDashboard({ stats, masters, recentProfiles }: Props) {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold text-sm">{master.profiles.full_name}</span>
                         {master.is_verified
-                          ? <Badge className="bg-green-100 text-green-800 border-0 text-xs gap-1"><CheckCircle2 className="w-3 h-3" /> Верифицирован</Badge>
-                          : <Badge className="bg-amber-100 text-amber-800 border-0 text-xs gap-1"><Clock className="w-3 h-3" /> Ожидает</Badge>
+                          ? <Badge className="bg-[rgba(16,185,129,0.14)] text-[#34d399] border-0 text-xs gap-1"><CheckCircle2 className="w-3 h-3" /> Верифицирован</Badge>
+                          : <Badge className="bg-[rgba(251,191,36,0.14)] text-[#fbbf24] border-0 text-xs gap-1"><Clock className="w-3 h-3" /> Ожидает</Badge>
                         }
-                        {isBoosted && <Badge className="bg-amber-100 text-amber-800 border-0 text-xs gap-1"><Zap className="w-3 h-3" /> Буст</Badge>}
+                        {isBoosted && <Badge className="bg-[rgba(251,191,36,0.14)] text-[#fbbf24] border-0 text-xs gap-1"><Zap className="w-3 h-3" /> Буст</Badge>}
                         {!master.is_active && <Badge variant="destructive" className="text-xs">Деактивирован</Badge>}
                       </div>
                       <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
@@ -179,7 +179,7 @@ export function AdminDashboard({ stats, masters, recentProfiles }: Props) {
                       {!isBoosted && (
                         <Button variant="outline" size="sm" onClick={() => handleBoost(master.id)}
                           disabled={loading === master.id}
-                          className="text-amber-600 border-amber-300 hover:bg-amber-50">
+                          className="text-[#fbbf24] border-[rgba(251,191,36,0.3)] hover:bg-[rgba(251,191,36,0.1)]">
                           <Zap className="w-3.5 h-3.5 mr-1" />
                           Буст
                         </Button>

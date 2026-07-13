@@ -95,11 +95,11 @@ export function ClientBookingCard({ booking, canCancel }: { booking: ClientBooki
                 {booking.original_price_kzt.toLocaleString('ru')} ₸
               </span>
             )}
-            <p className={`font-semibold ${booking.discount_pct ? 'text-green-700' : ''}`}>
+            <p className={`font-semibold ${booking.discount_pct ? 'text-[#34d399]' : ''}`}>
               {booking.price_kzt_snapshot.toLocaleString('ru')} ₸
             </p>
             {booking.discount_pct && (
-              <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-[rgba(16,185,129,0.14)] text-[#34d399] px-1.5 py-0.5 rounded-full font-medium">
                 -{booking.discount_pct}%
               </span>
             )}
@@ -122,7 +122,7 @@ export function ClientBookingCard({ booking, canCancel }: { booking: ClientBooki
               <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">Ваш отзыв</p>
               <div className="flex gap-1 mb-1">
                 {[1,2,3,4,5].map(i => (
-                  <Star key={i} className={`w-4 h-4 ${i <= (existingReview?.rating ?? reviewRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                  <Star key={i} className={`w-4 h-4 ${i <= (existingReview?.rating ?? reviewRating) ? 'fill-yellow-400 text-yellow-400' : 'text-white/15'}`} />
                 ))}
               </div>
               {existingReview?.text && (
@@ -142,7 +142,7 @@ export function ClientBookingCard({ booking, canCancel }: { booking: ClientBooki
                     className="transition-transform hover:scale-125"
                     type="button"
                   >
-                    <Star className={`w-7 h-7 transition-colors ${star <= (hoveredStar || reviewRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                    <Star className={`w-7 h-7 transition-colors ${star <= (hoveredStar || reviewRating) ? 'fill-yellow-400 text-yellow-400' : 'text-white/15'}`} />
                   </button>
                 ))}
                 {reviewRating > 0 && (

@@ -3,12 +3,24 @@
 import { Card } from '@/components/ui/card'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, LineChart, Line, Area, AreaChart,
+  ResponsiveContainer, Area, AreaChart,
 } from 'recharts'
 
 type Props = {
   byStatus: { name: string; value: number }[]
   revenueChart: { date: string; revenue: number }[]
+}
+
+// Тёмная тема графиков
+const VIOLET = '#a78bfa'
+const GRID = 'rgba(255,255,255,0.08)'
+const AXIS = '#9ca3af'
+const TOOLTIP_STYLE = {
+  background: '#17171c',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: 12,
+  color: '#fff',
+  fontSize: 13,
 }
 
 export function StatsCharts({ byStatus, revenueChart }: Props) {
@@ -23,11 +35,11 @@ export function StatsCharts({ byStatus, revenueChart }: Props) {
         ) : (
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={byStatus} barSize={32}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={GRID} />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: AXIS }} axisLine={{ stroke: GRID }} tickLine={false} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: AXIS }} axisLine={{ stroke: GRID }} tickLine={false} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: 'rgba(167,139,250,0.08)' }} />
+              <Bar dataKey="value" fill={VIOLET} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}
@@ -44,18 +56,18 @@ export function StatsCharts({ byStatus, revenueChart }: Props) {
             <AreaChart data={revenueChart}>
               <defs>
                 <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  <stop offset="5%" stopColor={VIOLET} stopOpacity={0.35} />
+                  <stop offset="95%" stopColor={VIOLET} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-              <Tooltip formatter={(v) => [`${Number(v).toLocaleString('ru')} ₸`, 'Выручка']} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={GRID} />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: AXIS }} axisLine={{ stroke: GRID }} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: AXIS }} axisLine={{ stroke: GRID }} tickLine={false} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v) => [`${Number(v).toLocaleString('ru')} ₸`, 'Выручка']} />
               <Area
                 type="monotone"
                 dataKey="revenue"
-                stroke="hsl(var(--primary))"
+                stroke={VIOLET}
                 strokeWidth={2}
                 fill="url(#revenueGrad)"
               />

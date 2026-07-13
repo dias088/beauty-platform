@@ -264,7 +264,7 @@ export default function SchedulePage() {
                   onClick={() => setSelectedDay(isSelected ? null : day)}
                   className={[
                     'flex flex-col items-center p-2 rounded-xl border transition-all text-center',
-                    isSelected ? 'border-violet-400 bg-violet-50 shadow-sm' : 'border-border hover:border-violet-200',
+                    isSelected ? 'border-[var(--violet)] bg-[rgba(167,139,250,0.1)]' : 'border-border hover:border-[var(--violet)]/40',
                     isToday ? 'ring-2 ring-violet-400 ring-offset-1' : '',
                     isPast ? 'opacity-40' : '',
                   ].join(' ')}
@@ -275,8 +275,8 @@ export default function SchedulePage() {
                   </span>
                   {daySlots.length > 0 ? (
                     <div className="flex gap-1 flex-wrap justify-center">
-                      {free > 0 && <span className="text-xs bg-green-100 text-green-700 px-1 rounded">{free}</span>}
-                      {booked > 0 && <span className="text-xs bg-blue-100 text-blue-700 px-1 rounded inline-flex items-center gap-0.5">{booked}<Lock className="w-2.5 h-2.5" /></span>}
+                      {free > 0 && <span className="text-xs bg-[rgba(16,185,129,0.14)] text-[#34d399] px-1 rounded">{free}</span>}
+                      {booked > 0 && <span className="text-xs bg-[rgba(96,165,250,0.14)] text-[#93c5fd] px-1 rounded inline-flex items-center gap-0.5">{booked}<Lock className="w-2.5 h-2.5" /></span>}
                     </div>
                   ) : (
                     <span className="text-xs text-muted-foreground/50">—</span>
@@ -328,7 +328,7 @@ export default function SchedulePage() {
                         </span>
                         {slot.is_booked
                           ? <Badge variant="default" className="text-xs">Забронирован</Badge>
-                          : <Badge variant="outline" className="text-xs text-green-700 border-green-300">Свободен</Badge>
+                          : <Badge variant="outline" className="text-xs text-[#34d399] border-[rgba(16,185,129,0.3)]">Свободен</Badge>
                         }
                       </div>
                       {!slot.is_booked && (
@@ -376,7 +376,7 @@ export default function SchedulePage() {
 
       {tab === 'template' && (
         <div className="space-y-3">
-          <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-800 mb-4">
+          <div className="flex items-start gap-2 p-3 bg-[rgba(96,165,250,0.08)] border border-[rgba(96,165,250,0.2)] rounded-lg text-sm text-[#bfdbfe] mb-4">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             Слоты создаются с начала рабочего дня по расписанию. Если день частично прошёл — слоты за прошедшее время не создаются.
           </div>

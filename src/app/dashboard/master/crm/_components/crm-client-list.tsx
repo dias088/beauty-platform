@@ -17,18 +17,18 @@ import type { CrmClient, CrmBooking } from '@/lib/queries/crm'
 import { createClient } from '@/lib/supabase/client'
 
 const LEVEL_STYLE = {
-  new:      { label: 'Новый',       cls: 'bg-blue-100 text-blue-800' },
-  verified: { label: 'Проверенный', cls: 'bg-amber-100 text-amber-800' },
-  trusted:  { label: 'Доверенный',  cls: 'bg-green-100 text-green-800' },
+  new:      { label: 'Новый',       cls: 'bg-[rgba(96,165,250,0.14)] text-[#93c5fd]' },
+  verified: { label: 'Проверенный', cls: 'bg-[rgba(251,191,36,0.14)] text-[#fbbf24]' },
+  trusted:  { label: 'Доверенный',  cls: 'bg-[rgba(16,185,129,0.14)] text-[#34d399]' },
 }
 
 const STATUS_STYLE: Record<string, { label: string; cls: string }> = {
-  completed:           { label: 'Завершена',        cls: 'bg-green-100 text-green-800' },
-  confirmed:           { label: 'Подтверждена',     cls: 'bg-blue-100 text-blue-800' },
-  pending:             { label: 'Ожидает',          cls: 'bg-amber-100 text-amber-800' },
-  cancelled_by_client: { label: 'Отменена',         cls: 'bg-red-100 text-red-800' },
-  cancelled_by_master: { label: 'Отменена мастером',cls: 'bg-red-100 text-red-800' },
-  no_show:             { label: 'Не пришёл',        cls: 'bg-red-100 text-red-800' },
+  completed:           { label: 'Завершена',        cls: 'bg-[rgba(16,185,129,0.14)] text-[#34d399]' },
+  confirmed:           { label: 'Подтверждена',     cls: 'bg-[rgba(96,165,250,0.14)] text-[#93c5fd]' },
+  pending:             { label: 'Ожидает',          cls: 'bg-[rgba(251,191,36,0.14)] text-[#fbbf24]' },
+  cancelled_by_client: { label: 'Отменена',         cls: 'bg-[rgba(239,68,68,0.14)] text-[#f87171]' },
+  cancelled_by_master: { label: 'Отменена мастером',cls: 'bg-[rgba(239,68,68,0.14)] text-[#f87171]' },
+  no_show:             { label: 'Не пришёл',        cls: 'bg-[rgba(239,68,68,0.14)] text-[#f87171]' },
 }
 
 type Props = { clients: CrmClient[]; masterId: string }
@@ -182,7 +182,7 @@ export function CrmClientList({ clients, masterId }: Props) {
                   ) : (
                     <div className="space-y-2">
                       {(bookings[cid] ?? []).map(b => {
-                        const st = STATUS_STYLE[b.status] ?? { label: b.status, cls: 'bg-gray-100 text-gray-800' }
+                        const st = STATUS_STYLE[b.status] ?? { label: b.status, cls: 'bg-white/10 text-[var(--text-2)]' }
                         return (
                           <div key={b.id} className="flex items-center justify-between rounded-lg bg-background border px-3 py-2 text-sm">
                             <div>

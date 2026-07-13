@@ -15,13 +15,13 @@ const LEVEL_INFO: Record<string, { icon: LucideIcon; label: string; desc: string
     icon: BadgeCheck,
     label: 'Проверенный',
     desc: 'Клиенты с 5+ завершёнными записями и хорошей репутацией',
-    color: 'bg-amber-100 text-amber-800',
+    color: 'bg-[rgba(251,191,36,0.14)] text-[#fbbf24]',
   },
   trusted: {
     icon: ShieldCheck,
     label: 'Доверенный',
     desc: 'Постоянные клиенты с отличной репутацией, никогда не пропускали',
-    color: 'bg-green-100 text-green-800',
+    color: 'bg-[rgba(16,185,129,0.14)] text-[#34d399]',
   },
 }
 
@@ -71,7 +71,7 @@ export function DiscountSettingsForm({ initial }: Props) {
 
       {/* Пример как это выглядит для клиента */}
       {(verifiedDiscount > 0 || trustedDiscount > 0) && (
-        <div className="rounded-lg bg-violet-50 border border-violet-100 p-4 text-sm text-violet-800 flex gap-2">
+        <div className="rounded-lg bg-[rgba(167,139,250,0.08)] border border-[rgba(167,139,250,0.2)] p-4 text-sm text-[#c4b5fd] flex gap-2">
           <Info className="w-4 h-4 shrink-0 mt-0.5 text-violet-500" />
           <span>
             Клиент увидит скидку при выборе услуги на вашем профиле.
@@ -146,7 +146,7 @@ function LevelRow({
               'px-4 py-2 rounded-lg text-sm font-medium border transition-all',
               value === pct
                 ? 'bg-violet-600 text-white border-violet-600 shadow-sm'
-                : 'bg-background text-foreground border-border hover:border-violet-300 hover:bg-violet-50',
+                : 'bg-background text-foreground border-border hover:border-[var(--violet)]/40 hover:bg-[rgba(167,139,250,0.06)]',
             ].join(' ')}
           >
             {pct === 0 ? 'Выкл' : `${pct}%`}
@@ -218,11 +218,11 @@ function PriceRow({
             {original.toLocaleString('ru')} ₸
           </span>
         )}
-        <span className={discount > 0 ? 'font-semibold text-green-700' : 'font-medium'}>
+        <span className={discount > 0 ? 'font-semibold text-[#34d399]' : 'font-medium'}>
           {final.toLocaleString('ru')} ₸
         </span>
         {discount > 0 && (
-          <Badge className="bg-green-100 text-green-800 border-0 text-xs px-1.5">
+          <Badge className="bg-[rgba(16,185,129,0.14)] text-[#34d399] border-0 text-xs px-1.5">
             -{discount}%
           </Badge>
         )}

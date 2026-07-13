@@ -29,11 +29,11 @@ const LEVEL_INFO: Record<string, {
   new: {
     icon: Sparkles,
     name: 'Новый',
-    bg: 'bg-blue-50 border-blue-100',
-    text: 'text-blue-900',
-    muted: 'text-blue-700',
+    bg: 'bg-[rgba(96,165,250,0.1)] border-[rgba(96,165,250,0.2)]',
+    text: 'text-[#bfdbfe]',
+    muted: 'text-[#93c5fd]',
     bar: 'bg-blue-400',
-    track: 'bg-blue-200',
+    track: 'bg-[rgba(96,165,250,0.25)]',
     minScore: 0,
     maxScore: 49,
     benefits: ['Доступны все услуги', 'Может потребоваться предоплата'],
@@ -42,11 +42,11 @@ const LEVEL_INFO: Record<string, {
   verified: {
     icon: BadgeCheck,
     name: 'Проверенный',
-    bg: 'bg-amber-50 border-amber-100',
-    text: 'text-amber-900',
-    muted: 'text-amber-700',
+    bg: 'bg-[rgba(251,191,36,0.1)] border-[rgba(251,191,36,0.2)]',
+    text: 'text-[#fcd34d]',
+    muted: 'text-[#fbbf24]',
     bar: 'bg-amber-400',
-    track: 'bg-amber-200',
+    track: 'bg-[rgba(251,191,36,0.25)]',
     minScore: 50,
     maxScore: 149,
     benefits: ['Доступны все услуги', 'Предоплата по выбору мастера', '5% скидка'],
@@ -55,11 +55,11 @@ const LEVEL_INFO: Record<string, {
   trusted: {
     icon: ShieldCheck,
     name: 'Доверенный',
-    bg: 'bg-green-50 border-green-100',
-    text: 'text-green-900',
-    muted: 'text-green-700',
+    bg: 'bg-[rgba(16,185,129,0.1)] border-[rgba(16,185,129,0.2)]',
+    text: 'text-[#6ee7b7]',
+    muted: 'text-[#34d399]',
     bar: 'bg-green-400',
-    track: 'bg-green-200',
+    track: 'bg-[rgba(16,185,129,0.25)]',
     minScore: 150,
     maxScore: 999,
     benefits: ['Доступны все услуги', 'Предоплата не требуется', '10% скидка на услуги'],
@@ -151,12 +151,12 @@ export function BeautyScoreDetails({ score }: { score: ScoreData }) {
 
       {/* Предупреждение */}
       {(score.no_shows > 0 || score.late_cancellations > 0) && (
-        <Card className="p-5 border-orange-200 bg-orange-50">
+        <Card className="p-5 border-[rgba(249,115,22,0.22)] bg-[rgba(249,115,22,0.08)]">
           <div className="flex gap-3">
             <AlertCircle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-orange-900 text-sm">Обратите внимание</p>
-              <p className="text-sm text-orange-800 mt-1">
+              <p className="font-semibold text-[#fdba74] text-sm">Обратите внимание</p>
+              <p className="text-sm text-[#fb923c] mt-1">
                 {score.no_shows > 0 && `No-show: ${score.no_shows} раз. `}
                 {score.late_cancellations > 0 && `Поздних отмен: ${score.late_cancellations}. `}
                 Это снижает ваш Beauty Score. Старайтесь отменять заблаговременно!

@@ -86,7 +86,7 @@ function SidebarContent({ masterId }: { masterId?: string }) {
             <Link key={item.href} href={item.href}>
               <Button
                 variant={pathname === item.href ? 'default' : 'ghost'}
-                className={`w-full justify-start text-sm ${item.highlight && pathname !== item.href ? 'text-amber-600 hover:text-amber-700' : ''}`}
+                className={`w-full justify-start text-sm ${item.highlight && pathname !== item.href ? 'text-[#fbbf24] hover:text-[#fcd34d]' : ''}`}
               >
                 <Icon className="w-4 h-4 mr-2 shrink-0" />
                 {item.label}
