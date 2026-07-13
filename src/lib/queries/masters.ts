@@ -1,5 +1,10 @@
 import 'server-only'
-import { createAdminClient } from '@/lib/supabase/admin'
+// Каталог — публичные данные (активные мастера). Читаем обычным клиентом:
+// RLS-политики (masters_public_read / profiles_public_read_master /
+// services_public_read / portfolio_public_read) открывают ровно этот набор.
+// Раньше использовался service_role — из-за чего пустой/битый ключ ронял
+// весь каталог. Теперь каталог от service_role не зависит.
+import { createClient } from '@/lib/supabase/server'
 
 export type MasterListItem = {
   id: string
@@ -29,7 +34,7 @@ export type MasterFilters = {
 }
 
 export async function getMasters(filters: MasterFilters = {}): Promise<MasterListItem[]> {
-  const supabase = createAdminClient()
+  const supabase = await createClient()
 
   let query = supabase
     .from('masters')
@@ -111,7 +116,7 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
 
 export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> {
   if (ids.length === 0) return []
-  const supabase = createAdminClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('masters')
