@@ -412,11 +412,67 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-card-pop,
   .animate-fade-in-up,
-  .gradient-text,
-  .orb {
+  .gradient-text {
     animation: none !important;
     opacity: 1 !important;
   }
+  /* Орбы: гасим только дрейф, приглушённость сохраняем (не делаем ярче) */
+  .orb { animation: none !important; }
   .glow-follow::before,
   .service-line::after { transition: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCROLLYTELLING — фон, привязанный к прокрутке (CSS scroll-timeline)
+   Композиторная привязка к скроллу: без JS, без rAF. На браузерах
+   без поддержки — статичный фон (graceful degradation).
+   ══════════════════════════════════════════════════════════ */
+
+@keyframes glowJourney {
+  0%   { background: radial-gradient(55% 45% at 72% 12%, rgba(124, 58, 237, 0.24), transparent 70%); }
+  50%  { background: radial-gradient(55% 45% at 30% 42%, rgba(192, 38, 211, 0.22), transparent 70%); }
+  100% { background: radial-gradient(55% 45% at 62% 84%, rgba(79, 70, 229, 0.22), transparent 70%); }
+}
+@keyframes paraSlow { to { transform: translateY(-190px); } }
+@keyframes paraRev  { to { transform: translateY(150px); } }
+@keyframes orb3Journey {
+  0%   { transform: translateY(70px);  opacity: 0; }
+  55%  { opacity: 0.18; }
+  100% { transform: translateY(-150px); opacity: 0.22; }
+}
+
+/* Статичный фолбэк по умолчанию (браузеры без scroll-timeline) */
+.scroll-glow {
+  background: radial-gradient(55% 45% at 72% 12%, rgba(124, 58, 237, 0.22), transparent 70%);
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-glow {
+    animation: glowJourney linear both;
+    animation-timeline: scroll(root block);
+  }
+  .parallax-slow {
+    animation: paraSlow linear both;
+    animation-timeline: scroll(root block);
+  }
+  .parallax-rev {
+    animation: paraRev linear both;
+    animation-timeline: scroll(root block);
+  }
+  .orb3-scroll {
+    animation: orb3Journey linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+/* При reduce-motion убираем параллакс-сдвиги, но перелив цвета оставляем
+   (смена цвета — не «движение»). Орбы держим на своей приглушённости. */
+@media (prefers-reduced-motion: reduce) {
+  .parallax-slow,
+  .parallax-rev,
+  .orb3-scroll {
+    animation: none !important;
+    transform: none !important;
+  }
+  .orb3-scroll { opacity: 0.2 !important; }
 }

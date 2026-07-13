@@ -6,7 +6,7 @@ import { HowItWorks } from './_components/how-it-works'
 import { CategorySections } from './_components/category-sections'
 import { FiltersBar } from './_components/filters-bar'
 import { LandingOutro } from './_components/landing-outro'
-import { AmbientBackground } from '@/components/premium/ambient-background'
+import { ScrollBackground } from '@/components/premium/scroll-background'
 import { Suspense } from 'react'
 
 export default async function Home(props: {
@@ -40,10 +40,10 @@ export default async function Home(props: {
 
   // Homepage: category sections
   return (
-    <main className="relative isolate flex min-h-screen flex-col overflow-hidden">
-      {!user && <AmbientBackground variant="full" />}
+    <>
+      {!user && <ScrollBackground />}
 
-      <div className="relative z-10 flex flex-col">
+      <main className="relative z-10 flex min-h-screen flex-col">
         {!user && <HeroSection />}
 
         <Suspense>
@@ -58,7 +58,7 @@ export default async function Home(props: {
             <LandingOutro />
           </>
         )}
-      </div>
-    </main>
+      </main>
+    </>
   )
 }
