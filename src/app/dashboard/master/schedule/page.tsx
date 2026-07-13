@@ -287,7 +287,7 @@ export default function SchedulePage() {
           </div>
 
           {/* Детали выбранного дня */}
-          {selectedDay && (
+          {selectedDay ? (
             <Card className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-semibold">
@@ -343,6 +343,12 @@ export default function SchedulePage() {
                   ))}
                 </div>
               )}
+            </Card>
+          ) : (
+            <Card className="p-4 border-dashed border-2">
+              <p className="text-sm text-muted-foreground text-center">
+                Нажми на день выше, чтобы создать или удалить слоты <span className="text-foreground font-medium">для одного конкретного дня</span>
+              </p>
             </Card>
           )}
 
