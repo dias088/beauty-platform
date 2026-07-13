@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useFormStatus } from 'react-dom'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { registerAction } from '../actions'
 import { Button } from '@/components/ui/button'
@@ -13,8 +14,13 @@ import { toast } from 'sonner'
 
 function RegisterForm() {
   const { pending } = useFormStatus()
+  const searchParams = useSearchParams()
   const [errors, setErrors] = useState<Record<string, string[]>>({})
-  const [role, setRole] = useState<'client' | 'master'>('client')
+  // Предвыбираем роль из ссылки: /register?role=master открывает форму
+  // сразу как «Мастер». Иначе роль по умолчанию — клиент.
+  const [role, setRole] = useState<'client' | 'master'>(
+    searchParams.get('role') === 'master' ? 'master' : 'client'
+  )
 
   return (
     <form
@@ -109,7 +115,9 @@ export default function RegisterPage() {
         <CardDescription>Создайте новый аккаунт</CardDescription>
       </CardHeader>
       <CardContent>
-        <RegisterForm />
+        <Suspense fallback={null}>
+          <RegisterForm />
+        </Suspense>
       </CardContent>
     </Card>
   )
