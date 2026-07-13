@@ -92,13 +92,17 @@ export async function cancelBookingAction(bookingId: string, reason?: string): P
   return { success: true, data: undefined }
 }
 
-export async function generateSlotsAction(
-  slotCount: number,
-  startDate: string,
-  startTime: string,
-  durationMinutes: number,
-  intervalMinutes: number
-): Promise<Result> {
+/**
+ * Создаёт слоты из ГОТОВЫХ ISO-меток времени, посчитанных на клиенте.
+ * Важно: время считается в браузере мастера (его часовой пояс, Астана),
+ * поэтому сюда приходят корректные UTC-таймстемпы и вставляются как есть.
+ * Раньше время «расшивалось» в строки и пересобиралось на сервере (UTC) —
+ * из-за этого 09:00 превращалось в 14:00. Теперь этого нет.
+ * Пропускает прошедшие и пересекающиеся с существующими слоты.
+ */
+export async function createSlotsAction(
+  candidates: { starts: string; ends: string }[]
+): Promise<Result<{ created: number; skipped: number }>> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Войдите' }
@@ -111,36 +115,44 @@ export async function generateSlotsAction(
 
   if (!master) return { success: false, error: 'Не найден профиль мастера' }
 
-  const slots = []
-  const date = new Date(startDate)
-  const [hours, minutes] = startTime.split(':').map(Number)
-  date.setHours(hours, minutes, 0, 0)
+  const now = Date.now()
+  const future = candidates.filter(c => new Date(c.starts).getTime() > now)
+  if (future.length === 0) return { success: false, error: 'Все слоты уже в прошлом' }
 
-  const now = new Date()
+  // Диапазон кандидатов, чтобы подтянуть пересекающиеся существующие слоты
+  const minStart = future.reduce((m, c) => (c.starts < m ? c.starts : m), future[0].starts)
+  const maxEnd = future.reduce((m, c) => (c.ends > m ? c.ends : m), future[0].ends)
 
-  for (let i = 0; i < slotCount; i++) {
-    const startsAt = new Date(date.getTime() + i * intervalMinutes * 60000)
-    const endsAt = new Date(startsAt.getTime() + durationMinutes * 60000)
+  const { data: existing } = await supabase
+    .from('slots')
+    .select('starts_at, ends_at')
+    .eq('master_id', master.id)
+    .lt('starts_at', maxEnd)
+    .gt('ends_at', minStart)
 
-    // Пропускаем слоты в прошлом
-    if (startsAt <= now) continue
-
-    slots.push({
-      master_id: master.id,
-      starts_at: startsAt.toISOString(),
-      ends_at: endsAt.toISOString(),
-      is_booked: false,
+  const overlaps = (aStart: number, aEnd: number) =>
+    (existing ?? []).some(e => {
+      const es = new Date(e.starts_at).getTime()
+      const ee = new Date(e.ends_at).getTime()
+      return aStart < ee && es < aEnd // пересечение интервалов
     })
-  }
 
-  // Если все слоты в прошлом — возвращаем успех без ошибки
-  if (slots.length === 0) return { success: false, error: 'Все слоты уже в прошлом' }
+  const rows = future
+    .filter(c => !overlaps(new Date(c.starts).getTime(), new Date(c.ends).getTime()))
+    .map(c => ({
+      master_id: master.id,
+      starts_at: c.starts,
+      ends_at: c.ends,
+      is_booked: false,
+    }))
 
-  const { error } = await supabase.from('slots').insert(slots)
+  if (rows.length === 0) return { success: false, error: 'Такие слоты уже существуют' }
+
+  const { error } = await supabase.from('slots').insert(rows)
   if (error) return { success: false, error: 'Не удалось создать слоты' }
 
   revalidatePath('/dashboard/master/schedule')
-  return { success: true, data: undefined }
+  return { success: true, data: { created: rows.length, skipped: future.length - rows.length } }
 }
 
 export async function deleteSlotAction(slotId: string): Promise<Result> {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { generateSlotsAction, deleteSlotAction } from '../actions'
+import { createSlotsAction, deleteSlotAction } from '../actions'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -113,48 +113,41 @@ export default function SchedulePage() {
     }
 
     setGenerating(true)
-    let created = 0
-    for (const s of preview) {
-      const dateStr = format(new Date(s.starts), 'yyyy-MM-dd')
-      const timeStr = format(new Date(s.starts), 'HH:mm')
-      const result = await generateSlotsAction(1, dateStr, timeStr, cfg.slotDuration, cfg.slotDuration)
-      if (result.success) created++
-    }
+    const result = await createSlotsAction(preview)
     setGenerating(false)
 
-    if (created > 0) {
-      toast.success(`Создано ${created} слотов на ${format(day, 'd MMMM', { locale: ru })}`)
+    if (result.success) {
+      toast.success(`Создано ${result.data.created} слотов на ${format(day, 'd MMMM', { locale: ru })}`)
       loadSlots()
     } else {
-      toast.error('Не удалось создать слоты')
+      toast.error(result.error)
     }
   }
 
   // Создать слоты на всю неделю
   const handleGenerateWeek = async () => {
-    let totalCreated = 0
-    setGenerating(true)
-
+    const all: { starts: string; ends: string }[] = []
     for (const day of weekDays) {
       const dow = day.getDay()
       const cfg = template[dow]
       if (!cfg.enabled) continue
-
-      const preview = generateSlotsForDay(day, cfg)
-      for (const s of preview) {
-        const dateStr = format(new Date(s.starts), 'yyyy-MM-dd')
-        const timeStr = format(new Date(s.starts), 'HH:mm')
-        const result = await generateSlotsAction(1, dateStr, timeStr, cfg.slotDuration, cfg.slotDuration)
-        if (result.success) totalCreated++
-      }
+      all.push(...generateSlotsForDay(day, cfg))
     }
 
+    if (all.length === 0) {
+      toast.error('Нет слотов для создания')
+      return
+    }
+
+    setGenerating(true)
+    const result = await createSlotsAction(all)
     setGenerating(false)
-    if (totalCreated > 0) {
-      toast.success(`Создано ${totalCreated} слотов на неделю`)
+
+    if (result.success) {
+      toast.success(`Создано ${result.data.created} слотов на неделю`)
       loadSlots()
     } else {
-      toast.error('Не удалось создать слоты')
+      toast.error(result.error)
     }
   }
 
