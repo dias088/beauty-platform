@@ -87,11 +87,11 @@ export default function BoostPage() {
       {!payment && (
         <>
           <h2 className="text-xl font-bold mb-4">Выбери тариф</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 mt-3">
             {PLANS.map(plan => (
               <Card
                 key={plan.id}
-                className={`p-6 relative ${plan.badge ? 'border-amber-400 shadow-md' : ''}`}
+                className={`p-6 relative overflow-visible ${plan.badge ? 'border-amber-400 shadow-md' : ''}`}
               >
                 {plan.badge && (
                   <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-[#451a03] border-0">
