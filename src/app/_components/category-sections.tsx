@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Star, ChevronRight, Hand, Scissors, Eye, Palette, Droplet, Zap, ImageOff, type LucideIcon } from 'lucide-react'
 import type { MasterListItem } from '@/lib/queries/masters'
 import { FavoriteButton } from '@/components/shared/favorite-button'
+import { SectionReveal } from '@/components/premium/section-reveal'
 
 const CATEGORIES: { value: string; label: string; icon: LucideIcon }[] = [
   { value: 'nail',        label: 'Маникюр и педикюр', icon: Hand },
@@ -17,8 +18,8 @@ function CompactMasterCard({ master }: { master: MasterListItem }) {
   return (
     <div className="relative group flex-shrink-0 w-48">
       <Link href={`/masters/${master.id}`} className="block">
-        <div className="rounded-xl overflow-hidden border border-border/60 bg-card transition-all duration-200 group-hover:shadow-md group-hover:-translate-y-0.5">
-          <div className="relative h-36 bg-muted overflow-hidden">
+        <div className="surface rounded-2xl overflow-hidden transition-all duration-200 group-hover:-translate-y-1 group-hover:border-[var(--violet)]/40">
+          <div className="relative h-36 bg-white/[0.04] overflow-hidden">
             {master.primary_photo ? (
               <Image
                 src={master.primary_photo}
@@ -91,20 +92,20 @@ export function CategorySections({ masters }: Props) {
   }
 
   return (
-    <div className="py-8 space-y-10">
-      {sections.map(section => (
-        <div key={section.value}>
-          <div className="container mx-auto px-4 flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <section.icon className="w-5 h-5 text-primary" />
+    <div className="py-12 space-y-12">
+      {sections.map((section, i) => (
+        <SectionReveal key={section.value} delay={i * 0.04}>
+          <div className="container mx-auto px-4 flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2.5 text-white">
+              <section.icon className="w-4 h-4 text-[var(--violet)]" />
               <span>{section.label}</span>
-              <span className="text-sm font-normal text-muted-foreground ml-1">
+              <span className="text-sm font-normal text-[var(--text-3)]">
                 {section.masters.length}
               </span>
             </h2>
             <Link
               href={`/?category=${section.value}`}
-              className="text-sm text-primary font-medium flex items-center gap-0.5 hover:underline shrink-0"
+              className="text-sm text-[var(--violet-bright)] font-medium flex items-center gap-0.5 hover:underline shrink-0"
             >
               Все
               <ChevronRight className="w-4 h-4" />
@@ -126,7 +127,7 @@ export function CategorySections({ masters }: Props) {
               </Link>
             )}
           </div>
-        </div>
+        </SectionReveal>
       ))}
     </div>
   )

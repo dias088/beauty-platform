@@ -1,11 +1,13 @@
-import type { CSSProperties, ReactNode } from 'react'
+'use client'
+
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 
 /**
- * Мягкое появление секции при прокрутке. Реализовано на чистом CSS
- * (класс .reveal со scroll-driven animation, см. globals.css) — без JS
- * и без motion, поэтому нет рассинхронизации гидрации между SSR и клиентом.
- * В браузерах без scroll-timeline контент просто виден. prefers-reduced-motion
- * отключает анимацию (см. globals.css).
+ * Плавное появление секции при попадании в viewport — один раз, через
+ * IntersectionObserver + CSS-transition (opacity/translate/blur). Никаких
+ * scroll-timeline: контент не «телепортируется», а мягко всплывает.
+ * При prefers-reduced-motion показывается сразу.
  */
 export function SectionReveal({
   children,
@@ -16,11 +18,39 @@ export function SectionReveal({
   delay?: number
   className?: string
 }) {
-  const style: CSSProperties | undefined =
-    delay > 0 ? { animationDelay: `${delay}s` } : undefined
+  const ref = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(true)
+      return
+    }
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   return (
-    <div className={`reveal ${className}`.trim()} style={style}>
+    <div
+      ref={ref}
+      style={{ transitionDelay: shown ? `${delay}s` : '0s' }}
+      className={cn(
+        'transition-all duration-700 ease-out will-change-[opacity,transform] motion-reduce:transition-none',
+        shown ? 'translate-y-0 opacity-100 blur-0' : 'translate-y-4 opacity-0 blur-[6px]',
+        className
+      )}
+    >
       {children}
     </div>
   )
