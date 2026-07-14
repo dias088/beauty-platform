@@ -78,7 +78,8 @@ type Props = {
 export function CategorySections({ masters }: Props) {
   const sections = CATEGORIES.map(cat => ({
     ...cat,
-    masters: masters.filter(m => m.categories.includes(cat.value)),
+    // Показываем мастера в категории, только если у него есть УСЛУГА в ней
+    masters: masters.filter(m => m.service_categories.includes(cat.value)),
   })).filter(s => s.masters.length > 0)
 
   if (sections.length === 0) {

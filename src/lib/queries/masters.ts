@@ -21,6 +21,9 @@ export type MasterListItem = {
   min_price: number | null
   full_name: string
   is_boosted: boolean
+  // Категории, в которых у мастера ЕСТЬ услуги (для размещения в каталоге).
+  // Отличается от `categories` — тех, что мастер отметил как специализацию в профиле.
+  service_categories: string[]
 }
 
 export type SortOption = 'rating' | 'price_asc' | 'price_desc' | 'reviews'
@@ -52,17 +55,13 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
       boost_until,
       profiles!masters_profile_id_fkey (full_name),
       portfolio_photos (url, position),
-      services (price_kzt)
+      services (price_kzt, category)
     `)
     .eq('is_active', true)
     .order('boost_until', { ascending: false, nullsFirst: false })
     .order('rating', { ascending: false })
     .order('position', { referencedTable: 'portfolio_photos' })
     .limit(200)
-
-  if (filters.category) {
-    query = query.contains('categories', [filters.category])
-  }
 
   if (filters.search) {
     query = query.or(`bio.ilike.%${filters.search}%,address.ilike.%${filters.search}%`)
@@ -88,9 +87,15 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
     is_active: m.is_active,
     primary_photo: m.portfolio_photos?.[0]?.url ?? null,
     min_price: m.services?.length ? Math.min(...m.services.map((s: any) => s.price_kzt)) : null,
+    service_categories: [...new Set(((m.services as any[]) ?? []).map(s => s.category).filter(Boolean))] as string[],
     full_name: (m.profiles as any)?.full_name || 'Мастер',
     is_boosted: m.boost_until ? new Date(m.boost_until) > new Date() : false,
   }))
+
+  // Фильтр по категории — по УСЛУГАМ мастера (а не по галочкам специализации)
+  if (filters.category) {
+    results = results.filter(m => m.service_categories.includes(filters.category!))
+  }
 
   if (filters.minPrice) {
     results = results.filter(m => m.min_price !== null && m.min_price >= filters.minPrice!)
@@ -125,7 +130,7 @@ export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> 
       is_active, boost_until,
       profiles!masters_profile_id_fkey (full_name),
       portfolio_photos (url, position),
-      services (price_kzt)
+      services (price_kzt, category)
     `)
     .in('id', ids)
     .eq('is_active', true)
@@ -146,6 +151,7 @@ export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> 
     is_active: m.is_active,
     primary_photo: m.portfolio_photos?.[0]?.url ?? null,
     min_price: m.services?.length ? Math.min(...m.services.map((s: any) => s.price_kzt)) : null,
+    service_categories: [...new Set(((m.services as any[]) ?? []).map(s => s.category).filter(Boolean))] as string[],
     full_name: (m.profiles as any)?.full_name || 'Мастер',
     is_boosted: m.boost_until ? new Date(m.boost_until) > new Date() : false,
   }))
