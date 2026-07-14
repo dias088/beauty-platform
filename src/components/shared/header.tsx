@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import LogoutButton from './logout-button'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import { cn } from '@/lib/utils'
 import { ChevronDown, LayoutDashboard, LogOut } from 'lucide-react'
 
@@ -38,11 +39,8 @@ export async function Header() {
             >
               Войти
             </Link>
-            <Link
-              href="/register?role=master"
-              className={cn(buttonVariants({ size: 'sm' }), 'bg-[#FF2D78] hover:bg-[#E01E63] text-sm')}
-            >
-              Начать бесплатно
+            <Link href="/register?role=master" aria-label="Начать бесплатно" className="inline-block">
+              <InteractiveHoverButton text="Начать бесплатно" className="h-9 w-auto px-5 py-0 text-sm" />
             </Link>
           </nav>
         </div>
