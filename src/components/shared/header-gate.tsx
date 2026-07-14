@@ -9,7 +9,11 @@ import type { ReactNode } from 'react'
  */
 export function HeaderGate({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const hidden = pathname.startsWith('/dashboard') || pathname.startsWith('/onboarding')
+  const hidden =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/onboarding') ||
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/register')
   if (hidden) return null
   return <>{children}</>
 }

@@ -48,21 +48,27 @@ export function HeroSection() {
 
   return (
     <section className="relative isolate overflow-hidden">
+      {/* Мягкая радиальная розовая подложка сверху — глубина */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[620px]"
+        style={{ background: 'radial-gradient(60% 60% at 50% 0%, rgba(255,45,120,0.10), transparent 70%)' }}
+      />
       <div className="relative z-10 container mx-auto px-6 pt-24 pb-20 max-w-5xl">
         {/* Бейдж «Уже в Астане» */}
-        <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-2)] backdrop-blur">
+        <div className="animate-blur-in inline-flex items-center gap-2 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-2)] backdrop-blur">
           <span className="status-dot h-1.5 w-1.5 rounded-full bg-[var(--success)] text-[var(--success)]" />
           Уже в Астане
         </div>
 
         {/* Заголовок */}
-        <h1 className="animate-fade-in-up mt-7 max-w-3xl text-[2.6rem] font-extrabold leading-[1.08] tracking-[-0.022em] text-white sm:text-[3.5rem]">
+        <h1 className="animate-blur-in mt-7 max-w-3xl text-[2.6rem] font-extrabold leading-[1.08] tracking-[-0.022em] text-white sm:text-[3.5rem]">
           Красота начинается с{' '}
           <span className="gradient-text">правильного мастера</span>
         </h1>
 
         {/* Typewriter */}
-        <p className="animate-fade-in-up mt-6 flex min-h-[1.75rem] flex-wrap items-center text-lg text-[var(--text-2)]">
+        <p className="animate-blur-in mt-6 flex min-h-[1.75rem] flex-wrap items-center text-lg text-[var(--text-2)]">
           <span className="mr-2 font-medium text-[var(--text-2)]">Найди:</span>
           <TypewriterText
             className="font-medium text-[var(--violet-bright)]"
@@ -76,7 +82,7 @@ export function HeroSection() {
         </p>
 
         {/* CTA */}
-        <div className="animate-fade-in-up mt-9">
+        <div className="animate-blur-in mt-9">
           <MagneticButton onClick={() => setOpen(v => !v)}>
             Смотреть услуги
             <ArrowRight
@@ -124,7 +130,7 @@ export function HeroSection() {
         )}
 
         {/* Полоса честных фактов (без выдуманной статистики) */}
-        <div className="animate-fade-in-up mt-16 flex flex-wrap items-center gap-x-10 gap-y-6">
+        <div className="animate-blur-in mt-16 flex flex-wrap items-center gap-x-10 gap-y-6">
           {FACTS.map((f, i) => (
             <div key={f.label} className="flex items-center gap-10">
               <div>

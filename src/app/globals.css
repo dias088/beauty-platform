@@ -476,3 +476,16 @@
   }
   .orb3-scroll { opacity: 0.2 !important; }
 }
+
+/* Blur-появление (богаче, чем обычный fade) — для hero и форм */
+@keyframes blurIn {
+  from { opacity: 0; filter: blur(10px); transform: translateY(14px); }
+  to   { opacity: 1; filter: blur(0);    transform: translateY(0); }
+}
+.animate-blur-in {
+  opacity: 0;
+  animation: blurIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-blur-in { animation: none !important; opacity: 1 !important; }
+}
