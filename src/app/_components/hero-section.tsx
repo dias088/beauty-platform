@@ -52,26 +52,26 @@ export function HeroSection() {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[620px]"
-        style={{ background: 'radial-gradient(60% 60% at 50% 0%, rgba(255,45,120,0.10), transparent 70%)' }}
+        style={{ background: 'radial-gradient(58% 58% at 50% 0%, rgba(255,45,120,0.06), transparent 72%)' }}
       />
-      <div className="relative z-10 container mx-auto px-6 pt-24 pb-20 max-w-5xl">
-        {/* Бейдж «Уже в Астане» */}
-        <div className="animate-blur-in inline-flex items-center gap-2 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-2)] backdrop-blur">
-          <span className="status-dot h-1.5 w-1.5 rounded-full bg-[var(--success)] text-[var(--success)]" />
+      <div className="relative z-10 container mx-auto px-6 pt-32 pb-24 max-w-5xl">
+        {/* Бейдж — минимал, uppercase */}
+        <div className="animate-blur-in inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--text-3)]">
+          <span className="status-dot h-1 w-1 rounded-full bg-[var(--success)] text-[var(--success)]" />
           Уже в Астане
         </div>
 
-        {/* Заголовок */}
-        <h1 className="animate-blur-in mt-7 max-w-3xl text-[2.6rem] font-extrabold leading-[1.08] tracking-[-0.022em] text-white sm:text-[3.5rem]">
+        {/* Заголовок — крупный и сдержанный */}
+        <h1 className="animate-blur-in mt-8 max-w-4xl text-[2.9rem] font-semibold leading-[1.04] tracking-[-0.03em] text-white sm:text-[4.25rem]">
           Красота начинается с{' '}
-          <span className="gradient-text">правильного мастера</span>
+          <span className="text-[#FF5C97]">правильного мастера</span>
         </h1>
 
-        {/* Typewriter */}
-        <p className="animate-blur-in mt-6 flex min-h-[1.75rem] flex-wrap items-center text-lg text-[var(--text-2)]">
-          <span className="mr-2 font-medium text-[var(--text-2)]">Найди:</span>
+        {/* Typewriter — спокойнее */}
+        <p className="animate-blur-in mt-8 flex min-h-[1.75rem] flex-wrap items-center text-lg text-[var(--text-2)]">
+          <span className="mr-2.5 text-[var(--text-3)]">Найди</span>
           <TypewriterText
-            className="font-medium text-[var(--violet-bright)]"
+            className="font-medium text-white"
             phrases={[
               'маникюр за 2 минуты',
               'мастера рядом с домом',
@@ -82,7 +82,7 @@ export function HeroSection() {
         </p>
 
         {/* CTA */}
-        <div className="animate-blur-in mt-9">
+        <div className="animate-blur-in mt-10">
           <MagneticButton onClick={() => setOpen(v => !v)}>
             Смотреть услуги
             <ArrowRight
@@ -129,15 +129,12 @@ export function HeroSection() {
           </div>
         )}
 
-        {/* Полоса честных фактов (без выдуманной статистики) */}
-        <div className="animate-blur-in mt-16 flex flex-wrap items-center gap-x-10 gap-y-6">
-          {FACTS.map((f, i) => (
-            <div key={f.label} className="flex items-center gap-10">
-              <div>
-                <p className="text-2xl font-extrabold tracking-tight text-white">{f.value}</p>
-                <p className="mt-0.5 text-xs text-[var(--text-3)]">{f.label}</p>
-              </div>
-              {i < FACTS.length - 1 && <div className="hidden h-9 w-px bg-white/10 sm:block" />}
+        {/* Полоса честных фактов — hairline, tech-luxe */}
+        <div className="animate-blur-in mt-20 flex flex-wrap gap-x-14 gap-y-8 border-t border-white/[0.06] pt-8">
+          {FACTS.map(f => (
+            <div key={f.label}>
+              <p className="text-2xl font-semibold tabular-nums tracking-tight text-white">{f.value}</p>
+              <p className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--text-3)]">{f.label}</p>
             </div>
           ))}
         </div>

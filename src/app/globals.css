@@ -310,14 +310,14 @@
   position: absolute;
   border-radius: 9999px;
   filter: blur(100px);
-  opacity: 0.22;
+  opacity: 0.15;
   pointer-events: none;
   will-change: transform;
   z-index: 0;
 }
 /* На мобильных blur дорогой — уменьшаем радиус и непрозрачность */
 @media (max-width: 640px) {
-  .orb { filter: blur(64px); opacity: 0.14; }
+  .orb { filter: blur(64px); opacity: 0.09; }
 }
 
 /* Тонкая сетка 48px с radial-маской (растворяется к краям) */
