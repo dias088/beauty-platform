@@ -36,8 +36,7 @@ export async function getCrmClients(masterId: string): Promise<CrmClient[]> {
         price_kzt_snapshot,
         starts_at,
         status,
-        profiles!bookings_client_id_fkey (full_name, avatar_url, phone),
-        client_scores!client_scores_client_id_fkey (score, level)
+        profiles!bookings_client_id_fkey (full_name, avatar_url, phone, client_scores (score, level))
       `)
       .eq('master_id', masterId)
       .in('status', ['completed', 'confirmed', 'pending', 'no_show'])
@@ -58,6 +57,9 @@ export async function getCrmClients(masterId: string): Promise<CrmClient[]> {
   for (const row of data as any[]) {
     const existing = map.get(row.client_id)
     const isCompleted = row.status === 'completed'
+    const cs = Array.isArray(row.profiles?.client_scores)
+      ? row.profiles.client_scores[0]
+      : row.profiles?.client_scores
 
     if (!existing) {
       map.set(row.client_id, {
@@ -68,8 +70,8 @@ export async function getCrmClients(masterId: string): Promise<CrmClient[]> {
         total_visits: isCompleted ? 1 : 0,
         total_spent:  isCompleted ? row.price_kzt_snapshot : 0,
         last_visit:   isCompleted ? row.starts_at : null,
-        score:        row.client_scores?.score ?? 0,
-        level:        row.client_scores?.level ?? 'new',
+        score:        cs?.score ?? 0,
+        level:        cs?.level ?? 'new',
         notes:        notesByClient.get(row.client_id) ?? null,
       })
     } else {
