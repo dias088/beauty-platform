@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 import { StatsCharts } from './_components/stats-charts'
 import { PeriodFilter } from './_components/period-filter'
-import { subDays, startOfDay } from 'date-fns'
+import { subDays, startOfDay, format, parseISO } from 'date-fns'
+import { ru } from 'date-fns/locale'
 import { Lock, TrendingUp, TrendingDown, CalendarCheck, Wallet, Star, Sparkles, type LucideIcon } from 'lucide-react'
 
 type Props = {
@@ -22,7 +23,6 @@ function windowStats(rows: Booking[]) {
   }
 }
 
-/** % изменения текущего периода к предыдущему. null — если сравнивать не с чем. */
 function delta(cur: number, prev: number): { pct: number; up: boolean } | null {
   if (prev === 0) return cur > 0 ? { pct: 100, up: true } : null
   const pct = Math.round(((cur - prev) / prev) * 100)
@@ -32,8 +32,6 @@ function delta(cur: number, prev: number): { pct: number; up: boolean } | null {
 async function getMasterStats(masterId: string, period: string) {
   const supabase = await createClient()
   const days = period === '7d' ? 7 : period === '30d' ? 30 : null
-
-  // Тянем данные с запасом на предыдущий период для трендов
   const fromDate = days ? startOfDay(subDays(new Date(), days * 2)).toISOString() : null
 
   let query = supabase
@@ -90,15 +88,48 @@ async function getMasterStats(masterId: string, period: string) {
     avgRating: master?.rating || 0,
     reviewCount: master?.reviews_count || 0,
     trends: days
-      ? {
-          total: delta(cur.total, pre.total),
-          completed: delta(cur.completed, pre.completed),
-          revenue: delta(cur.revenue, pre.revenue),
-        }
+      ? { total: delta(cur.total, pre.total), completed: delta(cur.completed, pre.completed), revenue: delta(cur.revenue, pre.revenue) }
       : { total: null, completed: null, revenue: null },
     byStatus,
     revenueChart,
   }
+}
+
+type RecentRow = {
+  id: string
+  service: string
+  status: string
+  starts_at: string
+  price: number
+  client: string
+}
+
+async function getRecentBookings(masterId: string): Promise<RecentRow[]> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('bookings')
+    .select('id, status, starts_at, service_name_snapshot, price_kzt_snapshot, profiles!bookings_client_id_fkey (full_name)')
+    .eq('master_id', masterId)
+    .order('starts_at', { ascending: false })
+    .limit(8)
+
+  return (data || []).map((b: any) => ({
+    id: b.id,
+    service: b.service_name_snapshot ?? 'Услуга',
+    status: b.status,
+    starts_at: b.starts_at,
+    price: b.price_kzt_snapshot ?? 0,
+    client: b.profiles?.full_name ?? 'Клиент',
+  }))
+}
+
+const STATUS_TONE: Record<string, { label: string; cls: string; dot: string }> = {
+  completed:           { label: 'Завершена',   cls: 'text-[#34d399]', dot: 'bg-[#34d399]' },
+  confirmed:           { label: 'Подтверждена', cls: 'text-[#93c5fd]', dot: 'bg-[#93c5fd]' },
+  pending:             { label: 'Ожидает',     cls: 'text-[#fbbf24]', dot: 'bg-[#fbbf24]' },
+  cancelled_by_client: { label: 'Отменена',    cls: 'text-[#f87171]', dot: 'bg-[#f87171]' },
+  cancelled_by_master: { label: 'Отменена',    cls: 'text-[#f87171]', dot: 'bg-[#f87171]' },
+  no_show:             { label: 'Не пришёл',   cls: 'text-[#f87171]', dot: 'bg-[#f87171]' },
 }
 
 type Kpi = {
@@ -107,6 +138,7 @@ type Kpi = {
   icon: LucideIcon
   trend: { pct: number; up: boolean } | null
   note: string
+  sub: string
 }
 
 function KpiCard({ kpi }: { kpi: Kpi }) {
@@ -124,19 +156,19 @@ function KpiCard({ kpi }: { kpi: Kpi }) {
           </span>
         )}
       </div>
-      <p className="mt-3 text-[1.7rem] font-semibold tabular-nums leading-none tracking-tight text-white">{kpi.value}</p>
-      <div className="mt-auto pt-4">
-        <p className="flex items-center gap-1.5 text-sm font-medium text-white">
+      <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-none tracking-tight text-white">{kpi.value}</p>
+      <div className="mt-auto pt-5 text-sm">
+        <p className="flex items-center gap-1.5 font-medium text-white">
           <Icon className="h-3.5 w-3.5 text-[var(--violet)]" />
           {kpi.note}
         </p>
+        <p className="mt-0.5 text-[var(--text-3)]">{kpi.sub}</p>
       </div>
     </div>
   )
 }
 
 export default async function StatsPage({ searchParams }: Props) {
-  // По умолчанию — 30 дней (чтобы тренды считались сразу)
   const { period = '30d' } = await searchParams
 
   const supabase = await createClient()
@@ -153,12 +185,28 @@ export default async function StatsPage({ searchParams }: Props) {
 
   const isPro = master.boost_until ? new Date(master.boost_until) > new Date() : false
   const stats = await getMasterStats(master.id, period)
+  const recent = await getRecentBookings(master.id)
 
   const kpis: Kpi[] = [
-    { label: 'Всего записей', value: String(stats.totalBookings), icon: CalendarCheck, trend: stats.trends.total, note: 'За выбранный период' },
-    { label: 'Завершено', value: String(stats.completedBookings), icon: TrendingUp, trend: stats.trends.completed, note: 'Проведённые приёмы' },
-    { label: 'Доход', value: formatPrice(stats.totalRevenue), icon: Wallet, trend: stats.trends.revenue, note: 'С завершённых записей' },
-    { label: 'Рейтинг', value: stats.avgRating.toFixed(1), icon: Star, trend: null, note: `${stats.reviewCount} отзывов` },
+    {
+      label: 'Всего записей', value: String(stats.totalBookings), icon: CalendarCheck, trend: stats.trends.total,
+      note: stats.trends.total ? (stats.trends.total.up ? 'Рост за период' : 'Снижение за период') : 'За выбранный период',
+      sub: 'Все записи в этом окне',
+    },
+    {
+      label: 'Завершено', value: String(stats.completedBookings), icon: TrendingUp, trend: stats.trends.completed,
+      note: stats.trends.completed ? (stats.trends.completed.up ? 'Больше приёмов' : 'Меньше приёмов') : 'Проведённые приёмы',
+      sub: 'Отмеченные как «завершена»',
+    },
+    {
+      label: 'Доход', value: formatPrice(stats.totalRevenue), icon: Wallet, trend: stats.trends.revenue,
+      note: stats.trends.revenue ? (stats.trends.revenue.up ? 'Выручка растёт' : 'Выручка ниже') : 'С завершённых записей',
+      sub: 'За выбранный период',
+    },
+    {
+      label: 'Рейтинг', value: stats.avgRating.toFixed(1), icon: Star, trend: null,
+      note: 'Средняя оценка', sub: `${stats.reviewCount} отзывов`,
+    },
   ]
 
   const dashboard = (
@@ -166,7 +214,49 @@ export default async function StatsPage({ searchParams }: Props) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpis.map(kpi => <KpiCard key={kpi.label} kpi={kpi} />)}
       </div>
+
       <StatsCharts byStatus={stats.byStatus} revenueChart={stats.revenueChart} />
+
+      {/* Таблица последних записей */}
+      <div className="surface overflow-hidden rounded-2xl">
+        <div className="flex items-center justify-between px-6 py-4">
+          <h2 className="text-base font-semibold text-white">Последние записи</h2>
+          <Link href="/dashboard/master" className="text-sm text-[var(--violet-bright)] hover:underline">Все записи</Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-y border-white/[0.06] text-left text-[var(--text-3)]">
+                <th className="px-6 py-2.5 font-medium">Услуга</th>
+                <th className="px-6 py-2.5 font-medium">Клиент</th>
+                <th className="px-6 py-2.5 font-medium">Статус</th>
+                <th className="px-6 py-2.5 font-medium">Дата</th>
+                <th className="px-6 py-2.5 text-right font-medium">Цена</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recent.length === 0 ? (
+                <tr><td colSpan={5} className="px-6 py-8 text-center text-[var(--text-3)]">Записей пока нет</td></tr>
+              ) : recent.map(r => {
+                const st = STATUS_TONE[r.status] ?? { label: r.status, cls: 'text-[var(--text-2)]', dot: 'bg-white/30' }
+                return (
+                  <tr key={r.id} className="border-b border-white/[0.04] transition-colors hover:bg-white/[0.02]">
+                    <td className="px-6 py-3 font-medium text-white">{r.service}</td>
+                    <td className="px-6 py-3 text-[var(--text-2)]">{r.client}</td>
+                    <td className="px-6 py-3">
+                      <span className={`inline-flex items-center gap-1.5 ${st.cls}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${st.dot}`} />{st.label}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-[var(--text-3)]">{format(parseISO(r.starts_at), 'd MMM, HH:mm', { locale: ru })}</td>
+                    <td className="px-6 py-3 text-right tabular-nums text-white">{formatPrice(r.price)}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   )
 
