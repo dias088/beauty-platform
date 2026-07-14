@@ -42,12 +42,12 @@ async function sendBookingCreatedEmails(bookingId: string, clientEmail: string) 
         subject: 'Новая запись на Beauty Platform',
         html: `
           <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
-            <h2 style="color:#7c3aed">Новая запись!</h2>
+            <h2 style="color:#FF2D78">Новая запись!</h2>
             <p>Клиент записался на <strong>${serviceName}</strong></p>
             <p><strong>Время:</strong> ${dateTime}</p>
             <div style="margin-top:24px">
               <a href="${APP_URL}/dashboard/master"
-                style="background:#7c3aed;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">
+                style="background:#FF2D78;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">
                 Открыть дашборд
               </a>
             </div>
@@ -60,14 +60,14 @@ async function sendBookingCreatedEmails(bookingId: string, clientEmail: string) 
         subject: `Запись создана — ${masterName}`,
         html: `
           <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
-            <h2 style="color:#7c3aed">Запись создана!</h2>
+            <h2 style="color:#FF2D78">Запись создана!</h2>
             <p>Вы записались к <strong>${masterName}</strong></p>
             <p>Услуга: <strong>${serviceName}</strong></p>
             <p>Время: <strong>${dateTime}</strong></p>
             <p style="color:#6b7280;font-size:14px">Мастер подтвердит запись в течение часа.</p>
             <div style="margin-top:24px">
               <a href="${APP_URL}/dashboard/client"
-                style="background:#7c3aed;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">
+                style="background:#FF2D78;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">
                 Мой кабинет
               </a>
             </div>

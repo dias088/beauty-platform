@@ -99,20 +99,20 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
               {STEPS.map(s => (
                 <div key={s.num} className="flex flex-col items-center gap-1">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                    step > s.num ? 'bg-violet-600 text-white' :
-                    step === s.num ? 'bg-violet-600 text-white ring-4 ring-[rgba(167,139,250,0.2)]' :
+                    step > s.num ? 'bg-[#FF2D78] text-white' :
+                    step === s.num ? 'bg-[#FF2D78] text-white ring-4 ring-[rgba(167,139,250,0.2)]' :
                     'bg-muted text-muted-foreground'
                   }`}>
                     {step > s.num ? '✓' : s.num}
                   </div>
-                  <span className={`text-xs ${step === s.num ? 'text-violet-600 font-medium' : 'text-muted-foreground'}`}>
+                  <span className={`text-xs ${step === s.num ? 'text-[#FF2D78] font-medium' : 'text-muted-foreground'}`}>
                     {s.label}
                   </span>
                 </div>
               ))}
             </div>
             <div className="relative h-1.5 bg-muted rounded-full overflow-hidden">
-              <div className="absolute inset-y-0 left-0 bg-violet-600 rounded-full transition-all duration-500"
+              <div className="absolute inset-y-0 left-0 bg-[#FF2D78] rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }} />
             </div>
           </div>

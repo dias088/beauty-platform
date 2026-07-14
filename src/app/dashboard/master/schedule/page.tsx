@@ -258,12 +258,12 @@ export default function SchedulePage() {
                   className={[
                     'flex flex-col items-center p-2 rounded-xl border transition-all text-center',
                     isSelected ? 'border-[var(--violet)] bg-[rgba(167,139,250,0.1)]' : 'border-border hover:border-[var(--violet)]/40',
-                    isToday ? 'ring-2 ring-violet-400 ring-offset-1' : '',
+                    isToday ? 'ring-2 ring-[#FF87B2] ring-offset-1' : '',
                     isPast ? 'opacity-40' : '',
                   ].join(' ')}
                 >
                   <span className="text-xs text-muted-foreground">{DAY_NAMES[day.getDay()]}</span>
-                  <span className={`text-lg font-bold my-0.5 ${isToday ? 'text-violet-600' : ''}`}>
+                  <span className={`text-lg font-bold my-0.5 ${isToday ? 'text-[#FF2D78]' : ''}`}>
                     {format(day, 'd')}
                   </span>
                   {daySlots.length > 0 ? (
@@ -396,7 +396,7 @@ export default function SchedulePage() {
                     onClick={() => setTemplate(t => ({ ...t, [dow]: { ...t[dow], enabled: !t[dow].enabled } }))}
                     className={`w-28 text-left font-semibold text-sm flex items-center gap-2 ${cfg.enabled ? 'text-foreground' : 'text-muted-foreground'}`}
                   >
-                    <span className={`w-3 h-3 rounded-full border-2 transition-colors ${cfg.enabled ? 'bg-violet-500 border-violet-500' : 'bg-transparent border-muted-foreground/40'}`} />
+                    <span className={`w-3 h-3 rounded-full border-2 transition-colors ${cfg.enabled ? 'bg-[#FF5C97] border-[#FF5C97]' : 'bg-transparent border-muted-foreground/40'}`} />
                     {DAY_NAMES_FULL[dow]}
                   </button>
 

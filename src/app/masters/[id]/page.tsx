@@ -93,7 +93,7 @@ export default async function MasterProfilePage({ params }: Props) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
             </>
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-violet-500 to-pink-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FF2D78] via-[#FF5C97] to-pink-500" />
           )}
 
           {/* Back button */}

@@ -40,7 +40,7 @@ export function BookingButton({ masterId, masterName, services }: Props) {
       <Button
         onClick={handleClick}
         size="lg"
-        className="w-full shadow-lg shadow-primary/30 bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-700 hover:to-violet-600 text-white border-0"
+        className="w-full shadow-lg shadow-primary/30 bg-gradient-to-r from-[#FF2D78] to-[#FF5C97] hover:from-[#E01E63] hover:to-[#FF2D78] text-white border-0"
       >
         Записаться
       </Button>

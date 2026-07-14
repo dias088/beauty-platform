@@ -59,7 +59,7 @@ export function DiscountSettingsForm({ initial }: Props) {
   return (
     <Card className="p-6 space-y-6">
       <div className="flex items-start gap-3">
-        <Sparkles className="w-5 h-5 text-violet-500 shrink-0 mt-0.5" />
+        <Sparkles className="w-5 h-5 text-[#FF5C97] shrink-0 mt-0.5" />
         <div>
           <h2 className="font-semibold text-base">Скидки по Beauty Score</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
@@ -72,7 +72,7 @@ export function DiscountSettingsForm({ initial }: Props) {
       {/* Пример как это выглядит для клиента */}
       {(verifiedDiscount > 0 || trustedDiscount > 0) && (
         <div className="rounded-lg bg-[rgba(167,139,250,0.08)] border border-[rgba(167,139,250,0.2)] p-4 text-sm text-[#c4b5fd] flex gap-2">
-          <Info className="w-4 h-4 shrink-0 mt-0.5 text-violet-500" />
+          <Info className="w-4 h-4 shrink-0 mt-0.5 text-[#FF5C97]" />
           <span>
             Клиент увидит скидку при выборе услуги на вашем профиле.
             Цена автоматически пересчитается в момент записи.
@@ -145,7 +145,7 @@ function LevelRow({
             className={[
               'px-4 py-2 rounded-lg text-sm font-medium border transition-all',
               value === pct
-                ? 'bg-violet-600 text-white border-violet-600 shadow-sm'
+                ? 'bg-[#FF2D78] text-white border-[#FF2D78] shadow-sm'
                 : 'bg-background text-foreground border-border hover:border-[var(--violet)]/40 hover:bg-[rgba(167,139,250,0.06)]',
             ].join(' ')}
           >

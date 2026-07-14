@@ -12,7 +12,7 @@ type Props = {
 }
 
 // Тёмная тема графиков
-const VIOLET = '#a78bfa'
+const VIOLET = '#FF5C97'
 const GRID = 'rgba(255,255,255,0.08)'
 const AXIS = '#9ca3af'
 const TOOLTIP_STYLE = {

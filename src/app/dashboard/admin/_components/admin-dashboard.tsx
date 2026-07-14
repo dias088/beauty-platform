@@ -45,13 +45,13 @@ type Props = {
 }
 
 const STAT_CARDS = (s: Stats) => [
-  { label: 'Всего мастеров',    value: s.totalMasters,      icon: Users,       color: 'text-[#a78bfa]', bg: 'bg-[rgba(167,139,250,0.1)]' },
+  { label: 'Всего мастеров',    value: s.totalMasters,      icon: Users,       color: 'text-[#FF5C97]', bg: 'bg-[rgba(167,139,250,0.1)]' },
   { label: 'Верифицировано',    value: s.verifiedMasters,   icon: CheckCircle2,color: 'text-[#34d399]',  bg: 'bg-[rgba(16,185,129,0.1)]'  },
   { label: 'Ожидают проверки',  value: s.pendingMasters,    icon: Clock,       color: 'text-[#fbbf24]',  bg: 'bg-[rgba(251,191,36,0.1)]', alert: s.pendingMasters > 0 },
   { label: 'Записей (30 дн)',   value: s.totalBookings30d,  icon: BarChart3,   color: 'text-[#60a5fa]',   bg: 'bg-[rgba(96,165,250,0.1)]'   },
   { label: 'Завершено',         value: s.completedBookings, icon: TrendingUp,  color: 'text-[#34d399]',  bg: 'bg-[rgba(16,185,129,0.1)]'  },
   { label: 'Выручка (30 дн)',   value: `${(s.revenue30d/1000).toFixed(0)}K ₸`, icon: Star, color: 'text-[#fbbf24]', bg: 'bg-[rgba(251,191,36,0.1)]' },
-  { label: 'Клиентов',          value: s.totalClients,      icon: Users,       color: 'text-[#a78bfa]', bg: 'bg-[rgba(167,139,250,0.1)]' },
+  { label: 'Клиентов',          value: s.totalClients,      icon: Users,       color: 'text-[#FF5C97]', bg: 'bg-[rgba(167,139,250,0.1)]' },
 ]
 
 type Tab = 'masters' | 'pending'

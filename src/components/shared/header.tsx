@@ -16,7 +16,7 @@ function Logo() {
   return (
     <Link href="/" className="flex items-center gap-1 group">
       <span className="font-medium text-base tracking-tight text-foreground">
-        Beauty<span className="text-violet-600">.</span>kz
+        Beauty<span className="text-[#FF2D78]">.</span>kz
       </span>
     </Link>
   )
@@ -40,7 +40,7 @@ export async function Header() {
             </Link>
             <Link
               href="/register?role=master"
-              className={cn(buttonVariants({ size: 'sm' }), 'bg-violet-600 hover:bg-violet-700 text-sm')}
+              className={cn(buttonVariants({ size: 'sm' }), 'bg-[#FF2D78] hover:bg-[#E01E63] text-sm')}
             >
               Начать бесплатно
             </Link>
@@ -69,7 +69,7 @@ export async function Header() {
 
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-muted transition-colors outline-none">
-            <div className="w-7 h-7 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-semibold shrink-0">
+            <div className="w-7 h-7 rounded-full bg-[rgba(255,45,120,0.15)] text-[#E01E63] flex items-center justify-center text-xs font-semibold shrink-0">
               {initials}
             </div>
             <span className="text-sm font-medium hidden sm:block max-w-32 truncate">

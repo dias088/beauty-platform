@@ -93,31 +93,31 @@
   --card-foreground: #ffffff;
   --popover: #17171c;
   --popover-foreground: #ffffff;
-  --primary: #8b5cf6;
+  --primary: #FF2D78;
   --primary-foreground: #ffffff;
   --secondary: rgba(255, 255, 255, 0.06);
   --secondary-foreground: #ffffff;
   --muted: rgba(255, 255, 255, 0.04);
   --muted-foreground: #9ca3af;
-  --accent: rgba(167, 139, 250, 0.09);
-  --accent-foreground: #c4b5fd;
+  --accent: rgba(255, 45, 120, 0.09);
+  --accent-foreground: #FF9BC0;
   --destructive: #ef4444;
   --border: rgba(255, 255, 255, 0.07);
   --input: rgba(255, 255, 255, 0.10);
-  --ring: #a78bfa;
-  --chart-1: #a78bfa;
-  --chart-2: #c026d3;
-  --chart-3: #4f46e5;
+  --ring: #FF5C97;
+  --chart-1: #FF5C97;
+  --chart-2: #FF6B4A;
+  --chart-3: #C8215E;
   --chart-4: #10b981;
   --chart-5: #fbbf24;
   --sidebar: #101013;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #8b5cf6;
+  --sidebar-primary: #FF2D78;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(167, 139, 250, 0.09);
-  --sidebar-accent-foreground: #c4b5fd;
+  --sidebar-accent: rgba(255, 45, 120, 0.09);
+  --sidebar-accent-foreground: #FF9BC0;
   --sidebar-border: rgba(255, 255, 255, 0.07);
-  --sidebar-ring: #a78bfa;
+  --sidebar-ring: #FF5C97;
 }
 
 /* Дополнительные premium-токены (доступны всегда, сайт dark-only) */
@@ -125,10 +125,10 @@
 .dark {
   --surface: rgba(255, 255, 255, 0.03);
   --surface-border: rgba(255, 255, 255, 0.07);
-  --surface-active: rgba(167, 139, 250, 0.09);
-  --violet: #a78bfa;
-  --violet-bright: #c4b5fd;
-  --gradient-primary: linear-gradient(135deg, #8b5cf6, #c026d3);
+  --surface-active: rgba(255, 45, 120, 0.09);
+  --violet: #FF5C97;
+  --violet-bright: #FF9BC0;
+  --gradient-primary: linear-gradient(135deg, #FF2D78, #FF6B4A);
   /* Тексты: контраст поднят для комфортной читаемости на тёмном фоне.
      text-1 основной, text-2 вторичный, text-3 приглушённый (но читаемый),
      text-muted самый тихий, label — номера/метки (violet). */
@@ -136,15 +136,15 @@
   --text-2: #b2b8c2;
   --text-3: #969ca8;
   --text-muted: #8b919d;
-  --label: #a394d8;
-  --orb-1: #7c3aed;
-  --orb-2: #c026d3;
-  --orb-3: #4f46e5;
+  --label: #C77A9B;
+  --orb-1: #FF2D78;
+  --orb-2: #FF6B4A;
+  --orb-3: #C8215E;
   --success: #10b981;
   --warning: #fbbf24;
   --danger: #ef4444;
-  --glow-violet: 0 0 34px rgba(139, 92, 246, 0.25);
-  --glow-violet-strong: 0 20px 50px rgba(139, 92, 246, 0.45);
+  --glow-violet: 0 0 34px rgba(255, 45, 120, 0.25);
+  --glow-violet-strong: 0 20px 50px rgba(255, 45, 120, 0.45);
 }
 
 @layer base {
@@ -282,8 +282,8 @@
   50%      { transform: translate(-32px, 30px) scale(1.1); }
 }
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.5); }
-  50%      { box-shadow: 0 0 0 4px rgba(167, 139, 250, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 120, 0.5); }
+  50%      { box-shadow: 0 0 0 4px rgba(255, 45, 120, 0); }
 }
 
 /* Каскад появления: класс на контейнере, задержки по индексу */
@@ -336,7 +336,7 @@
 
 /* Градиентный переливающийся текст (акцентные слова) */
 .gradient-text {
-  background-image: linear-gradient(90deg, #8b5cf6, #c026d3, #a78bfa, #8b5cf6);
+  background-image: linear-gradient(90deg, #FF2D78, #FF6B4A, #FF5C97, #FF2D78);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
@@ -368,7 +368,7 @@
   transition: opacity 0.3s ease;
   background: radial-gradient(
     220px circle at var(--x, 50%) var(--y, 50%),
-    rgba(167, 139, 250, 0.22),
+    rgba(255, 45, 120, 0.22),
     transparent 60%
   );
 }
@@ -429,9 +429,9 @@
    ══════════════════════════════════════════════════════════ */
 
 @keyframes glowJourney {
-  0%   { background: radial-gradient(55% 45% at 72% 12%, rgba(124, 58, 237, 0.24), transparent 70%); }
-  50%  { background: radial-gradient(55% 45% at 30% 42%, rgba(192, 38, 211, 0.22), transparent 70%); }
-  100% { background: radial-gradient(55% 45% at 62% 84%, rgba(79, 70, 229, 0.22), transparent 70%); }
+  0%   { background: radial-gradient(55% 45% at 72% 12%, rgba(255, 45, 120, 0.24), transparent 70%); }
+  50%  { background: radial-gradient(55% 45% at 30% 42%, rgba(255, 107, 74, 0.22), transparent 70%); }
+  100% { background: radial-gradient(55% 45% at 62% 84%, rgba(200, 33, 94, 0.22), transparent 70%); }
 }
 @keyframes paraSlow { to { transform: translateY(-190px); } }
 @keyframes paraRev  { to { transform: translateY(150px); } }
@@ -443,7 +443,7 @@
 
 /* Статичный фолбэк по умолчанию (браузеры без scroll-timeline) */
 .scroll-glow {
-  background: radial-gradient(55% 45% at 72% 12%, rgba(124, 58, 237, 0.22), transparent 70%);
+  background: radial-gradient(55% 45% at 72% 12%, rgba(255, 45, 120, 0.22), transparent 70%);
 }
 
 @supports (animation-timeline: scroll()) {
