@@ -11,17 +11,22 @@ export async function saveBasicsAction(
   categories: string[],
   instagram?: string,
 ): Promise<Result> {
+  // Instagram: убираем ведущий @ и пробелы, пустое → undefined (поле необязательное)
+  const instagramNormalized = instagram?.replace(/^@+/, '').trim() || undefined
+
   const parsed = masterBasicsSchema.safeParse({
     bio,
     categories,
-    instagram,
+    instagram: instagramNormalized,
   })
 
   if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors as Record<string, string[]>
+    const firstMsg = Object.values(fieldErrors).flat()[0]
     return {
       success: false,
-      error: 'Проверьте поля',
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      error: firstMsg ?? 'Проверьте поля',
+      fieldErrors,
     }
   }
 

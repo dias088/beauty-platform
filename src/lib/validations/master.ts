@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const SERVICE_CATEGORIES = ['nail', 'lash', 'brow', 'hair', 'makeup', 'cosmetology'] as const
 
 export const masterBasicsSchema = z.object({
-  bio: z.string().min(50, 'Минимум 50 символов').max(1000),
+  bio: z.string().min(20, 'Расскажите о себе — минимум 20 символов').max(1000),
   categories: z.array(z.enum(SERVICE_CATEGORIES)).min(1, 'Выберите хотя бы одну категорию'),
   instagram: z.string().regex(/^[a-zA-Z0-9._]{1,30}$/, 'Только буквы, цифры, точки').optional().or(z.literal('')),
 })

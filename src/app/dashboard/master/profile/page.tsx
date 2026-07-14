@@ -121,7 +121,7 @@ export default function ProfilePage() {
             rows={5}
           />
           <p className="text-xs text-muted-foreground mt-2">
-            {bio.length} символов (минимум 50)
+            {bio.length} символов (минимум 20)
           </p>
         </div>
 

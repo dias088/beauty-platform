@@ -341,7 +341,7 @@ export async function updateProfileAction(
     .update({
       bio,
       categories: categories as ('nail' | 'lash' | 'brow' | 'hair' | 'makeup' | 'cosmetology')[],
-      instagram_handle: instagram_handle || null,
+      instagram_handle: instagram_handle?.replace(/^@+/, '').trim() || null,
     })
     .eq('id', master.id)
 

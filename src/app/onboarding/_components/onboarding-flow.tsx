@@ -128,7 +128,9 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                 value={bio} onChange={e => setBio(e.target.value)}
                 rows={4} className="resize-none"
               />
-              <p className="text-xs text-muted-foreground mt-1">{bio.length} / 500 символов</p>
+              <p className={`text-xs mt-1 ${bio.length > 0 && bio.length < 20 ? 'text-[#f87171]' : 'text-muted-foreground'}`}>
+                {bio.length < 20 ? `Ещё минимум ${20 - bio.length} символов` : `${bio.length} символов`}
+              </p>
             </div>
 
             <div>
