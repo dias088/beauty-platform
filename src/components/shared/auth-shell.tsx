@@ -45,7 +45,7 @@ export function AuthShell({
           style={{ bottom: '2%', right: '-8%', width: 380, height: 380, background: 'var(--orb-2)', opacity: 0.4 }}
         />
 
-        <div className="relative z-10 flex h-full flex-col justify-end p-12">
+        <div className="relative z-10 flex h-full flex-col justify-center p-12">
           <p className="text-[2.4rem] font-extrabold leading-[1.1] tracking-[-0.02em] text-white">
             Красота начинается с{' '}
             <span className="gradient-text">правильного мастера</span>
