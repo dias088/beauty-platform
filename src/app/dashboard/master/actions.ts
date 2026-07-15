@@ -185,6 +185,107 @@ export async function createSlotsAction(
   return { success: true, data: { created: rows.length, skipped: future.length - rows.length } }
 }
 
+export type ScheduleTemplateDay = {
+  weekday: number
+  enabled: boolean
+  startTime: string
+  endTime: string
+  slotDuration: number
+}
+
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/
+
+function getMinutes(time: string) {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
+}
+
+async function getCurrentMasterId() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { supabase, error: 'Войдите снова' as const }
+
+  const { data: master } = await supabase
+    .from('masters')
+    .select('id')
+    .eq('profile_id', user.id)
+    .single()
+
+  if (!master) return { supabase, error: 'Профиль мастера не найден' as const }
+  return { supabase, masterId: master.id }
+}
+
+export async function getScheduleTemplateAction(): Promise<Result<ScheduleTemplateDay[]>> {
+  const current = await getCurrentMasterId()
+  if ('error' in current) return { success: false, error: current.error }
+
+  // The table is introduced by migration 10. The generated Supabase types are
+  // not regenerated in this repository, so this isolated cast keeps the app typed.
+  const templates = current.supabase.from('master_schedule_templates' as any) as any
+  const { data, error } = await templates
+    .select('weekday, enabled, start_time, end_time, slot_duration_minutes')
+    .eq('master_id', current.masterId)
+    .order('weekday')
+
+  if (error) return { success: false, error: 'Не удалось загрузить шаблон расписания' }
+
+  return {
+    success: true,
+    data: (data ?? []).map((day: any) => ({
+      weekday: day.weekday,
+      enabled: day.enabled,
+      startTime: day.start_time.slice(0, 5),
+      endTime: day.end_time.slice(0, 5),
+      slotDuration: day.slot_duration_minutes,
+    })),
+  }
+}
+
+export async function saveScheduleTemplateAction(
+  days: ScheduleTemplateDay[]
+): Promise<Result> {
+  if (!Array.isArray(days) || days.length !== 7 || new Set(days.map(day => day.weekday)).size !== 7) {
+    return { success: false, error: 'Шаблон должен содержать настройки для всех дней недели' }
+  }
+
+  for (const day of days) {
+    if (!Number.isInteger(day.weekday) || day.weekday < 0 || day.weekday > 6) {
+      return { success: false, error: 'Некорректный день недели' }
+    }
+    if (!TIME_PATTERN.test(day.startTime) || !TIME_PATTERN.test(day.endTime)) {
+      return { success: false, error: 'Укажите корректное время работы' }
+    }
+    if (!Number.isInteger(day.slotDuration) || day.slotDuration < 15 || day.slotDuration > 480) {
+      return { success: false, error: 'Длительность слота должна быть от 15 до 480 минут' }
+    }
+    if (day.enabled && getMinutes(day.endTime) <= getMinutes(day.startTime)) {
+      return { success: false, error: 'Время окончания должно быть позже времени начала' }
+    }
+  }
+
+  const current = await getCurrentMasterId()
+  if ('error' in current) return { success: false, error: current.error }
+
+  const templates = current.supabase.from('master_schedule_templates' as any) as any
+  const { error } = await templates.upsert(
+    days.map(day => ({
+      master_id: current.masterId,
+      weekday: day.weekday,
+      enabled: day.enabled,
+      start_time: day.startTime,
+      end_time: day.endTime,
+      slot_duration_minutes: day.slotDuration,
+      updated_at: new Date().toISOString(),
+    })),
+    { onConflict: 'master_id,weekday' }
+  )
+
+  if (error) return { success: false, error: 'Не удалось сохранить шаблон расписания' }
+
+  revalidatePath('/dashboard/master/schedule')
+  return { success: true, data: undefined }
+}
+
 export async function deleteSlotAction(slotId: string): Promise<Result> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -380,4 +481,3 @@ export async function updateProfileAction(
   revalidatePath('/dashboard/master/profile')
   return { success: true, data: undefined }
 }
-

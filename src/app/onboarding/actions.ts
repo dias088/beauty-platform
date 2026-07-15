@@ -72,6 +72,39 @@ export async function saveLocationAction(input: { address: string; lat: number; 
   redirect('/onboarding?step=3')
 }
 
+export async function saveOnboardingLocationAction(
+  input: { address: string; lat: number; lng: number }
+): Promise<Result> {
+  const parsed = masterLocationSchema.safeParse(input)
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: 'Проверьте адрес на карте',
+      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+    }
+  }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Войдите снова' }
+
+  const { error } = await supabase
+    .from('masters')
+    .update({
+      address: parsed.data.address,
+      lat: parsed.data.lat,
+      lng: parsed.data.lng,
+    })
+    .eq('profile_id', user.id)
+
+  if (error) return { success: false, error: 'Не удалось сохранить адрес' }
+
+  revalidatePath('/onboarding')
+  revalidatePath('/dashboard/master/profile')
+  revalidatePath('/')
+  return { success: true, data: undefined }
+}
+
 export async function savePhotoRecordAction(input: { url: string; storagePath: string }): Promise<Result<{ id: string }>> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -148,7 +181,7 @@ export async function completePhotosStepAction(): Promise<Result> {
   redirect('/onboarding?step=4')
 }
 
-export async function addServiceAction(input: any): Promise<Result<{ id: string }>> {
+export async function addServiceAction(input: unknown): Promise<Result<{ id: string }>> {
   const parsed = masterServiceSchema.safeParse(input)
   if (!parsed.success) {
     return {

@@ -19,7 +19,7 @@ const ASTANA_CENTER = [51.1694, 71.4491]
 export function MasterMap({ masters, selectedId, onSelect }: Props) {
   const features = useMemo(() =>
     masters
-      .filter(m => m.lat && m.lng)
+      .filter(m => typeof m.lat === 'number' && typeof m.lng === 'number')
       .map(m => ({
         type: 'Feature' as const,
         id: m.id,
@@ -36,7 +36,11 @@ export function MasterMap({ masters, selectedId, onSelect }: Props) {
           hintContent: m.full_name,
         },
         options: {
-          preset: m.id === selectedId ? 'islands#redIcon' : 'islands#pinkIcon',
+          // Фирменный пин Beauty.kz: обычный — hot pink, выбранный — глубже.
+          // Не используем встроенные red/pink пресеты, чтобы цвет карты совпадал
+          // с остальным интерфейсом (#FF2D78).
+          preset: 'islands#icon',
+          iconColor: m.id === selectedId ? '#C8215E' : '#FF2D78',
         },
       })),
     [masters, selectedId]
@@ -52,8 +56,8 @@ export function MasterMap({ masters, selectedId, onSelect }: Props) {
       >
         <ObjectManager
           options={{ clusterize: true, gridSize: 64 }}
-          objects={{ openBalloonOnClick: true, preset: 'islands#pinkIcon' }}
-          clusters={{ preset: 'islands#pinkClusterIcons' }}
+          objects={{ openBalloonOnClick: true, preset: 'islands#icon', iconColor: '#FF2D78' }}
+          clusters={{ preset: 'islands#pinkClusterIcons', iconColor: '#FF2D78' }}
           features={features as any}
           instanceRef={(ref: any) => {
             if (!ref) return

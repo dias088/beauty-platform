@@ -119,7 +119,11 @@ export function LocationStep({ initialData }: { initialData?: any }) {
                     ref={placemarkRef}
                     defaultGeometry={[location.lat, location.lng]}
                     properties={{ balloonContent: 'Ваше местоположение' }}
-                    options={{ draggable: true }}
+                    options={{
+                      draggable: true,
+                      preset: 'islands#icon',
+                      iconColor: '#FF2D78',
+                    }}
                     onDragEnd={handlePlacemarkDragEnd}
                   />
                 </YandexMap>

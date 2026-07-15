@@ -7,8 +7,9 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
-import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, Lightbulb } from 'lucide-react'
-import { saveBasicsAction, saveLocationAction } from '../actions'
+import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, Loader2, MapPin } from 'lucide-react'
+import { addServiceAction, saveBasicsAction, saveOnboardingLocationAction } from '../actions'
+import { useAddressSuggest } from '@/hooks/use-address-suggest'
 
 const CATEGORIES = [
   { value: 'nail',        label: 'Маникюр' },
@@ -43,9 +44,17 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
   const [servicePrice, setServicePrice]       = useState('')
   const [serviceDuration, setServiceDuration] = useState('60')
   const [serviceCategory, setServiceCategory] = useState('')
+  const [serviceCreated, setServiceCreated]   = useState(false)
 
   // Step 3
-  const [address, setAddress] = useState(masterInfo?.address ?? '')
+  const [addressQuery, setAddressQuery] = useState(masterInfo?.address ?? '')
+  const [addressCoords, setAddressCoords] = useState<{ lat: number; lng: number } | null>(
+    typeof masterInfo?.lat === 'number' && typeof masterInfo?.lng === 'number'
+      ? { lat: masterInfo.lat, lng: masterInfo.lng }
+      : null
+  )
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const { results: suggestions, loading: suggestLoading } = useAddressSuggest(addressQuery)
 
   const nextStep = () => setStep(s => s + 1)
   const prevStep = () => setStep(s => s - 1)
@@ -61,15 +70,58 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
   }
 
   const handleStep2 = async () => {
-    // Услуга опциональна на онбординге — можно добавить потом
-    nextStep()
+    if (serviceCreated || (!serviceName.trim() && !servicePrice && !serviceCategory)) {
+      nextStep()
+      return
+    }
+
+    if (!serviceName.trim() || !servicePrice || !serviceCategory) {
+      toast.error('Заполните название, цену и категорию услуги или пропустите этот шаг')
+      return
+    }
+
+    setLoading(true)
+    const result = await addServiceAction({
+      name: serviceName.trim(),
+      category: serviceCategory,
+      price_kzt: Number(servicePrice),
+      duration_minutes: Number(serviceDuration),
+    })
+    setLoading(false)
+
+    if (result.success) {
+      setServiceCreated(true)
+      nextStep()
+    } else {
+      toast.error(result.error)
+    }
   }
 
   const handleStep3 = async () => {
+    if (!addressQuery.trim()) {
+      nextStep()
+      return
+    }
+    if (!addressCoords) {
+      toast.error('Выберите адрес из подсказок, чтобы отметить его на карте')
+      return
+    }
+
     setLoading(true)
-    // Адрес тоже можно добавить позже
+    const result = await saveOnboardingLocationAction({
+      address: addressQuery,
+      lat: addressCoords.lat,
+      lng: addressCoords.lng,
+    })
     setLoading(false)
-    nextStep()
+    if (result.success) nextStep()
+    else toast.error(result.error)
+  }
+
+  const handleSelectAddress = (suggestion: { value: string; lat: number; lng: number }) => {
+    setAddressQuery(suggestion.value)
+    setAddressCoords({ lat: suggestion.lat, lng: suggestion.lng })
+    setShowSuggestions(false)
   }
 
   const progress = ((step - 1) / (STEPS.length - 1)) * 100
@@ -212,8 +264,8 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
               <Button variant="outline" className="flex-1" onClick={prevStep}>
                 <ArrowLeft className="w-4 h-4 mr-1" /> Назад
               </Button>
-              <Button className="flex-1" onClick={handleStep2}>
-                {serviceName ? 'Сохранить и далее' : 'Пропустить'} <ArrowRight className="w-4 h-4 ml-1" />
+              <Button className="flex-1" onClick={handleStep2} disabled={loading}>
+                {loading ? 'Сохранение...' : serviceName ? 'Сохранить и далее' : 'Пропустить'} <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </Card>
@@ -224,8 +276,35 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
           <Card className="p-6 space-y-5 shadow-sm">
             <div>
               <label className="text-sm font-medium block mb-2">Адрес приёма клиентов</label>
-              <Input placeholder="ул. Кунаева, 12, офис 305, Астана"
-                value={address} onChange={e => setAddress(e.target.value)} />
+              <div className="relative">
+                <Input
+                  placeholder="ул. Кунаева, 12, офис 305, Астана"
+                  value={addressQuery}
+                  onChange={event => {
+                    setAddressQuery(event.target.value)
+                    setAddressCoords(null)
+                    setShowSuggestions(true)
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  className="pr-10"
+                />
+                {suggestLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />}
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-lg border bg-popover shadow-lg">
+                    {suggestions.map((suggestion, index) => (
+                      <button
+                        key={`${suggestion.value}-${index}`}
+                        type="button"
+                        onClick={() => handleSelectAddress(suggestion)}
+                        className="flex w-full items-start gap-2 px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted"
+                      >
+                        <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#FF2D78]" />
+                        <span>{suggestion.value}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground mt-2">
                 Отображается на карте для клиентов. Можно добавить позже в настройках.
               </p>
@@ -236,7 +315,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                 <ArrowLeft className="w-4 h-4 mr-1" /> Назад
               </Button>
               <Button className="flex-1" onClick={handleStep3} disabled={loading}>
-                {address ? 'Сохранить и завершить' : 'Пропустить'} <ArrowRight className="w-4 h-4 ml-1" />
+                {addressQuery ? 'Сохранить и завершить' : 'Пропустить'} <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </Card>

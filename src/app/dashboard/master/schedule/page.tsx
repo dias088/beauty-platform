@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { createSlotsAction, deleteSlotAction } from '../actions'
+import {
+  createSlotsAction,
+  deleteSlotAction,
+  getScheduleTemplateAction,
+  saveScheduleTemplateAction,
+} from '../actions'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -30,6 +35,15 @@ type WeekTemplate = Record<number, DayTemplate>
 const DEFAULT_DAY: DayTemplate = { enabled: false, startTime: '09:00', endTime: '18:00', slotDuration: 60 }
 const DAY_NAMES = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
 const DAY_NAMES_FULL = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+
+function createDefaultTemplate(): WeekTemplate {
+  const template: WeekTemplate = {}
+  for (let day = 0; day < 7; day++) template[day] = { ...DEFAULT_DAY }
+  ;[1, 2, 3, 4, 5].forEach(day => {
+    template[day] = { enabled: true, startTime: '09:00', endTime: '18:00', slotDuration: 60 }
+  })
+  return template
+}
 
 function generateSlotsForDay(date: Date, cfg: DayTemplate): { starts: string; ends: string }[] {
   const result: { starts: string; ends: string }[] = []
@@ -61,24 +75,19 @@ export default function SchedulePage() {
   const [generating, setGenerating] = useState(false)
   const [deletingDay, setDeletingDay] = useState(false)
   const [deletingSlot, setDeletingSlot] = useState<string | null>(null)
+  const [savingTemplate, setSavingTemplate] = useState(false)
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDay, setSelectedDay] = useState<Date | null>(null)
   const [tab, setTab] = useState<'week' | 'template'>('week')
 
-  const [template, setTemplate] = useState<WeekTemplate>(() => {
-    const t: WeekTemplate = {}
-    for (let i = 0; i < 7; i++) t[i] = { ...DEFAULT_DAY }
-    ;[1, 2, 3, 4, 5].forEach(d => {
-      t[d] = { enabled: true, startTime: '09:00', endTime: '18:00', slotDuration: 60 }
-    })
-    return t
-  })
+  const [template, setTemplate] = useState<WeekTemplate>(createDefaultTemplate)
 
   const supabase = createClient()
   const weekStart = addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), weekOffset * 7)
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
 
   useEffect(() => { loadSlots() }, [weekOffset])
+  useEffect(() => { loadTemplate() }, [])
 
   const loadSlots = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -95,6 +104,46 @@ export default function SchedulePage() {
       .order('starts_at', { ascending: true })
 
     setSlots(data ?? [])
+  }
+
+  const loadTemplate = async () => {
+    const result = await getScheduleTemplateAction()
+    // When a master has not saved a template yet, the useful weekday default stays in place.
+    if (!result.success || result.data.length === 0) return
+
+    setTemplate(previous => {
+      const next = { ...previous }
+      for (const day of result.data) {
+        next[day.weekday] = {
+          enabled: day.enabled,
+          startTime: day.startTime,
+          endTime: day.endTime,
+          slotDuration: day.slotDuration,
+        }
+      }
+      return next
+    })
+  }
+
+  const handleSaveTemplate = async () => {
+    setSavingTemplate(true)
+    const result = await saveScheduleTemplateAction(
+      Object.entries(template).map(([weekday, day]) => ({
+        weekday: Number(weekday),
+        enabled: day.enabled,
+        startTime: day.startTime,
+        endTime: day.endTime,
+        slotDuration: day.slotDuration,
+      }))
+    )
+    setSavingTemplate(false)
+
+    if (result.success) {
+      toast.success('Шаблон сохранён')
+      setTab('week')
+    } else {
+      toast.error(result.error)
+    }
   }
 
   // Создать слоты для одного дня
@@ -430,7 +479,7 @@ export default function SchedulePage() {
           })}
 
           <div className="pt-2">
-            <Button onClick={() => { setTab('week'); toast.success('Шаблон сохранён!') }} className="w-full">
+            <Button onClick={handleSaveTemplate} disabled={savingTemplate} className="w-full">
               <Calendar className="w-4 h-4 mr-2" />
               Сохранить шаблон и перейти к неделе
             </Button>
