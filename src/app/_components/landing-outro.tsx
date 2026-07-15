@@ -32,7 +32,7 @@ export function LandingOutro() {
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--violet-bright)]">
                   Для мастеров
                 </p>
-                <h2 className="mt-3 text-[1.9rem] font-extrabold leading-tight tracking-[-0.02em] text-white sm:text-[2.2rem]">
+                <h2 className="mt-3 text-[2.1rem] font-semibold leading-[1.1] tracking-[-0.025em] text-white sm:text-[2.5rem]">
                   Ведите запись бесплатно
                 </h2>
                 <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-2)]">

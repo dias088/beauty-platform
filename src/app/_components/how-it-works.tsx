@@ -56,7 +56,7 @@ function StepColumn({
                   </div>
                 </div>
                 <div>
-                  <p className="mb-1 text-[15px] font-bold tracking-tight text-white">{step.title}</p>
+                  <p className="mb-1 text-[15px] font-semibold tracking-tight text-white">{step.title}</p>
                   <p className="text-sm leading-relaxed text-[var(--text-2)]">{step.desc}</p>
                 </div>
               </div>
@@ -76,7 +76,7 @@ export function HowItWorks() {
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-3)]">
             Как это работает
           </p>
-          <h2 className="text-[1.9rem] font-extrabold tracking-[-0.02em] text-white sm:text-[2rem]">
+          <h2 className="text-[2.1rem] font-semibold tracking-[-0.025em] text-white sm:text-[2.4rem]">
             Просто и понятно
           </h2>
         </SectionReveal>

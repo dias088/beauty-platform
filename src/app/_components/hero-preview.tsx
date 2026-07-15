@@ -1,31 +1,30 @@
-import { TrendingUp, CalendarCheck, Wallet, Star } from 'lucide-react'
+import { Search, Star, SlidersHorizontal } from 'lucide-react'
 
 /**
- * Декоративное превью продукта в «оконной» рамке (как скриншот приложения
- * в референсе). Полностью на CSS/SVG, без внешних картинок. Цифры —
- * иллюстративные (это витрина продукта, а не реальные данные).
+ * Декоративное превью продукта в «оконной» рамке — мини-каталог мастеров
+ * (как выглядит поиск на сайте). Полностью на CSS, без внешних картинок.
+ * Содержимое — иллюстративное (витрина интерфейса, не реальные мастера).
  */
-const TILES = [
-  { label: 'Записи', value: '128', icon: CalendarCheck, trend: '+12%' },
-  { label: 'Доход', value: '640 000 ₸', icon: Wallet, trend: '+8%' },
-  { label: 'Завершено', value: '96', icon: TrendingUp, trend: '+15%' },
-  { label: 'Рейтинг', value: '4.9', icon: Star, trend: null },
+const PILLS = ['Маникюр', 'Ресницы', 'Брови', 'Волосы', 'Макияж']
+
+const CARDS = [
+  { name: 'Айгерим М.', spec: 'Маникюр · Педикюр', rating: '4.9', reviews: 42, price: 'от 5 000 ₸', g: 'linear-gradient(135deg,#FF2D78,#FF6B4A)' },
+  { name: 'Динара К.', spec: 'Ресницы · Брови', rating: '5.0', reviews: 28, price: 'от 8 000 ₸', g: 'linear-gradient(135deg,#C8215E,#FF2D78)' },
+  { name: 'Сауле Т.', spec: 'Макияж', rating: '4.8', reviews: 17, price: 'от 12 000 ₸', g: 'linear-gradient(135deg,#FF5C97,#C8215E)' },
 ]
 
 export function HeroPreview() {
   return (
     <div className="relative mt-16 sm:mt-20">
-      {/* Розовое свечение под рамкой */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-10 top-0 -z-10 h-full -translate-y-1/4 rounded-full blur-[70px]"
-        style={{ background: 'radial-gradient(ellipse at center, rgba(255,45,120,0.14), transparent 60%)' }}
+        style={{ background: 'radial-gradient(ellipse at center, rgba(255,45,120,0.12), transparent 60%)' }}
       />
 
-      {/* Рамка окна с растворением снизу */}
       <div
         className="animate-blur-in relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-[#0f0f13] p-2 shadow-2xl"
-        style={{ maskImage: 'linear-gradient(to bottom, black 62%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, black 62%, transparent)' }}
+        style={{ maskImage: 'linear-gradient(to bottom, black 64%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, black 64%, transparent)' }}
       >
         <div className="rounded-xl border border-white/[0.06] bg-[#0d0d0f]">
           {/* Верхняя панель «окна» */}
@@ -33,51 +32,58 @@ export function HeroPreview() {
             <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
             <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
             <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="ml-3 text-xs text-[var(--text-3)]">Кабинет мастера · Статистика</span>
+            <span className="ml-3 text-xs text-[var(--text-3)]">Beauty.kz · Каталог мастеров</span>
           </div>
 
-          <div className="space-y-5 p-5">
-            {/* KPI-плитки */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {TILES.map(t => {
-                const Icon = t.icon
-                return (
-                  <div key={t.label} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] uppercase tracking-[0.14em] text-[var(--text-3)]">{t.label}</span>
-                      {t.trend && (
-                        <span className="rounded-full border border-white/10 px-1.5 py-0.5 text-[10px] font-semibold text-[#34d399]">{t.trend}</span>
-                      )}
-                    </div>
-                    <p className="mt-2 text-lg font-semibold tracking-tight text-white">{t.value}</p>
-                    <Icon className="mt-2 h-3.5 w-3.5 text-[var(--violet)]" />
-                  </div>
-                )
-              })}
+          <div className="space-y-4 p-5">
+            {/* Поиск + фильтры */}
+            <div className="flex items-center gap-2">
+              <div className="flex flex-1 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[var(--text-3)]">
+                <Search className="h-4 w-4" />
+                Поиск мастера, услуги или адреса…
+              </div>
+              <div className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[var(--text-3)]">
+                <SlidersHorizontal className="h-4 w-4" />
+                <span className="hidden sm:inline">Цена</span>
+              </div>
             </div>
 
-            {/* Мок area-графика */}
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-              <p className="mb-3 text-sm font-medium text-white">Выручка по дням</p>
-              <svg viewBox="0 0 600 160" className="h-40 w-full" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="heroArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FF2D78" stopOpacity="0.45" />
-                    <stop offset="100%" stopColor="#FF2D78" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M0 120 C 40 110, 70 70, 110 80 S 180 40, 220 60 S 300 100, 340 70 S 420 30, 470 55 S 550 20, 600 45 L 600 160 L 0 160 Z"
-                  fill="url(#heroArea)"
-                />
-                <path
-                  d="M0 120 C 40 110, 70 70, 110 80 S 180 40, 220 60 S 300 100, 340 70 S 420 30, 470 55 S 550 20, 600 45"
-                  fill="none"
-                  stroke="#FF5C97"
-                  strokeWidth="2.5"
-                  vectorEffect="non-scaling-stroke"
-                />
-              </svg>
+            {/* Пиллы категорий */}
+            <div className="flex flex-wrap gap-2">
+              {PILLS.map((p, i) => (
+                <span
+                  key={p}
+                  className={
+                    i === 0
+                      ? 'rounded-full px-3 py-1 text-xs font-medium text-white'
+                      : 'rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-[var(--text-2)]'
+                  }
+                  style={i === 0 ? { background: 'var(--gradient-primary)' } : undefined}
+                >
+                  {p}
+                </span>
+              ))}
+            </div>
+
+            {/* Карточки мастеров */}
+            <div className="grid grid-cols-3 gap-3">
+              {CARDS.map(c => (
+                <div key={c.name} className="overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.03]">
+                  <div className="h-20 sm:h-24" style={{ background: c.g, opacity: 0.85 }} />
+                  <div className="p-3">
+                    <p className="truncate text-[13px] font-semibold text-white">{c.name}</p>
+                    <p className="truncate text-[11px] text-[var(--text-3)]">{c.spec}</p>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="flex items-center gap-1 text-[11px] text-white">
+                        <Star className="h-3 w-3 fill-[#fbbf24] text-[#fbbf24]" />
+                        {c.rating}
+                        <span className="text-[var(--text-3)]">({c.reviews})</span>
+                      </span>
+                      <span className="text-[11px] font-semibold text-[var(--violet-bright)]">{c.price}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
