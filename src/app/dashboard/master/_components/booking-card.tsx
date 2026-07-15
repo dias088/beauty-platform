@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { confirmBookingAction, completeBookingAction, cancelBookingAction } from '../actions'
+import { confirmBookingAction, completeBookingAction, cancelBookingAction, markNoShowAction } from '../actions'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -119,9 +119,33 @@ export function BookingCard({ booking }: { booking: MasterBooking }) {
           )}
 
           {!loading && booking.status === 'confirmed' && !isUpcoming && (
-            <Button size="sm" onClick={() => withLoading(() => completeBookingAction(booking.id))}>
-              Завершить
-            </Button>
+            <>
+              <Button size="sm" onClick={() => withLoading(() => completeBookingAction(booking.id))}>
+                Завершить
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <Button size="sm" variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10">
+                    Не пришёл
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Клиент не пришёл?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Запись отметится как «Не пришёл». Это снизит Beauty Score клиента.
+                      Действие нельзя отменить.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Назад</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => withLoading(() => markNoShowAction(booking.id))}>
+                      Отметить «Не пришёл»
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
           )}
 
           {!loading && booking.status === 'confirmed' && isUpcoming && (

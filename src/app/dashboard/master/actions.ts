@@ -60,6 +60,36 @@ export async function completeBookingAction(bookingId: string): Promise<Result> 
   return { success: true, data: undefined }
 }
 
+export async function markNoShowAction(bookingId: string): Promise<Result> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Войдите' }
+
+  const { data: booking } = await supabase
+    .from('bookings')
+    .select('master_id, starts_at, masters!masters_profile_id_fkey!inner(profile_id)')
+    .eq('id', bookingId)
+    .single()
+
+  if (!booking || (booking.masters as any).profile_id !== user.id) {
+    return { success: false, error: 'Нет доступа' }
+  }
+
+  if (new Date(booking.starts_at) > new Date()) {
+    return { success: false, error: 'Запись ещё не наступила' }
+  }
+
+  const { error } = await supabase
+    .from('bookings')
+    .update({ status: 'no_show', status_changed_at: new Date().toISOString() })
+    .eq('id', bookingId)
+
+  if (error) return { success: false, error: 'Не удалось отметить' }
+
+  revalidatePath('/dashboard/master')
+  return { success: true, data: undefined }
+}
+
 export async function cancelBookingAction(bookingId: string, reason?: string): Promise<Result> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
