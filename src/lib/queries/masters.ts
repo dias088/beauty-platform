@@ -1,10 +1,10 @@
 import 'server-only'
-// Каталог — публичные данные (активные мастера). Читаем обычным клиентом:
-// RLS-политики (masters_public_read / profiles_public_read_master /
-// services_public_read / portfolio_public_read) открывают ровно этот набор.
-// Раньше использовался service_role — из-за чего пустой/битый ключ ронял
-// весь каталог. Теперь каталог от service_role не зависит.
-import { createClient } from '@/lib/supabase/server'
+// Каталог — публичные данные (активные мастера). Читаем бескуковым публичным
+// клиентом (RLS-политики masters_public_read / profiles_public_read_master /
+// services_public_read / portfolio_public_read открывают ровно этот набор),
+// поэтому результат можно кешировать. От service_role каталог не зависит.
+import { unstable_cache } from 'next/cache'
+import { createPublicClient } from '@/lib/supabase/public'
 
 export type MasterListItem = {
   id: string
@@ -36,8 +36,8 @@ export type MasterFilters = {
   maxPrice?: number
 }
 
-export async function getMasters(filters: MasterFilters = {}): Promise<MasterListItem[]> {
-  const supabase = await createClient()
+async function fetchMasters(filters: MasterFilters = {}): Promise<MasterListItem[]> {
+  const supabase = createPublicClient()
 
   let query = supabase
     .from('masters')
@@ -119,9 +119,22 @@ export async function getMasters(filters: MasterFilters = {}): Promise<MasterLis
   return [...boosted.sort(sortFn), ...rest.sort(sortFn)]
 }
 
+/**
+ * Публичный каталог с кешем на 60с (по комбинации фильтров). Резко срезает
+ * TTFB и число запросов к БД — данные каталога меняются нечасто.
+ */
+export async function getMasters(filters: MasterFilters = {}): Promise<MasterListItem[]> {
+  const cached = unstable_cache(
+    () => fetchMasters(filters),
+    ['getMasters', JSON.stringify(filters)],
+    { revalidate: 60, tags: ['masters'] }
+  )
+  return cached()
+}
+
 export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> {
   if (ids.length === 0) return []
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const { data, error } = await supabase
     .from('masters')

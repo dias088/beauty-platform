@@ -15,15 +15,18 @@ export default async function Home(props: {
   const searchParams = await props.searchParams
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
 
-  const masters = await getMasters({
-    category: searchParams.category,
-    search: searchParams.q,
-    sort: searchParams.sort as any,
-    minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
-    maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
-  })
+  // getUser (сессия) и getMasters (публичный каталог) независимы — параллелим
+  const [{ data: { user } }, masters] = await Promise.all([
+    supabase.auth.getUser(),
+    getMasters({
+      category: searchParams.category,
+      search: searchParams.q,
+      sort: searchParams.sort as any,
+      minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
+      maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
+    }),
+  ])
 
   const hasFilters = !!(searchParams.category || searchParams.q || searchParams.sort || searchParams.minPrice || searchParams.maxPrice)
 
