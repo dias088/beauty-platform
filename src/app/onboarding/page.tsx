@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { OnboardingFlow } from './_components/onboarding-flow'
+import { MapsProvider } from '@/components/shared/maps-provider'
 
 export default async function OnboardingPage(props: {
   searchParams: Promise<{ step?: string }>
@@ -16,5 +17,9 @@ export default async function OnboardingPage(props: {
   const { data: masterInfo } = await supabase.from('masters').select('*').eq('profile_id', user.id).single()
   const step = parseInt(searchParams?.step || '1')
 
-  return <OnboardingFlow step={step} masterInfo={masterInfo} userName={profile?.full_name ?? ''} />
+  return (
+    <MapsProvider>
+      <OnboardingFlow step={step} masterInfo={masterInfo} userName={profile?.full_name ?? ''} />
+    </MapsProvider>
+  )
 }

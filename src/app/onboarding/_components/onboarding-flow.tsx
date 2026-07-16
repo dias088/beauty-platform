@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, Loader2, MapPin } from 'lucide-react'
 import { addServiceAction, saveBasicsAction, saveOnboardingLocationAction } from '../actions'
-import { useAddressSuggest } from '@/hooks/use-address-suggest'
+import { useYmapsGeocode } from '@/hooks/use-ymaps-geocode'
 import { LocationPicker } from '@/components/shared/location-picker'
 
 const CATEGORIES = [
@@ -54,19 +54,18 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
       ? { lat: masterInfo.lat, lng: masterInfo.lng }
       : null
   )
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  // true — маркер поставлен вручную (клик/перетаскивание/выбор подсказки),
+  // true — маркер поставлен вручную (клик/перетаскивание по карте),
   // тогда живой предпросмотр по вводу не перебивает выбор пользователя.
   const [pinnedManually, setPinnedManually] = useState(!!masterInfo?.lat)
-  const { results: suggestions, loading: suggestLoading } = useAddressSuggest(addressQuery)
+  const { result: geoResult, loading: geoLoading } = useYmapsGeocode(addressQuery)
 
-  // Пока пользователь не зафиксировал точку сам — показываем на карте
-  // первый найденный вариант, чтобы адрес «появлялся» по мере ввода.
+  // Пока пользователь не зафиксировал точку сам — показываем найденный
+  // адрес на карте, чтобы он «появлялся» по мере ввода.
   useEffect(() => {
-    if (!pinnedManually && suggestions.length > 0) {
-      setAddressCoords({ lat: suggestions[0].lat, lng: suggestions[0].lng })
+    if (!pinnedManually && geoResult) {
+      setAddressCoords({ lat: geoResult.lat, lng: geoResult.lng })
     }
-  }, [suggestions, pinnedManually])
+  }, [geoResult, pinnedManually])
 
   const nextStep = () => setStep(s => s + 1)
   const prevStep = () => setStep(s => s - 1)
@@ -115,48 +114,22 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
       return
     }
 
-    setLoading(true)
-
-    // Если координаты не выбраны из подсказок — геокодим напечатанный адрес сами.
-    let coords = addressCoords
-    let finalAddress = addressQuery
+    // Координаты берём из карты (ручная точка или живой предпросмотр геокодера).
+    const coords = addressCoords ?? (geoResult ? { lat: geoResult.lat, lng: geoResult.lng } : null)
     if (!coords) {
-      try {
-        const res = await fetch(`/api/suggest?q=${encodeURIComponent(addressQuery)}`)
-        const data = await res.json()
-        const first = data.results?.[0]
-        if (first) {
-          coords = { lat: first.lat, lng: first.lng }
-          finalAddress = first.value
-          setAddressQuery(first.value)
-          setAddressCoords(coords)
-        }
-      } catch {
-        /* ниже покажем ошибку */
-      }
-    }
-
-    if (!coords) {
-      setLoading(false)
-      toast.error('Не удалось найти адрес. Уточните улицу и номер дома.')
+      toast.error('Адрес не найден. Отметьте место на карте вручную.')
       return
     }
 
+    setLoading(true)
     const result = await saveOnboardingLocationAction({
-      address: finalAddress,
+      address: !pinnedManually && geoResult ? geoResult.value : addressQuery,
       lat: coords.lat,
       lng: coords.lng,
     })
     setLoading(false)
     if (result.success) nextStep()
     else toast.error(result.error)
-  }
-
-  const handleSelectAddress = (suggestion: { value: string; lat: number; lng: number }) => {
-    setAddressQuery(suggestion.value)
-    setAddressCoords({ lat: suggestion.lat, lng: suggestion.lng })
-    setPinnedManually(true)
-    setShowSuggestions(false)
   }
 
   const progress = ((step - 1) / (STEPS.length - 1)) * 100
@@ -313,36 +286,24 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
               <label className="text-sm font-medium block mb-2">Адрес приёма клиентов</label>
               <div className="relative">
                 <Input
-                  placeholder="ул. Кунаева, 12, офис 305, Астана"
+                  placeholder="ул. Кунаева, 12, Астана"
                   value={addressQuery}
                   onChange={event => {
                     setAddressQuery(event.target.value)
                     setAddressCoords(null)
                     setPinnedManually(false)
-                    setShowSuggestions(true)
                   }}
-                  onFocus={() => setShowSuggestions(true)}
                   className="pr-10"
                 />
-                {suggestLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />}
-                {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-lg border bg-popover shadow-lg">
-                    {suggestions.map((suggestion, index) => (
-                      <button
-                        key={`${suggestion.value}-${index}`}
-                        type="button"
-                        onClick={() => handleSelectAddress(suggestion)}
-                        className="flex w-full items-start gap-2 px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted"
-                      >
-                        <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#FF2D78]" />
-                        <span>{suggestion.value}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {geoLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />}
               </div>
+              {!pinnedManually && geoResult && (
+                <p className="mt-2 flex items-start gap-1.5 text-xs text-green-500">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" /> Найдено: {geoResult.value}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground mt-2">
-                Начните вводить адрес и выберите подсказку — или отметьте место на карте вручную.
+                Адрес появится на карте. Если точка встала неточно — поправьте маркер вручную.
               </p>
             </div>
 
