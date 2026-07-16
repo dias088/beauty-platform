@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Eye, EyeOff, Check } from 'lucide-react'
+import { Eye, EyeOff, Check, MailCheck } from 'lucide-react'
 import { registerAction } from '../actions'
 import { AuthShell } from '@/components/shared/auth-shell'
 import { AnimatedGroup } from '@/components/ui/animated-group'
@@ -22,6 +22,7 @@ function RegisterForm() {
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [pending, setPending] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [sentTo, setSentTo] = useState<string | null>(null)
   // Предвыбор роли из ссылки: /register?role=master открывает форму как «Мастер».
   const [role, setRole] = useState<'client' | 'master'>(
     searchParams.get('role') === 'master' ? 'master' : 'client'
@@ -31,6 +32,44 @@ function RegisterForm() {
     { value: 'client' as const, label: 'Я клиент', desc: 'Буду записываться к мастерам' },
     { value: 'master' as const, label: 'Я мастер', desc: 'Буду принимать клиентов' },
   ]
+
+  // Экран после регистрации, когда включено подтверждение почты.
+  if (sentTo) {
+    return (
+      <AnimatedGroup preset="blur-slide">
+        <div className="space-y-5 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(255,45,120,0.12)]">
+            <MailCheck className="h-7 w-7 text-[var(--violet-bright)]" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">Проверьте почту</h3>
+            <p className="mt-2 text-sm text-[var(--text-3)]">
+              Мы отправили ссылку для подтверждения на{' '}
+              <span className="font-medium text-white">{sentTo}</span>. Перейдите по ней,
+              чтобы активировать аккаунт.
+            </p>
+          </div>
+          <p className="text-xs text-[var(--text-muted)]">
+            Не пришло письмо? Проверьте папку «Спам» или{' '}
+            <button
+              type="button"
+              onClick={() => setSentTo(null)}
+              className="font-medium text-[var(--violet-bright)] hover:underline"
+            >
+              зарегистрируйтесь заново
+            </button>
+            .
+          </p>
+          <Link
+            href="/login"
+            className="btn-primary-glow inline-block w-full rounded-xl py-3.5 text-sm font-semibold text-white"
+          >
+            Перейти ко входу
+          </Link>
+        </div>
+      </AnimatedGroup>
+    )
+  }
 
   return (
     <AnimatedGroup preset="blur-slide">
@@ -44,6 +83,8 @@ function RegisterForm() {
           if (!result.success) {
             setErrors(result.fieldErrors || {})
             toast.error(result.error)
+          } else if (result.data?.pendingConfirmation) {
+            setSentTo(String(formData.get('email') || ''))
           }
         }}
       >

@@ -5,6 +5,7 @@ import { loginSchema, registerSchema } from '@/lib/validations/auth'
 import type { Result } from '@/types/result'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 
 export async function loginAction(formData: FormData): Promise<Result> {
   const parsed = loginSchema.safeParse({
@@ -38,7 +39,9 @@ export async function loginAction(formData: FormData): Promise<Result> {
   redirect(profile?.role === 'master' ? '/dashboard/master' : '/')
 }
 
-export async function registerAction(formData: FormData): Promise<Result> {
+export async function registerAction(
+  formData: FormData
+): Promise<Result<{ pendingConfirmation?: boolean; role?: 'client' | 'master' }>> {
   const parsed = registerSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
@@ -54,11 +57,18 @@ export async function registerAction(formData: FormData): Promise<Result> {
     }
   }
 
+  // Куда Supabase вернёт пользователя после клика по ссылке в письме.
+  const origin =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (await headers()).get('origin') ||
+    'http://localhost:3000'
+
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
+      emailRedirectTo: `${origin}/auth/confirm?role=${parsed.data.role}`,
       data: {
         role: parsed.data.role,
         full_name: parsed.data.fullName,
@@ -71,6 +81,13 @@ export async function registerAction(formData: FormData): Promise<Result> {
       return { success: false, error: 'Этот email уже зарегистрирован' }
     }
     return { success: false, error: `Ошибка: ${error.message}` }
+  }
+
+  // Подтверждение почты включено: сессии ещё нет — просим проверить почту.
+  // (Профиль создаёт триггер handle_new_user; запись masters создастся при
+  //  первом входе на онбординге.)
+  if (!data.session) {
+    return { success: true, data: { pendingConfirmation: true, role: parsed.data.role } }
   }
 
   // Если мастер — создаём запись в masters сразу
