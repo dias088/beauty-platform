@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, Loader2, MapPin } from 'lucide-react'
 import { addServiceAction, saveBasicsAction, saveOnboardingLocationAction } from '../actions'
 import { useAddressSuggest } from '@/hooks/use-address-suggest'
+import { LocationPicker } from '@/components/shared/location-picker'
 
 const CATEGORIES = [
   { value: 'nail',        label: 'Маникюр' },
@@ -328,9 +329,18 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                 )}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Отображается на карте для клиентов. Можно добавить позже в настройках.
+                Начните вводить адрес и выберите подсказку — или отметьте место на карте вручную.
               </p>
             </div>
+
+            <LocationPicker
+              value={addressCoords}
+              onPick={(coords, address) => {
+                setAddressCoords(coords)
+                if (address) setAddressQuery(address)
+                setShowSuggestions(false)
+              }}
+            />
 
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={prevStep}>
