@@ -102,16 +102,38 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
       nextStep()
       return
     }
-    if (!addressCoords) {
-      toast.error('Выберите адрес из подсказок, чтобы отметить его на карте')
+
+    setLoading(true)
+
+    // Если координаты не выбраны из подсказок — геокодим напечатанный адрес сами.
+    let coords = addressCoords
+    let finalAddress = addressQuery
+    if (!coords) {
+      try {
+        const res = await fetch(`/api/suggest?q=${encodeURIComponent(addressQuery)}`)
+        const data = await res.json()
+        const first = data.results?.[0]
+        if (first) {
+          coords = { lat: first.lat, lng: first.lng }
+          finalAddress = first.value
+          setAddressQuery(first.value)
+          setAddressCoords(coords)
+        }
+      } catch {
+        /* ниже покажем ошибку */
+      }
+    }
+
+    if (!coords) {
+      setLoading(false)
+      toast.error('Не удалось найти адрес. Уточните улицу и номер дома.')
       return
     }
 
-    setLoading(true)
     const result = await saveOnboardingLocationAction({
-      address: addressQuery,
-      lat: addressCoords.lat,
-      lng: addressCoords.lng,
+      address: finalAddress,
+      lat: coords.lat,
+      lng: coords.lng,
     })
     setLoading(false)
     if (result.success) nextStep()
