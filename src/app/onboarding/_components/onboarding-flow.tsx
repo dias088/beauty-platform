@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -55,7 +55,18 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
       : null
   )
   const [showSuggestions, setShowSuggestions] = useState(false)
+  // true — маркер поставлен вручную (клик/перетаскивание/выбор подсказки),
+  // тогда живой предпросмотр по вводу не перебивает выбор пользователя.
+  const [pinnedManually, setPinnedManually] = useState(!!masterInfo?.lat)
   const { results: suggestions, loading: suggestLoading } = useAddressSuggest(addressQuery)
+
+  // Пока пользователь не зафиксировал точку сам — показываем на карте
+  // первый найденный вариант, чтобы адрес «появлялся» по мере ввода.
+  useEffect(() => {
+    if (!pinnedManually && suggestions.length > 0) {
+      setAddressCoords({ lat: suggestions[0].lat, lng: suggestions[0].lng })
+    }
+  }, [suggestions, pinnedManually])
 
   const nextStep = () => setStep(s => s + 1)
   const prevStep = () => setStep(s => s - 1)
@@ -144,6 +155,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
   const handleSelectAddress = (suggestion: { value: string; lat: number; lng: number }) => {
     setAddressQuery(suggestion.value)
     setAddressCoords({ lat: suggestion.lat, lng: suggestion.lng })
+    setPinnedManually(true)
     setShowSuggestions(false)
   }
 
@@ -306,6 +318,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                   onChange={event => {
                     setAddressQuery(event.target.value)
                     setAddressCoords(null)
+                    setPinnedManually(false)
                     setShowSuggestions(true)
                   }}
                   onFocus={() => setShowSuggestions(true)}
@@ -338,6 +351,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
               onPick={(coords, address) => {
                 setAddressCoords(coords)
                 if (address) setAddressQuery(address)
+                setPinnedManually(true)
                 setShowSuggestions(false)
               }}
             />
