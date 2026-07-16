@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { masterBasicsSchema, masterLocationSchema, masterServiceSchema } from '@/lib/validations/master'
+import { checkContent } from '@/lib/moderation'
 import type { Result } from '@/types/result'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -29,6 +30,9 @@ export async function saveBasicsAction(
       fieldErrors,
     }
   }
+
+  const mod = checkContent(parsed.data.bio)
+  if (!mod.ok) return { success: false, error: mod.reason, fieldErrors: { bio: [mod.reason] } }
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -190,6 +194,9 @@ export async function addServiceAction(input: unknown): Promise<Result<{ id: str
       fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     }
   }
+
+  const mod = checkContent(parsed.data.name, parsed.data.description)
+  if (!mod.ok) return { success: false, error: mod.reason, fieldErrors: { name: [mod.reason] } }
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

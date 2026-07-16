@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { checkContent } from '@/lib/moderation'
 import type { Result } from '@/types/result'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
@@ -14,6 +15,9 @@ const reviewSchema = z.object({
 export async function addReviewAction(input: z.infer<typeof reviewSchema>): Promise<Result> {
   const parsed = reviewSchema.safeParse(input)
   if (!parsed.success) return { success: false, error: 'Неверные данные' }
+
+  const mod = checkContent(parsed.data.text)
+  if (!mod.ok) return { success: false, error: mod.reason }
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

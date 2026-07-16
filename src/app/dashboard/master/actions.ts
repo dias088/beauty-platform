@@ -5,6 +5,7 @@ import type { Result } from '@/types/result'
 import { revalidatePath } from 'next/cache'
 import { after } from 'next/server'
 import { sendBookingConfirmedEmail, sendBookingCancelledEmail } from '@/lib/email/booking-emails'
+import { checkContent } from '@/lib/moderation'
 
 export async function confirmBookingAction(bookingId: string): Promise<Result> {
   const supabase = await createClient()
@@ -463,6 +464,9 @@ export async function updateProfileAction(
   categories: string[],
   instagram_handle?: string
 ): Promise<Result> {
+  const mod = checkContent(bio)
+  if (!mod.ok) return { success: false, error: mod.reason }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Войдите' }
