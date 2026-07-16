@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Result } from '@/types/result'
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
+import { sendBookingConfirmedEmail, sendBookingCancelledEmail } from '@/lib/email/booking-emails'
 
 export async function confirmBookingAction(bookingId: string): Promise<Result> {
   const supabase = await createClient()
@@ -25,6 +27,9 @@ export async function confirmBookingAction(bookingId: string): Promise<Result> {
     .eq('id', bookingId)
 
   if (error) return { success: false, error: 'Не удалось подтвердить' }
+
+  // Письмо клиенту — после ответа, чтобы не тормозить действие
+  after(() => sendBookingConfirmedEmail(bookingId))
 
   revalidatePath('/dashboard/master')
   return { success: true, data: undefined }
@@ -117,6 +122,9 @@ export async function cancelBookingAction(bookingId: string, reason?: string): P
   if (bookingError) return { success: false, error: 'Не удалось отменить' }
 
   await supabase.from('slots').update({ is_booked: false }).eq('id', booking.slot_id)
+
+  // Письмо клиенту об отмене — после ответа
+  after(() => sendBookingCancelledEmail(bookingId))
 
   revalidatePath('/dashboard/master')
   return { success: true, data: undefined }
