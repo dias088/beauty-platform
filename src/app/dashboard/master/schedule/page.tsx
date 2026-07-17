@@ -292,7 +292,7 @@ export default function SchedulePage() {
           </div>
 
           {/* Сетка дней */}
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {weekDays.map(day => {
               const daySlots = slotsForDay(day)
               const booked = daySlots.filter(s => s.is_booked).length
@@ -305,20 +305,20 @@ export default function SchedulePage() {
                 <button key={day.toISOString()}
                   onClick={() => setSelectedDay(isSelected ? null : day)}
                   className={[
-                    'flex flex-col items-center p-2 rounded-xl border transition-all text-center',
+                    'flex flex-col items-center p-1 sm:p-2 rounded-lg sm:rounded-xl border transition-all text-center',
                     isSelected ? 'border-[var(--violet)] bg-[rgba(167,139,250,0.1)]' : 'border-border hover:border-[var(--violet)]/40',
                     isToday ? 'ring-2 ring-[#FF87B2] ring-offset-1' : '',
                     isPast ? 'opacity-40' : '',
                   ].join(' ')}
                 >
-                  <span className="text-xs text-muted-foreground">{DAY_NAMES[day.getDay()]}</span>
-                  <span className={`text-lg font-bold my-0.5 ${isToday ? 'text-[#FF2D78]' : ''}`}>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">{DAY_NAMES[day.getDay()]}</span>
+                  <span className={`text-base sm:text-lg font-bold my-0.5 ${isToday ? 'text-[#FF2D78]' : ''}`}>
                     {format(day, 'd')}
                   </span>
                   {daySlots.length > 0 ? (
-                    <div className="flex gap-1 flex-wrap justify-center">
-                      {free > 0 && <span className="text-xs bg-[rgba(16,185,129,0.14)] text-[#34d399] px-1 rounded">{free}</span>}
-                      {booked > 0 && <span className="text-xs bg-[rgba(96,165,250,0.14)] text-[#93c5fd] px-1 rounded inline-flex items-center gap-0.5">{booked}<Lock className="w-2.5 h-2.5" /></span>}
+                    <div className="flex gap-0.5 sm:gap-1 flex-wrap justify-center">
+                      {free > 0 && <span className="text-[10px] sm:text-xs bg-[rgba(16,185,129,0.14)] text-[#34d399] px-1 rounded">{free}</span>}
+                      {booked > 0 && <span className="text-[10px] sm:text-xs bg-[rgba(96,165,250,0.14)] text-[#93c5fd] px-1 rounded inline-flex items-center gap-0.5">{booked}<Lock className="w-2.5 h-2.5" /></span>}
                     </div>
                   ) : (
                     <span className="text-xs text-muted-foreground/50">—</span>
