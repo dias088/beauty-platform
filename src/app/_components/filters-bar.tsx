@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { X, SlidersHorizontal, ChevronDown } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const CATEGORIES = [
   { value: 'nail', label: 'Маникюр' },
@@ -35,6 +35,16 @@ export function FiltersBar() {
   const [minVal, setMinVal] = useState(minPrice)
   const [maxVal, setMaxVal] = useState(maxPrice)
 
+  // Локальное значение поиска — мгновенный ввод без ожидания навигации.
+  // Запрос к серверу (обновление URL) откладываем дебаунсом.
+  const [searchValue, setSearchValue] = useState(query)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Синхронизация, если q поменяли извне (сброс фильтров, кнопки назад/вперёд).
+  useEffect(() => {
+    setSearchValue(query)
+  }, [query])
+
   const update = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams)
     if (value) params.set(key, value)
@@ -44,7 +54,10 @@ export function FiltersBar() {
   }
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    update('q', e.target.value || null)
+    const value = e.target.value
+    setSearchValue(value)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => update('q', value || null), 350)
   }
 
   const handlePriceApply = () => {
@@ -59,6 +72,7 @@ export function FiltersBar() {
   const handleReset = () => {
     setMinVal('')
     setMaxVal('')
+    setSearchValue('')
     router.replace('/')
   }
 
@@ -70,7 +84,7 @@ export function FiltersBar() {
       <div className="container mx-auto px-4 py-3 flex gap-2 items-center">
         <Input
           placeholder="Поиск мастера, услуги или адреса..."
-          value={query}
+          value={searchValue}
           onChange={handleSearch}
           className="flex-1 h-9"
         />
