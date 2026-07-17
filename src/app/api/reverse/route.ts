@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 
-/** Обратный геокодинг: координаты → текстовый адрес (для ручного маркера на карте). */
+// Обратный геокодинг через бесплатный Nominatim (координаты → адрес).
+const UA = 'BeautyKZ/1.0 (https://beauty-platform-gamma.vercel.app; diaskalm45@gmail.com)'
+
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const lat = url.searchParams.get('lat')
@@ -8,21 +10,17 @@ export async function GET(req: Request) {
   if (!lat || !lng) return NextResponse.json({ address: null })
 
   try {
-    const key = process.env.YANDEX_GEOCODER_KEY || process.env.NEXT_PUBLIC_YANDEX_MAPS_KEY || ''
-    const geo = new URL('https://geocode-maps.yandex.ru/1.x/')
-    geo.searchParams.set('apikey', key)
-    geo.searchParams.set('format', 'json')
-    geo.searchParams.set('geocode', `${lng},${lat}`) // Яндекс ждёт «долгота,широта»
-    geo.searchParams.set('lang', 'ru_RU')
-    geo.searchParams.set('results', '1')
+    const nom = new URL('https://nominatim.openstreetmap.org/reverse')
+    nom.searchParams.set('format', 'jsonv2')
+    nom.searchParams.set('lat', lat)
+    nom.searchParams.set('lon', lng)
+    nom.searchParams.set('accept-language', 'ru')
 
-    const res = await fetch(geo.toString())
+    const res = await fetch(nom.toString(), { headers: { 'User-Agent': UA } })
     const data = await res.json()
-    const feature = data.response?.GeoObjectCollection?.featureMember?.[0]
-    const address = feature?.GeoObject?.metaDataProperty?.GeocoderMetaData?.text || null
-    return NextResponse.json({ address })
+    return NextResponse.json({ address: data?.display_name || null })
   } catch (error) {
-    console.error('Reverse geocode error:', error)
+    console.error('Reverse (nominatim) error:', error)
     return NextResponse.json({ address: null })
   }
 }

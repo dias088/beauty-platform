@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, Lightbulb, Loader2, MapPin } from 'lucide-react'
 import { addServiceAction, saveBasicsAction, saveOnboardingLocationAction } from '../actions'
-import { useYmapsGeocode } from '@/hooks/use-ymaps-geocode'
+import { useGeocode } from '@/hooks/use-geocode'
 import { LocationPicker } from '@/components/shared/location-picker'
 
 const CATEGORIES = [
@@ -57,7 +57,7 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
   // true — маркер поставлен вручную (клик/перетаскивание по карте),
   // тогда живой предпросмотр по вводу не перебивает выбор пользователя.
   const [pinnedManually, setPinnedManually] = useState(!!masterInfo?.lat)
-  const { result: geoResult, loading: geoLoading } = useYmapsGeocode(addressQuery)
+  const { result: geoResult, loading: geoLoading } = useGeocode(addressQuery)
 
   // Пока пользователь не зафиксировал точку сам — показываем найденный
   // адрес на карте, чтобы он «появлялся» по мере ввода.

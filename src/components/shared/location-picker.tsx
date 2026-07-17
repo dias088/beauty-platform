@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { Map, Placemark, useYMaps } from '@pbe/react-yandex-maps'
+import { Map, Placemark } from '@pbe/react-yandex-maps'
 
 const ASTANA_CENTER = [51.1694, 71.4491]
 
@@ -15,21 +15,19 @@ type Props = {
 
 /**
  * Карта с ручным маркером. Клик по карте или перетаскивание метки задаёт
- * координаты; параллельно обратным геокодингом (ymaps.geocode) подтягиваем
- * текстовый адрес. Должен рендериться внутри <YMaps> (MapsProvider).
+ * координаты; параллельно обратным геокодингом (бесплатный Nominatim через
+ * /api/reverse) подтягиваем текстовый адрес. Рендерится внутри <YMaps>.
  */
 export function LocationPicker({ value, onPick }: Props) {
-  const ymaps = useYMaps(['geocode'])
   const mapRef = useRef<any>(null)
   const pmRef = useRef<any>(null)
 
   const place = async (lat: number, lng: number) => {
     onPick({ lat, lng })
-    if (!ymaps) return
     try {
-      const res = await ymaps.geocode([lat, lng], { results: 1 })
-      const obj = res.geoObjects.get(0)
-      if (obj) onPick({ lat, lng }, obj.getAddressLine())
+      const res = await fetch(`/api/reverse?lat=${lat}&lng=${lng}`)
+      const data = await res.json()
+      if (data.address) onPick({ lat, lng }, data.address)
     } catch {
       /* координаты уже сохранены, адрес оставим как есть */
     }
