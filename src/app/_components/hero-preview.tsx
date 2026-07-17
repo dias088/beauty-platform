@@ -73,13 +73,13 @@ export function HeroPreview() {
                   <div className="p-3">
                     <p className="truncate text-[13px] font-semibold text-white">{c.name}</p>
                     <p className="truncate text-[11px] text-[var(--text-3)]">{c.spec}</p>
-                    <div className="mt-2 flex items-center justify-between">
-                      <span className="flex items-center gap-1 text-[11px] text-white">
+                    <div className="mt-2 flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="flex items-center gap-1 whitespace-nowrap text-[11px] text-white">
                         <Star className="h-3 w-3 fill-[#fbbf24] text-[#fbbf24]" />
                         {c.rating}
                         <span className="text-[var(--text-3)]">({c.reviews})</span>
                       </span>
-                      <span className="text-[11px] font-semibold text-[var(--violet-bright)]">{c.price}</span>
+                      <span className="whitespace-nowrap text-[11px] font-semibold text-[var(--violet-bright)]">{c.price}</span>
                     </div>
                   </div>
                 </div>

@@ -57,7 +57,7 @@ export function MasterCard({ master }: Props) {
 
             {/* Цена */}
             {master.min_price && (
-              <div className="absolute bottom-2.5 right-2.5 rounded-full border border-white/10 bg-black/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+              <div className="absolute bottom-2.5 right-2.5 whitespace-nowrap rounded-full border border-white/10 bg-black/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                 от {master.min_price.toLocaleString('ru')} ₸
               </div>
             )}
