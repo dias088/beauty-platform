@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { updateProfileAction, updateLocationAction } from '../actions'
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,9 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { Checkbox } from '@/components/ui/checkbox'
-import { useAddressSuggest } from '@/hooks/use-address-suggest'
+import { useGeocode } from '@/hooks/use-geocode'
+import { LocationPicker } from '@/components/shared/location-picker'
+import { MapsProvider } from '@/components/shared/maps-provider'
 import { MapPin, Loader2 } from 'lucide-react'
 
 const CATEGORIES = [
@@ -31,10 +33,12 @@ export default function ProfilePage() {
   // Локация
   const [addressQuery, setAddressQuery] = useState('')
   const [savedAddress, setSavedAddress] = useState('')
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const addressRef = useRef<HTMLDivElement>(null)
+  const [addressCoords, setAddressCoords] = useState<{ lat: number; lng: number } | null>(null)
+  // true — точка выбрана вручную (карта) или загружена сохранённой, тогда
+  // живой предпросмотр по вводу не перебивает её.
+  const [pinnedManually, setPinnedManually] = useState(true)
 
-  const { results: suggestions, loading: suggestLoading } = useAddressSuggest(addressQuery)
+  const { result: geoResult, loading: geoLoading } = useGeocode(addressQuery)
 
   const supabase = createClient()
 
@@ -45,7 +49,7 @@ export default function ProfilePage() {
 
       const { data: master } = await supabase
         .from('masters')
-        .select('bio, instagram_handle, categories, address')
+        .select('bio, instagram_handle, categories, address, lat, lng')
         .eq('profile_id', user.id)
         .single()
 
@@ -55,22 +59,22 @@ export default function ProfilePage() {
         setSelectedCategories(master.categories || [])
         setSavedAddress(master.address || '')
         setAddressQuery(master.address || '')
+        if (typeof master.lat === 'number' && typeof master.lng === 'number') {
+          setAddressCoords({ lat: master.lat, lng: master.lng })
+          setPinnedManually(true)
+        }
       }
     }
 
     loadProfile()
   }, [])
 
-  // Закрываем список при клике вне
+  // Живой предпросмотр найденного адреса на карте (пока не зафиксировали вручную).
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (addressRef.current && !addressRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false)
-      }
+    if (!pinnedManually && geoResult) {
+      setAddressCoords({ lat: geoResult.lat, lng: geoResult.lng })
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
+  }, [geoResult, pinnedManually])
 
   const handleSave = async () => {
     if (!bio.trim() || selectedCategories.length === 0) {
@@ -89,16 +93,21 @@ export default function ProfilePage() {
     }
   }
 
-  const handleSelectAddress = async (suggestion: { value: string; lat: number; lng: number }) => {
-    setAddressQuery(suggestion.value)
-    setShowSuggestions(false)
-    setLocationLoading(true)
+  const handleSaveAddress = async () => {
+    const coords = addressCoords ?? (geoResult ? { lat: geoResult.lat, lng: geoResult.lng } : null)
+    if (!coords) {
+      toast.error('Адрес не найден. Отметьте место на карте вручную.')
+      return
+    }
 
-    const result = await updateLocationAction(suggestion.value, suggestion.lat, suggestion.lng)
+    const address = !pinnedManually && geoResult ? geoResult.value : addressQuery
+    setLocationLoading(true)
+    const result = await updateLocationAction(address, coords.lat, coords.lng)
     setLocationLoading(false)
 
     if (result.success) {
-      setSavedAddress(suggestion.value)
+      setSavedAddress(address)
+      setAddressQuery(address)
       toast.success('Адрес обновлён')
     } else {
       toast.error(result.error)
@@ -162,53 +171,58 @@ export default function ProfilePage() {
       </Card>
 
       {/* Локация */}
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
+      <Card className="p-6 space-y-4">
+        <div className="flex items-center gap-2">
           <MapPin className="w-5 h-5 text-primary" />
           <h2 className="font-semibold">Адрес приёма клиентов</h2>
         </div>
 
         {savedAddress && (
-          <p className="text-sm text-muted-foreground mb-3">
+          <p className="text-sm text-muted-foreground">
             Текущий: <span className="font-medium text-foreground">{savedAddress}</span>
           </p>
         )}
 
-        <div ref={addressRef} className="relative">
+        <div>
           <div className="relative">
             <Input
               placeholder="Начните вводить адрес в Астане..."
               value={addressQuery}
               onChange={e => {
                 setAddressQuery(e.target.value)
-                setShowSuggestions(true)
+                setAddressCoords(null)
+                setPinnedManually(false)
               }}
-              onFocus={() => setShowSuggestions(true)}
               className="pr-10"
             />
-            {(suggestLoading || locationLoading) && (
+            {(geoLoading || locationLoading) && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
             )}
           </div>
-
-          {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg overflow-hidden">
-              {suggestions.map((s, i) => (
-                <button
-                  key={i}
-                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-muted transition-colors flex items-start gap-2"
-                  onMouseDown={() => handleSelectAddress(s)}
-                >
-                  <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
-                  <span>{s.value}</span>
-                </button>
-              ))}
-            </div>
+          {!pinnedManually && geoResult && (
+            <p className="mt-2 flex items-start gap-1.5 text-xs text-green-500">
+              <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" /> Найдено: {geoResult.value}
+            </p>
           )}
         </div>
 
-        <p className="text-xs text-muted-foreground mt-2">
-          Выберите адрес из подсказок — он появится на карте для клиентов
+        <MapsProvider>
+          <LocationPicker
+            value={addressCoords}
+            onPick={(coords, address) => {
+              setAddressCoords(coords)
+              if (address) setAddressQuery(address)
+              setPinnedManually(true)
+            }}
+          />
+        </MapsProvider>
+
+        <Button onClick={handleSaveAddress} disabled={locationLoading} className="w-full">
+          {locationLoading ? 'Сохранение...' : 'Сохранить адрес'}
+        </Button>
+
+        <p className="text-xs text-muted-foreground">
+          Введите адрес — он появится на карте. Если точка встала неточно, поправьте маркер вручную.
         </p>
       </Card>
     </main>
