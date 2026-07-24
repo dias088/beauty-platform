@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { logoutAction } from '@/app/(auth)/actions'
-import { Calendar, Home, Settings, LogOut, Menu, Wrench, BarChart3, ExternalLink, Copy, Check, Zap, Sparkles, Users } from 'lucide-react'
+import { Calendar, Home, Settings, LogOut, Menu, Wrench, BarChart3, ExternalLink, Copy, Check, Zap, Sparkles, Users, Images } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -14,6 +14,7 @@ const MENU_ITEMS = [
   { href: '/dashboard/master', icon: Home, label: 'Записи' },
   { href: '/dashboard/master/schedule', icon: Calendar, label: 'Расписание' },
   { href: '/dashboard/master/services', icon: Wrench, label: 'Услуги' },
+  { href: '/dashboard/master/portfolio', icon: Images, label: 'Мои работы' },
   { href: '/dashboard/master/profile', icon: Settings, label: 'Профиль' },
   { href: '/dashboard/master/stats', icon: BarChart3, label: 'Статистика' },
   { href: '/dashboard/master/crm', icon: Users, label: 'Клиенты' },
