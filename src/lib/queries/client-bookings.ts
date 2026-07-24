@@ -26,6 +26,7 @@ export type ClientBooking = {
     id: string
     rating: number
     text: string | null
+    photos: string[]
   } | null
 }
 
@@ -61,7 +62,7 @@ export async function getClientBookings(clientId: string): Promise<ClientBooking
         address,
         profiles!masters_profile_id_fkey!inner (full_name, avatar_url)
       ),
-      review:reviews (id, rating, text)
+      review:reviews (id, rating, text, photos)
     `)
     .eq('client_id', clientId)
     .order('starts_at', { ascending: false })

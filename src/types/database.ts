@@ -382,6 +382,7 @@ export type Database = {
           master_id: string
           rating: number
           text: string | null
+          photos: string[]
         }
         Insert: {
           booking_id: string
@@ -391,6 +392,7 @@ export type Database = {
           master_id: string
           rating: number
           text?: string | null
+          photos?: string[]
         }
         Update: {
           booking_id?: string
@@ -400,6 +402,7 @@ export type Database = {
           master_id?: string
           rating?: number
           text?: string | null
+          photos?: string[]
         }
         Relationships: [
           {

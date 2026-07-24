@@ -6,10 +6,13 @@ import type { Result } from '@/types/result'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+const MEDIA_URL_RE = /\/storage\/v1\/object\/public\/media\//
+
 const reviewSchema = z.object({
   booking_id: z.string().uuid(),
   rating: z.number().int().min(1).max(5),
   text: z.string().max(1000).optional(),
+  photos: z.array(z.string().url().regex(MEDIA_URL_RE)).max(3).optional(),
 })
 
 export async function addReviewAction(input: z.infer<typeof reviewSchema>): Promise<Result> {
@@ -47,6 +50,7 @@ export async function addReviewAction(input: z.infer<typeof reviewSchema>): Prom
     master_id: booking.master_id,
     rating: parsed.data.rating,
     text: parsed.data.text || null,
+    photos: parsed.data.photos ?? [],
   })
 
   if (error) return { success: false, error: 'Не удалось сохранить отзыв' }
