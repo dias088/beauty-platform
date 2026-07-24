@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { ProfileForm } from './_profile-form'
+import { AvatarUpload } from '@/components/shared/avatar-upload'
+import { Card } from '@/components/ui/card'
 
 export default async function ClientProfilePage() {
   const supabase = await createClient()
@@ -14,6 +16,10 @@ export default async function ClientProfilePage() {
   return (
     <main className="container mx-auto py-8 px-4 max-w-3xl">
       <h1 className="text-3xl font-bold mb-8">Профиль</h1>
+      <Card className="p-6 mb-6">
+        <label className="text-sm font-medium block mb-3">Фото профиля</label>
+        <AvatarUpload />
+      </Card>
       <ProfileForm
         fullName={profile?.full_name ?? ''}
         email={user!.email ?? ''}

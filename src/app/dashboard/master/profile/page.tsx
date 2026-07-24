@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useGeocode } from '@/hooks/use-geocode'
 import { LocationPicker } from '@/components/shared/location-picker'
 import { MapsProvider } from '@/components/shared/maps-provider'
+import { AvatarUpload } from '@/components/shared/avatar-upload'
 import { MapPin, Loader2 } from 'lucide-react'
 
 const CATEGORIES = [
@@ -120,6 +121,11 @@ export default function ProfilePage() {
 
       {/* Основная информация */}
       <Card className="p-6 space-y-6 mb-6">
+        <div>
+          <label className="text-sm font-medium block mb-3">Фото профиля</label>
+          <AvatarUpload />
+        </div>
+
         <div>
           <label className="text-sm font-medium">О вас</label>
           <Textarea
