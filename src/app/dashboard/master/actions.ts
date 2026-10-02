@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { after } from 'next/server'
 import { sendBookingConfirmedEmail, sendBookingCancelledEmail } from '@/lib/email/booking-emails'
 import { checkContent } from '@/lib/moderation'
+import { getKaspiBoostNumber } from '@/lib/boost-payment'
 
 export async function confirmBookingAction(bookingId: string): Promise<Result> {
   const supabase = await createClient()
@@ -397,6 +398,9 @@ export async function requestBoostAction(plan: '7d' | '30d'): Promise<Result<{ k
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Войдите' }
 
+  const kaspiNumber = getKaspiBoostNumber()
+  if (!kaspiNumber) return { success: false, error: 'Оплата буста временно недоступна' }
+
   const { data: master } = await supabase
     .from('masters')
     .select('id, profiles!masters_profile_id_fkey!inner(full_name)')
@@ -435,7 +439,7 @@ export async function requestBoostAction(plan: '7d' | '30d'): Promise<Result<{ k
     console.error('Boost notification failed:', err)
   }
 
-  return { success: true, data: { kaspi_number: '+7 777 123 45 67', amount: chosen.amount } }
+  return { success: true, data: { kaspi_number: kaspiNumber, amount: chosen.amount } }
 }
 
 export async function updateLocationAction(
