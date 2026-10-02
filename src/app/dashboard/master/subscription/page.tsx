@@ -34,6 +34,8 @@ export default async function SubscriptionPage() {
   // Автосписание идёт, пока подписка active/past_due; canceled — уже отключено.
   const autopay = sub?.status === 'active' || sub?.status === 'past_due'
   const checkoutEnabled = isCheckoutEnabled()
+  // Разовая оплата буста идёт переводом на Kaspi; без номера её не предлагаем.
+  const oneOffEnabled = !!process.env.KASPI_BOOST_NUMBER?.trim()
   const price = PRO_PRICE_KZT.toLocaleString('ru')
 
   return (
@@ -125,15 +127,19 @@ export default async function SubscriptionPage() {
               >
                 Скоро — подключаем оплату
               </button>
-              <p className="mt-3 text-xs text-muted-foreground">
-                Пока автосписание не подключено, Pro можно оплатить разово на 7 или 30 дней.
-              </p>
-              <Link
-                href="/dashboard/master/boost"
-                className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/10 py-3 text-sm font-semibold hover:bg-white/[0.04]"
-              >
-                Оплатить Pro разово
-              </Link>
+              {oneOffEnabled && (
+                <>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Пока автосписание не подключено, Pro можно оплатить разово на 7 или 30 дней.
+                  </p>
+                  <Link
+                    href="/dashboard/master/boost"
+                    className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/10 py-3 text-sm font-semibold hover:bg-white/[0.04]"
+                  >
+                    Оплатить Pro разово
+                  </Link>
+                </>
+              )}
             </>
           )}
         </Card>

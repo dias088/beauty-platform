@@ -61,9 +61,6 @@ export default function BoostPage() {
         <p className="text-muted-foreground mt-2">
           Выйди на первые позиции в поиске и получи в 3–5 раз больше просмотров
         </p>
-        <p className="text-sm text-muted-foreground mt-1">
-          Буст — это Pro на 7 или 30 дней без автосписания: TOP в каталоге, значок и полная статистика.
-        </p>
       </div>
 
       {/* Что даёт буст */}
