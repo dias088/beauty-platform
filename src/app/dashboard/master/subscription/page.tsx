@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { getMyProStatus } from '@/lib/queries/subscription'
 import { isProUntil } from '@/lib/billing/pro'
+import { isCheckoutEnabled } from '@/lib/billing/provider'
+import { ProCheckoutButton } from './_components/pro-checkout-button'
+import { CancelSubscriptionButton } from './_components/cancel-subscription-button'
 import { PRO_PRICE_KZT } from '@/lib/billing/types'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -28,6 +31,10 @@ export default async function SubscriptionPage() {
   const proUntil = my?.proUntil ?? null
   const pro = isProUntil(proUntil)
   const status = STATUS_LABEL[sub?.status ?? 'inactive'] ?? STATUS_LABEL.inactive
+  // Автосписание идёт, пока подписка active/past_due; canceled — уже отключено.
+  const autopay = sub?.status === 'active' || sub?.status === 'past_due'
+  const checkoutEnabled = isCheckoutEnabled()
+  const price = PRO_PRICE_KZT.toLocaleString('ru')
 
   return (
     <main className="container mx-auto max-w-2xl px-4 py-8">
@@ -87,37 +94,48 @@ export default async function SubscriptionPage() {
       </Card>
 
       {/* CTA */}
-      {pro ? (
+      {autopay ? (
         <Card className="p-6">
           <div className="flex items-center gap-2 text-green-500">
             <Check className="h-5 w-5" />
-            <span className="font-medium">Подписка активна — все функции Pro доступны.</span>
+            <span className="font-medium">Автосписание включено, все функции Pro доступны.</span>
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Управление подпиской (смена карты, отмена) появится после подключения платёжного провайдера.
-          </p>
+          {sub?.status === 'past_due' && (
+            <p className="mt-3 text-sm text-red-400">
+              Последнее списание не прошло. Проверьте, что на карте есть деньги: мы попробуем ещё раз.
+            </p>
+          )}
+          <CancelSubscriptionButton />
         </Card>
       ) : (
         <Card className="p-6 text-center">
-          <p className="font-semibold text-lg">Оформить Pro за {PRO_PRICE_KZT.toLocaleString('ru')} ₸/мес</p>
+          <p className="font-semibold text-lg">
+            {pro ? 'Включить автопродление Pro' : `Оформить Pro за ${price} ₸/мес`}
+          </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Автосписание с карты каждый месяц. Отмена в любой момент.
+            Оплата картой любого банка, Apple Pay или Google Pay. Списание раз в месяц, отмена в любой момент.
           </p>
-          <button
-            disabled
-            className="btn-primary-glow mt-5 w-full rounded-xl py-3.5 text-sm font-semibold text-white opacity-60"
-          >
-            Скоро — подключаем оплату
-          </button>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Пока автосписание не подключено, Pro можно оплатить разово на 7 или 30 дней.
-          </p>
-          <Link
-            href="/dashboard/master/boost"
-            className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/10 py-3 text-sm font-semibold hover:bg-white/[0.04]"
-          >
-            Оплатить Pro разово
-          </Link>
+          {checkoutEnabled ? (
+            <ProCheckoutButton priceLabel={price} />
+          ) : (
+            <>
+              <button
+                disabled
+                className="btn-primary-glow mt-5 w-full rounded-xl py-3.5 text-sm font-semibold text-white opacity-60"
+              >
+                Скоро — подключаем оплату
+              </button>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Пока автосписание не подключено, Pro можно оплатить разово на 7 или 30 дней.
+              </p>
+              <Link
+                href="/dashboard/master/boost"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/10 py-3 text-sm font-semibold hover:bg-white/[0.04]"
+              >
+                Оплатить Pro разово
+              </Link>
+            </>
+          )}
         </Card>
       )}
     </main>

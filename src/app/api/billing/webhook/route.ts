@@ -14,20 +14,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'invalid signature' }, { status: 401 })
   }
 
-  // 2. Разбираем событие.
-  const event = provider.parseEvent(rawBody)
+  // 2. Разбираем событие. Нераспознанное подтверждаем, чтобы не было ретраев.
+  const event = provider.parseEvent(rawBody, new URL(req.url))
   if (!event) {
-    return NextResponse.json({ error: 'unrecognized event' }, { status: 400 })
+    return NextResponse.json(provider.ackBody('ok'))
   }
 
   // 3. Применяем (идемпотентно, service_role).
   try {
-    const ok = await applyBillingEvent(event)
-    if (!ok) {
-      // Подписка не найдена — отвечаем 200, чтобы провайдер не долбил ретраями.
-      return NextResponse.json({ ok: true, note: 'no matching subscription' })
-    }
-    return NextResponse.json({ ok: true })
+    const outcome = await applyBillingEvent(event, provider.id)
+    if (outcome !== 'ok') console.warn('billing webhook:', event.type, outcome)
+    // Отказ имеет смысл только на проверке до списания; после списания
+    // подтверждаем получение, иначе провайдер будет слать повторы.
+    return NextResponse.json(provider.ackBody(event.type === 'check' ? outcome : 'ok'))
   } catch (e) {
     console.error('billing webhook error:', e)
     return NextResponse.json({ error: 'internal' }, { status: 500 })
