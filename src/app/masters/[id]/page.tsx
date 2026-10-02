@@ -1,4 +1,5 @@
 import { getMasterProfile } from '@/lib/queries/master-profile'
+import { isProUntil } from '@/lib/billing/pro'
 import { type Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -46,7 +47,7 @@ export default async function MasterProfilePage({ params }: Props) {
     ? Math.min(...master.services.map((s: { price_kzt: number }) => s.price_kzt))
     : null
 
-  const isBoosted = master.boost_until ? new Date(master.boost_until) > new Date() : false
+  const isBoosted = isProUntil(master.boost_until)
 
   const jsonLd = {
     '@context': 'https://schema.org',

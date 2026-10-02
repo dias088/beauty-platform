@@ -5,6 +5,7 @@ import 'server-only'
 // поэтому результат можно кешировать. От service_role каталог не зависит.
 import { unstable_cache } from 'next/cache'
 import { createPublicClient } from '@/lib/supabase/public'
+import { isProUntil } from '@/lib/billing/pro'
 
 export type MasterListItem = {
   id: string
@@ -89,7 +90,7 @@ async function fetchMasters(filters: MasterFilters = {}): Promise<MasterListItem
     min_price: m.services?.length ? Math.min(...m.services.map((s: any) => s.price_kzt)) : null,
     service_categories: [...new Set(((m.services as any[]) ?? []).map(s => s.category).filter(Boolean))] as string[],
     full_name: (m.profiles as any)?.full_name || 'Мастер',
-    is_boosted: m.boost_until ? new Date(m.boost_until) > new Date() : false,
+    is_boosted: isProUntil(m.boost_until),
   }))
 
   // Фильтр по категории — по УСЛУГАМ мастера (а не по галочкам специализации)
@@ -166,6 +167,6 @@ export async function getMastersByIds(ids: string[]): Promise<MasterListItem[]> 
     min_price: m.services?.length ? Math.min(...m.services.map((s: any) => s.price_kzt)) : null,
     service_categories: [...new Set(((m.services as any[]) ?? []).map(s => s.category).filter(Boolean))] as string[],
     full_name: (m.profiles as any)?.full_name || 'Мастер',
-    is_boosted: m.boost_until ? new Date(m.boost_until) > new Date() : false,
+    is_boosted: isProUntil(m.boost_until),
   }))
 }

@@ -2,6 +2,7 @@ import 'server-only'
 import { addMonths } from 'date-fns'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { BillingEvent } from './types'
+import { extendProUntil } from './pro'
 
 /**
  * Применяет нормализованное событие webhook к подписке.
@@ -34,8 +35,14 @@ export async function applyBillingEvent(event: BillingEvent): Promise<boolean> {
       status: event.type === 'payment_succeeded' ? 'success' : 'failed',
       raw_event: event as any,
     })
-    // 23505 = unique_violation → уже обрабатывали, выходим успешно.
-    if (payErr && (payErr as any).code === '23505') return true
+    // 23505 = unique_violation → уже обрабатывали. Pro всё равно досинхронизируем:
+    // если прошлый вызов упал после записи платежа, повтор webhook это починит.
+    if (payErr && (payErr as any).code === '23505') {
+      if (event.type === 'payment_succeeded' && s.current_period_end) {
+        await syncProUntil(admin, s.master_id, new Date(s.current_period_end))
+      }
+      return true
+    }
     if (payErr) throw payErr
   }
 
@@ -44,15 +51,19 @@ export async function applyBillingEvent(event: BillingEvent): Promise<boolean> {
     const base = s.current_period_end && new Date(s.current_period_end) > new Date()
       ? new Date(s.current_period_end)
       : new Date()
-    await admin
+    const periodEnd = addMonths(base, 1)
+    const { error: subErr } = await admin
       .from('subscriptions')
       .update({
         status: 'active',
-        current_period_end: addMonths(base, 1).toISOString(),
+        current_period_end: periodEnd.toISOString(),
         card_last4: event.cardLast4 ?? undefined,
         updated_at: new Date().toISOString(),
       })
       .eq('id', s.id)
+    if (subErr) throw subErr
+
+    await syncProUntil(admin, s.master_id, periodEnd)
     return true
   }
 
@@ -78,4 +89,23 @@ export async function applyBillingEvent(event: BillingEvent): Promise<boolean> {
   }
 
   return false
+}
+
+/**
+ * Pro открывается только через masters.boost_until (см. ./pro.ts):
+ * продлеваем его до конца оплаченного периода, не сокращая разовый буст.
+ * Идемпотентно: повторный вызов с той же датой ничего не меняет.
+ */
+async function syncProUntil(
+  admin: ReturnType<typeof createAdminClient>,
+  masterId: string,
+  until: Date,
+): Promise<void> {
+  const { data: m } = await admin
+    .from('masters').select('boost_until').eq('id', masterId).single()
+  const { error } = await admin
+    .from('masters')
+    .update({ boost_until: extendProUntil(m?.boost_until, until) })
+    .eq('id', masterId)
+  if (error) throw error
 }

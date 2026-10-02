@@ -14,6 +14,7 @@ import {
   Search, Shield, ShieldOff, Zap, Eye, BarChart3
 } from 'lucide-react'
 import { verifyMasterAction, deactivateMasterAction, activateBoostAdminAction } from '../actions'
+import { isProUntil } from '@/lib/billing/pro'
 
 type Stats = {
   totalMasters: number
@@ -132,7 +133,7 @@ export function AdminDashboard({ stats, masters, recentProfiles }: Props) {
         ) : (
           <div className="space-y-3">
             {displayList.map(master => {
-              const isBoosted = master.boost_until && new Date(master.boost_until) > new Date()
+              const isBoosted = isProUntil(master.boost_until)
               return (
                 <Card key={master.id} className="p-4">
                   <div className="flex items-center gap-4">

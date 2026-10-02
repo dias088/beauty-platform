@@ -2,35 +2,31 @@ import 'server-only'
 import { createClient } from '@/lib/supabase/server'
 import type { Subscription } from '@/lib/billing/types'
 
-/** Подписка текущего мастера (или null). RLS отдаёт только свою. */
-export async function getMySubscription(): Promise<Subscription | null> {
+export type MyProStatus = {
+  /** До какого момента оплачен Pro (masters.boost_until), см. lib/billing/pro.ts. */
+  proUntil: string | null
+  /** Автосписание, если мастер его оформлял. Само по себе Pro не открывает. */
+  subscription: Subscription | null
+}
+
+/** Pro-статус и подписка текущего мастера. RLS отдаёт только свои строки. */
+export async function getMyProStatus(): Promise<MyProStatus | null> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
 
   const { data: master } = await supabase
-    .from('masters').select('id').eq('profile_id', user.id).single()
+    .from('masters').select('id, boost_until').eq('profile_id', user.id).single()
   if (!master) return null
 
   const { data } = await supabase
     .from('subscriptions')
     .select('*')
-    .eq('master_id', (master as any).id)
+    .eq('master_id', master.id)
     .maybeSingle()
 
-  return (data as Subscription | null) ?? null
-}
-
-/** Pro активен, если статус active, либо период ещё не истёк (canceled/past_due). */
-export function isProActive(sub: Subscription | null): boolean {
-  if (!sub) return false
-  if (sub.status === 'active') return true
-  if (
-    (sub.status === 'past_due' || sub.status === 'canceled') &&
-    sub.current_period_end &&
-    new Date(sub.current_period_end) > new Date()
-  ) {
-    return true
+  return {
+    proUntil: master.boost_until,
+    subscription: (data as Subscription | null) ?? null,
   }
-  return false
 }

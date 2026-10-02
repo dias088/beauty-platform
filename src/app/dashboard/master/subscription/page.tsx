@@ -1,4 +1,6 @@
-import { getMySubscription, isProActive } from '@/lib/queries/subscription'
+import Link from 'next/link'
+import { getMyProStatus } from '@/lib/queries/subscription'
+import { isProUntil } from '@/lib/billing/pro'
 import { PRO_PRICE_KZT } from '@/lib/billing/types'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -17,12 +19,14 @@ const STATUS_LABEL: Record<string, { label: string; variant: 'default' | 'outlin
 const PERKS = [
   { icon: Zap, text: 'Буст профиля — выше в каталоге' },
   { icon: BarChart3, text: 'Полная статистика и аналитика' },
-  { icon: Sparkles, text: 'Значок Pro в профиле' },
+  { icon: Sparkles, text: 'Значок TOP на карточке и в профиле' },
 ]
 
 export default async function SubscriptionPage() {
-  const sub = await getMySubscription()
-  const pro = isProActive(sub)
+  const my = await getMyProStatus()
+  const sub = my?.subscription ?? null
+  const proUntil = my?.proUntil ?? null
+  const pro = isProUntil(proUntil)
   const status = STATUS_LABEL[sub?.status ?? 'inactive'] ?? STATUS_LABEL.inactive
 
   return (
@@ -49,9 +53,17 @@ export default async function SubscriptionPage() {
           )}
         </div>
 
-        {sub?.current_period_end && (
+        {pro && proUntil && (
           <p className="mt-4 text-sm text-muted-foreground">
-            {sub.status === 'canceled' ? 'Pro действует до' : 'Следующее списание'}:{' '}
+            Pro действует до:{' '}
+            <span className="font-medium text-foreground">
+              {format(new Date(proUntil), 'd MMMM yyyy', { locale: ru })}
+            </span>
+          </p>
+        )}
+        {sub?.status === 'active' && sub.current_period_end && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            Следующее списание:{' '}
             <span className="font-medium text-foreground">
               {format(new Date(sub.current_period_end), 'd MMMM yyyy', { locale: ru })}
             </span>
@@ -98,8 +110,14 @@ export default async function SubscriptionPage() {
             Скоро — подключаем оплату
           </button>
           <p className="mt-3 text-xs text-muted-foreground">
-            Платёжный провайдер подключается — как только будет готов, здесь появится оплата.
+            Пока автосписание не подключено, Pro можно оплатить разово на 7 или 30 дней.
           </p>
+          <Link
+            href="/dashboard/master/boost"
+            className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/10 py-3 text-sm font-semibold hover:bg-white/[0.04]"
+          >
+            Оплатить Pro разово
+          </Link>
         </Card>
       )}
     </main>
