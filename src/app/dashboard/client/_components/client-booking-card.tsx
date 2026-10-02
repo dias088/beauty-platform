@@ -35,7 +35,15 @@ const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secon
   cancelled_by_master: { label: 'Отменена мастером',     variant: 'outline' },
 }
 
-export function ClientBookingCard({ booking, canCancel }: { booking: ClientBooking; canCancel: boolean }) {
+export function ClientBookingCard({
+  booking,
+  canCancel,
+  masterAlreadyReviewed = false,
+}: {
+  booking: ClientBooking
+  canCancel: boolean
+  masterAlreadyReviewed?: boolean
+}) {
   const [loading, setLoading] = useState(false)
   const [reviewRating, setReviewRating] = useState(0)
   const [hoveredStar, setHoveredStar] = useState(0)
@@ -173,6 +181,8 @@ export function ClientBookingCard({ booking, canCancel }: { booking: ClientBooki
                 </div>
               )}
             </div>
+          ) : masterAlreadyReviewed ? (
+            <p className="text-sm text-muted-foreground">Вы уже оставили отзыв этому мастеру</p>
           ) : (
             <div className="space-y-3">
               <p className="text-sm font-medium">Оставьте отзыв о визите:</p>

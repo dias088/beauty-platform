@@ -28,6 +28,8 @@ export default async function ClientDashboardPage() {
   const cancelled = bookings.filter(
     b => b.status === 'cancelled_by_client' || b.status === 'cancelled_by_master'
   )
+  // Отзыв одному мастеру можно оставить только один раз
+  const reviewedMasterIds = new Set(bookings.filter(b => b.review).map(b => b.master_id))
 
   return (
     <main className="container mx-auto py-8 px-4 max-w-3xl">
@@ -78,7 +80,14 @@ export default async function ClientDashboardPage() {
               <p>Нет прошедших записей</p>
             </div>
           ) : (
-            past.map(b => <ClientBookingCard key={b.id} booking={b} canCancel={false} />)
+            past.map(b => (
+              <ClientBookingCard
+                key={b.id}
+                booking={b}
+                canCancel={false}
+                masterAlreadyReviewed={!b.review && reviewedMasterIds.has(b.master_id)}
+              />
+            ))
           )}
         </TabsContent>
 

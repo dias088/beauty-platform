@@ -19,7 +19,7 @@ for f in 00_supabase_shim.sql "${MIGRATIONS[@]}" 01_helpers.sql; do
   psql -q -v ON_ERROR_STOP=1 -d "$DB" -f "$f" >/dev/null
 done
 
-out=$(psql -q -d "$DB" -f 02_write_guards.sql 2>&1 | grep -oE "(PASS|FAIL) .*|^--- [A-Z].*|ERROR.*")
+out=$(for f in 0[2-9]_*.sql; do psql -q -d "$DB" -f "$f" 2>&1; done | grep -oE "(PASS|FAIL) .*|^--- [A-Z].*|ERROR.*")
 echo "$out"
 dropdb "$DB"
 if grep -qE "^(FAIL|ERROR)" <<<"$out"; then exit 1; fi
