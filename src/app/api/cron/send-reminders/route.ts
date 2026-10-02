@@ -1,8 +1,31 @@
+import { timingSafeEqual } from 'node:crypto'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+// Vercel Cron передаёт секрет в заголовке `Authorization: Bearer <CRON_SECRET>`.
+// Без заданного CRON_SECRET роут закрыт для всех, иначе подошёл бы `Bearer undefined`.
+function isAuthorizedCronRequest(request: Request): boolean {
+  const secret = process.env.CRON_SECRET
+  if (!secret) return false
+
+  const received = Buffer.from(request.headers.get('authorization') ?? '')
+  const expected = Buffer.from(`Bearer ${secret}`)
+  return received.length === expected.length && timingSafeEqual(received, expected)
+}
+
+// Астана живёт по UTC+5 круглый год (без перехода на летнее время).
+const ASTANA_UTC_OFFSET_MS = 5 * 60 * 60 * 1000
+const DAY_MS = 24 * 60 * 60 * 1000
+
+// Границы завтрашнего дня по времени Астаны, в UTC: [начало, конец).
+function tomorrowInAstana(now: Date): { from: Date; to: Date } {
+  const local = new Date(now.getTime() + ASTANA_UTC_OFFSET_MS)
+  const startMs =
+    Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate() + 1) - ASTANA_UTC_OFFSET_MS
+  return { from: new Date(startMs), to: new Date(startMs + DAY_MS) }
+}
+
 export async function GET(request: Request) {
-  const cronSecret = request.headers.get('x-cron-secret')
-  if (cronSecret !== process.env.CRON_SECRET) {
+  if (!isAuthorizedCronRequest(request)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -12,9 +35,9 @@ export async function GET(request: Request) {
   const supabase = createAdminClient()
   const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
-  // Записи, которые начнутся через 23-25 часов
-  const from = new Date(Date.now() + 23 * 60 * 60 * 1000)
-  const to   = new Date(Date.now() + 25 * 60 * 60 * 1000)
+  // Крон запускается раз в сутки, поэтому берём все записи на завтра,
+  // а не узкое окно «через 23-25 часов».
+  const { from, to } = tomorrowInAstana(new Date())
 
   const { data: bookings } = await supabase
     .from('bookings')
@@ -30,7 +53,7 @@ export async function GET(request: Request) {
     `)
     .eq('status', 'confirmed')
     .gte('starts_at', from.toISOString())
-    .lte('starts_at', to.toISOString())
+    .lt('starts_at', to.toISOString())
 
   if (!bookings?.length) {
     return Response.json({ sent: 0 })
