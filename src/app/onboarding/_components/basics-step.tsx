@@ -46,7 +46,7 @@ function BasicsForm({ initialData }: { initialData?: any }) {
     <form
       action={async (formData) => {
         selected.forEach(cat => formData.append('categories', cat))
-        const result = await saveBasicsAction(formData)
+        const result = await saveBasicsAction(bio, selected, instagram || undefined)
         if (!result.success) {
           setErrors(result.fieldErrors || {})
           toast.error(result.error)
