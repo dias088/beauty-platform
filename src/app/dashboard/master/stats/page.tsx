@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
+import { isProUntil } from '@/lib/billing/pro'
+import { PRO_PRICE_KZT } from '@/lib/billing/types'
 import { StatsCharts } from './_components/stats-charts'
 import { PeriodFilter } from './_components/period-filter'
 import { subDays, startOfDay, format, parseISO } from 'date-fns'
@@ -183,7 +185,7 @@ export default async function StatsPage({ searchParams }: Props) {
 
   if (!master) redirect('/onboarding')
 
-  const isPro = master.boost_until ? new Date(master.boost_until) > new Date() : false
+  const isPro = isProUntil(master.boost_until)
   const stats = await getMasterStats(master.id, period)
   const recent = await getRecentBookings(master.id)
 
@@ -288,11 +290,11 @@ export default async function StatsPage({ searchParams }: Props) {
                 вместе с TOP-позицией в каталоге.
               </p>
               <div className="mt-4 flex items-baseline justify-center gap-1.5">
-                <span className="text-3xl font-extrabold text-white">7 990 ₸</span>
+                <span className="text-3xl font-extrabold text-white">{PRO_PRICE_KZT.toLocaleString('ru')} ₸</span>
                 <span className="text-sm text-[var(--text-3)]">/ мес</span>
               </div>
               <Link
-                href="/dashboard/master/boost"
+                href="/dashboard/master/subscription"
                 className="btn-primary-glow mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold text-white"
               >
                 <Sparkles className="h-4 w-4" />

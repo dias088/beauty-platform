@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isProUntil } from '@/lib/billing/pro'
 import { env } from '@/lib/env'
 import type { Result } from '@/types/result'
 import { revalidatePath } from 'next/cache'
@@ -60,9 +61,12 @@ export async function activateBoostAdminAction(
   if (!user) return { success: false, error: 'Нет доступа' }
 
   const days = plan === '7d' ? 7 : 30
-  const boostUntil = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
-
   const admin = createAdminClient()
+  const { data: current } = await admin.from('masters').select('boost_until').eq('id', masterId).single()
+  // Продлеваем от конца уже оплаченного Pro, а не от сегодня, чтобы не съесть оплаченные дни.
+  const base = isProUntil(current?.boost_until) ? new Date(current!.boost_until!) : new Date()
+  const boostUntil = new Date(base.getTime() + days * 24 * 60 * 60 * 1000).toISOString()
+
   const { error } = await admin.from('masters').update({ boost_until: boostUntil }).eq('id', masterId)
   if (error) return { success: false, error: 'Ошибка при активации буста' }
 
