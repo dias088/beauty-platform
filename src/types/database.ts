@@ -507,6 +507,107 @@ export type Database = {
           },
         ]
       }
+      subscription_payments: {
+        Row: {
+          amount_kzt: number | null
+          created_at: string
+          id: string
+          master_id: string | null
+          provider: string | null
+          provider_payment_id: string | null
+          raw_event: Json | null
+          status: string
+          subscription_id: string | null
+        }
+        Insert: {
+          amount_kzt?: number | null
+          created_at?: string
+          id?: string
+          master_id?: string | null
+          provider?: string | null
+          provider_payment_id?: string | null
+          raw_event?: Json | null
+          status: string
+          subscription_id?: string | null
+        }
+        Update: {
+          amount_kzt?: number | null
+          created_at?: string
+          id?: string
+          master_id?: string | null
+          provider?: string | null
+          provider_payment_id?: string | null
+          raw_event?: Json | null
+          status?: string
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_payments_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: false
+            referencedRelation: "masters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          amount_kzt: number
+          canceled_at: string | null
+          card_last4: string | null
+          created_at: string
+          current_period_end: string | null
+          id: string
+          master_id: string
+          provider: string | null
+          provider_subscription_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_kzt?: number
+          canceled_at?: string | null
+          card_last4?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          master_id: string
+          provider?: string | null
+          provider_subscription_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_kzt?: number
+          canceled_at?: string | null
+          card_last4?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          master_id?: string
+          provider?: string | null
+          provider_subscription_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: true
+            referencedRelation: "masters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

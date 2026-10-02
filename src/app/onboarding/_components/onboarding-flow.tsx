@@ -313,7 +313,6 @@ export function OnboardingFlow({ step: initialStep, masterInfo, userName }: Prop
                 setAddressCoords(coords)
                 if (address) setAddressQuery(address)
                 setPinnedManually(true)
-                setShowSuggestions(false)
               }}
             />
 

@@ -209,7 +209,10 @@ function getMinutes(time: string) {
   return hours * 60 + minutes
 }
 
-async function getCurrentMasterId() {
+async function getCurrentMasterId(): Promise<
+  | { supabase: Awaited<ReturnType<typeof createClient>>; error: string }
+  | { supabase: Awaited<ReturnType<typeof createClient>>; masterId: string }
+> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { supabase, error: 'Войдите снова' as const }
