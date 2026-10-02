@@ -1,8 +1,19 @@
+import { timingSafeEqual } from 'node:crypto'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+// Vercel Cron передаёт секрет в заголовке `Authorization: Bearer <CRON_SECRET>`.
+// Без заданного CRON_SECRET роут закрыт для всех, иначе подошёл бы `Bearer undefined`.
+function isAuthorizedCronRequest(request: Request): boolean {
+  const secret = process.env.CRON_SECRET
+  if (!secret) return false
+
+  const received = Buffer.from(request.headers.get('authorization') ?? '')
+  const expected = Buffer.from(`Bearer ${secret}`)
+  return received.length === expected.length && timingSafeEqual(received, expected)
+}
+
 export async function GET(request: Request) {
-  const cronSecret = request.headers.get('x-cron-secret')
-  if (cronSecret !== process.env.CRON_SECRET) {
+  if (!isAuthorizedCronRequest(request)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
