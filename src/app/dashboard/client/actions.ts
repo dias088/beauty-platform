@@ -36,13 +36,16 @@ export async function addReviewAction(input: z.infer<typeof reviewSchema>): Prom
 
   if (!booking) return { success: false, error: 'Запись не найдена или не завершена' }
 
+  // Один отзыв от клиента одному мастеру (то же правило проверяет база)
   const { data: existingReview } = await supabase
     .from('reviews')
     .select('id')
-    .eq('booking_id', parsed.data.booking_id)
+    .eq('client_id', user.id)
+    .eq('master_id', booking.master_id)
+    .limit(1)
     .maybeSingle()
 
-  if (existingReview) return { success: false, error: 'Вы уже оставили отзыв' }
+  if (existingReview) return { success: false, error: 'Вы уже оставили отзыв этому мастеру' }
 
   const { error } = await supabase.from('reviews').insert({
     booking_id: parsed.data.booking_id,
@@ -66,7 +69,7 @@ export async function cancelClientBookingAction(bookingId: string): Promise<Resu
 
   const { data: booking } = await supabase
     .from('bookings')
-    .select('id, starts_at, slot_id')
+    .select('id, starts_at')
     .eq('id', bookingId)
     .eq('client_id', user.id)
     .single()
@@ -83,9 +86,8 @@ export async function cancelClientBookingAction(bookingId: string): Promise<Resu
     .update({ status: 'cancelled_by_client', status_changed_at: new Date().toISOString() })
     .eq('id', bookingId)
 
+  // Слот освобождает триггер release_slot_on_cancel в базе
   if (error) return { success: false, error: 'Не удалось отменить' }
-
-  await supabase.from('slots').update({ is_booked: false }).eq('id', booking.slot_id)
 
   revalidatePath('/dashboard/client')
   return { success: true, data: undefined }

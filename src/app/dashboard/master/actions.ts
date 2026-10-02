@@ -103,7 +103,7 @@ export async function cancelBookingAction(bookingId: string, reason?: string): P
 
   const { data: booking } = await supabase
     .from('bookings')
-    .select('slot_id, master_id, masters!inner(profile_id)')
+    .select('master_id, masters!inner(profile_id)')
     .eq('id', bookingId)
     .single()
 
@@ -120,9 +120,8 @@ export async function cancelBookingAction(bookingId: string, reason?: string): P
     })
     .eq('id', bookingId)
 
+  // Слот освобождает триггер release_slot_on_cancel в базе
   if (bookingError) return { success: false, error: 'Не удалось отменить' }
-
-  await supabase.from('slots').update({ is_booked: false }).eq('id', booking.slot_id)
 
   // Письмо клиенту об отмене — после ответа
   after(() => sendBookingCancelledEmail(bookingId))
