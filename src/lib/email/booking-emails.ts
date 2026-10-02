@@ -1,13 +1,33 @@
 import 'server-only'
 import { Resend } from 'resend'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { format, parseISO } from 'date-fns'
-import { ru } from 'date-fns/locale'
 
 const FROM = 'Beauty Platform <bookings@beauty-platform.kz>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 type Ctx = { clientEmail: string; masterName: string; serviceName: string; dateTime: string }
+
+/** Экранирует пользовательский текст (имена, названия услуг) перед вставкой в HTML письма. */
+export function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+/** Время записи в часовом поясе Астаны (сервер Vercel работает в UTC). */
+export function formatBookingTime(startsAt: string): string {
+  return new Intl.DateTimeFormat('ru-RU', {
+    timeZone: 'Asia/Almaty',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(startsAt))
+}
 
 /** Данные для письма клиенту: email клиента, имя мастера, услуга, время. */
 async function getBookingContext(bookingId: string): Promise<Ctx | null> {
@@ -30,9 +50,9 @@ async function getBookingContext(bookingId: string): Promise<Ctx | null> {
 
   return {
     clientEmail,
-    masterName: b.masters?.profiles?.full_name ?? 'Мастер',
-    serviceName: b.service_name_snapshot ?? 'Услуга',
-    dateTime: format(parseISO(b.starts_at), "d MMMM yyyy 'в' HH:mm", { locale: ru }),
+    masterName: escapeHtml(b.masters?.profiles?.full_name ?? 'Мастер'),
+    serviceName: escapeHtml(b.service_name_snapshot ?? 'Услуга'),
+    dateTime: formatBookingTime(b.starts_at),
   }
 }
 
@@ -95,5 +115,34 @@ export async function sendBookingCancelledEmail(bookingId: string): Promise<void
     })
   } catch (e) {
     console.error('sendBookingCancelledEmail failed:', e)
+  }
+}
+
+/** Клиенту: напоминание о записи завтра (вызывается кроном). Возвращает true, если письмо ушло. */
+export async function sendBookingReminderEmail(bookingId: string): Promise<boolean> {
+  try {
+    const ctx = await getBookingContext(bookingId)
+    if (!ctx || !process.env.RESEND_API_KEY) return false
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    const { error } = await resend.emails.send({
+      from: FROM,
+      to: ctx.clientEmail,
+      subject: 'Напоминание о записи завтра',
+      html: shell(`
+        <h2 style="color:#d97706;margin:0 0 12px">Напоминание</h2>
+        <p>Завтра у вас запись к <strong>${ctx.masterName}</strong>.</p>
+        <p>Услуга: <strong>${ctx.serviceName}</strong><br/>Время: <strong>${ctx.dateTime}</strong></p>
+        <p style="color:#6b7280;font-size:14px">Если планы изменились, отмените запись в кабинете заранее.</p>
+        ${button(`${APP_URL}/dashboard/client`, 'Мои записи')}
+      `),
+    })
+    if (error) {
+      console.error('sendBookingReminderEmail failed:', error)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.error('sendBookingReminderEmail failed:', e)
+    return false
   }
 }

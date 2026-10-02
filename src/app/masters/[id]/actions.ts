@@ -7,8 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { getMasterSlots, type Slot } from '@/lib/queries/slots'
 import { Resend } from 'resend'
-import { format, parseISO } from 'date-fns'
-import { ru } from 'date-fns/locale'
+import { escapeHtml, formatBookingTime } from '@/lib/email/booking-emails'
 
 const FROM = 'Beauty Platform <bookings@beauty-platform.kz>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -28,9 +27,10 @@ async function sendBookingCreatedEmails(bookingId: string, clientEmail: string) 
 
     const master = booking.masters as any
     const masterProfileId: string = master.profile_id
-    const masterName: string = master.profiles.full_name
-    const serviceName: string = booking.service_name_snapshot
-    const dateTime = format(parseISO(booking.starts_at), "d MMMM yyyy 'в' HH:mm", { locale: ru })
+    const rawMasterName: string = master.profiles.full_name ?? 'Мастер'
+    const masterName = escapeHtml(rawMasterName)
+    const serviceName = escapeHtml(booking.service_name_snapshot ?? 'Услуга')
+    const dateTime = formatBookingTime(booking.starts_at)
 
     const { data: masterAuth } = await admin.auth.admin.getUserById(masterProfileId)
     const masterEmail = masterAuth?.user?.email
@@ -57,7 +57,7 @@ async function sendBookingCreatedEmails(bookingId: string, clientEmail: string) 
       resend.emails.send({
         from: FROM,
         to: clientEmail,
-        subject: `Запись создана — ${masterName}`,
+        subject: `Запись создана — ${rawMasterName}`,
         html: `
           <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
             <h2 style="color:#FF2D78">Запись создана!</h2>
